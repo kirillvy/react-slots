@@ -1,0 +1,58 @@
+{
+  "name": "react-dropzone-file-uploader",
+  "version": "0.0.2",
+  "description": "A configurable file uploader",
+  "main": "./lib/index.js",
+  "files": [
+    "/lib"
+  ],
+  "bundlesize": [
+    {
+      "path": "./lib/index*.js",
+      "maxSize": "3 kB"
+    }
+  ],
+  "scripts": {
+    "build": "rm -rf ./lib &&./node_modules/.bin/webpack --mode production --config=webpack.config.js",
+    "build:dev": "NODE_ENV=local ./node_modules/.bin/webpack --mode development --config=webpack.config.js",
+    "test": "test",
+    "test:jest": "CI=TRUE node --max_old_space_size=4096 ./node_modules/jest/bin/jest.js --env=jsdom --colors --coverage test'",
+    "docs:storybook:run": "node --max_old_space_size=4096 ./node_modules/.bin/start-storybook -s ./src -p 6006",
+    "build-storybook": "node --max_old_space_size=4096 ./node_modules/.bin/build-storybook",
+    "docs:storybook": "node --max_old_space_size=4096 ./node_modules/.bin/build-storybook -c .storybook -o ../../dist/storybook/app_client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kirillvy/dropzone-uploader"
+  },
+  "keywords": [
+    "s"
+  ],
+  "author": "Kirill Vysokolov",
+  "license": "MIT",
+  "devDependencies": {
+    "@storybook/addon-actions": "^5.1.9",
+    "@storybook/cli": "^5.1.10",
+    "@storybook/react": "^5.1.9",
+    "@types/jest": "^24.0.16",
+    "@types/node": "^12.6.8",
+    "@types/react": "^16.8.23",
+    "@types/react-dom": "^16.8.5",
+    "@types/storybook-readme": "^5.0.3",
+    "@types/storybook__react": "^4.0.2",
+    "babel-loader": "^8.0.6",
+    "jest": "^24.8.0",
+    "react-docgen-typescript-loader": "^3.1.0",
+    "storybook-readme": "^5.0.5",
+    "ts-loader": "^6.0.4",
+    "tslint": "^5.18.0",
+    "tslint-react": "^4.0.0",
+    "typescript": "^3.5.3",
+    "webpack-cli": "^3.3.6"
+  },
+  "peerDependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "dependencies": {}
+}
