@@ -35,9 +35,9 @@ interface ISlot<T> {
    */
   fallbackProps?: JSX.IntrinsicAttributes & React.PropsWithChildren<T>;
   /**
-   * Use the default element as the fallback
+   * Designate the children prop as the default element, the fallback element or both
    */
-  fallbackOnDefault?: boolean;
+  childIs?: 'feedback' | 'default' | 'both';
 }
 
 interface ISubSlot<T> extends Partial<ISlot<T>> {
@@ -52,7 +52,7 @@ interface ISlotComponentSlot<T> extends ISlotComponentCtx<T> {
   Slot: React.FunctionComponent<ISlot<T>>;
 }
 
-interface ISlotComponent<T> extends ISlotComponentSlot<T> {
+export interface ISlotComponent<T> extends ISlotComponentSlot<T> {
   SubSlot: React.FunctionComponent<ISubSlot<T>>;
 }
 
@@ -62,35 +62,21 @@ interface IOverloadCreateSlot {
   ): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
   <S extends keyof JSX.IntrinsicElements, T extends {}>(
     Element?: React.ComponentType<T & Partial<JSX.IntrinsicElements[S]>>,
-
   ): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
   <T extends keyof JSX.IntrinsicElements>(
     Element: T | React.ComponentType<Partial<JSX.IntrinsicElements[T]>>,
-  ): ISlotComponent<{ children?: any } & Partial<JSX.IntrinsicElements[T]>>;
+  ): ISlotComponent<Partial<JSX.IntrinsicElements[T]>>;
   <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
 }
 
 type SlotType<T = {}, S = {}> =
   T extends {} ? S extends keyof JSX.IntrinsicElements ? T & Partial<JSX.IntrinsicElements[S]> : T :
   T extends keyof JSX.IntrinsicElements ? S extends {} ? S & Partial<JSX.IntrinsicElements[T]> :
-  { children?: any } & Partial<JSX.IntrinsicElements[T]> : any;
-
-interface INonSlotted {
-  scope: any;
-  slots: Array<ISlotComponent<any>>;
-}
-
-interface INonSubSlotted extends INonSlotted {
-  scope: React.Context<any>;
-}
-
-interface INonSlotComponent extends React.FC<INonSlotted> {
-  SubSlot: React.FunctionComponent<INonSubSlotted>;
-}
+   Partial<JSX.IntrinsicElements[T]> : any;
 
 const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlot<T>> => (
   { scope, children: defaultElement, multiple = false, defaultProps, passedProps, withContext,
-    fallback, fallbackProps, fallbackOnDefault },
+    fallback, fallbackProps, childIs },
 ) => {
   const SlottedChild: React.ReactElement[] = [];
   if (scope.length === 0) {
@@ -103,6 +89,9 @@ const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlo
     }
     if (child.type === Element) {
       if (withContext === true  && defaultElement !== undefined) {
+        if (childIs === 'feedback') {
+          return;
+        }
         if (Element.Context.Provider === undefined) {
           return;
         }
@@ -135,8 +124,8 @@ const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlo
     if (fallback !== undefined) {
       return React.cloneElement(fallback, fallbackProps);
     }
-    if (fallbackOnDefault === true && defaultElement !== undefined) {
-      return React.cloneElement(defaultElement, { ...defaultProps });
+    if ((childIs === 'feedback' || childIs === 'both') && defaultElement !== undefined) {
+      return React.cloneElement(defaultElement, fallbackProps);
     }
     return null;
   }
@@ -183,45 +172,8 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
     result.SubSlot.displayName = 'SubSlot';
     return result;
 };
+// import NonSlotted from './NonSlotted/index';
 
-const NonSlotFactory = (Element: React.FC<INonSlotted>): React.FC<INonSubSlotted> => (
-  { scope: Context, ...props },
-) => {
-  return <Context.Consumer>{(value) => <Element {...props} scope={value.props.children}/>}</Context.Consumer>;
-};
-
-const NonSlottedComponent = ({ scope, slots }: {scope: any; slots: any[]}) => {
-  const SlottedChild: React.ReactElement[] = [];
-  const childrenCount = React.Children.count(scope);
-  const ignoreSlot = (child: JSX.Element, i?: number) => {
-    if (!React.isValidElement(child)) {
-      if (child !== undefined) {
-        SlottedChild.push(child);
-      }
-      return;
-    }
-    if (slots.some((el: any) => el === child.type)) {
-      return;
-    }
-    if (i !== undefined) {
-      SlottedChild.push(React.cloneElement(child, { key: i }));
-    } else {
-      SlottedChild.push(child);
-    }
-  };
-  if (childrenCount === 1) {
-    ignoreSlot(React.Children.only(scope));
-  } else if (childrenCount > 1) {
-      React.Children.forEach(scope, ignoreSlot);
-  }
-  if (SlottedChild.length === 0) {
-    return null;
-  }
-  return <>{SlottedChild}</>;
-};
-
-NonSlottedComponent.SubSlot = NonSlotFactory(NonSlottedComponent);
-
-export const NonSlotted: INonSlotComponent = NonSlottedComponent;
+// export {NonSlotted};
 
 export default createSlot;

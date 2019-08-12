@@ -25,7 +25,7 @@ multiple? | `boolean` | Display all if multiple slots are passed
 withContext? | `boolean` | Components are composed through their immediate children
 fallback? | `any` | fallback to use if slot is not used
 fallbackProps? | `JSX.IntrinsicAttributes & React.PropsWithChildren<T>` | default props to use with default element
-fallbackOnDefault? | `boolean` | Use the default element as the fallback
+childIs? | `'feedback' | 'default' | 'both'` | Designate the children prop as the default element, the fallback element or both
 
 ### Component.SubSlot
 
@@ -44,13 +44,14 @@ scope | `React.Context` | Elements passed for filtering
 
 ### NonSlotted
 
-Equivalent of `{children}`, but filters out all slotted elements passed into it. Must include all elements
-that you want to skip or it will display them.
+Equivalent of `{children}` for non-slottable elements. Can include a whitelist (include) or blacklist(exclude),
+otherwise filters out all slottable elements.
 
 Name | Type | Description
 --- | --- | ---
-scope | any | Elements passed for filtering
-slots | Array<ISlotComponent<any>> | slots to exclude
+scope | `any` | Elements passed for filtering
+exclude | `Array<SlotComponent>` | Array of slottable components for filtering out
+include | `Array<SlotComponent>` | Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
 
 ### NonSlotted.SubSlot
 
@@ -258,17 +259,6 @@ Both will allow you to make insert slots one into another:
 <CommentList>
   <SingleComment>
     <CommentName>
-      Tony
-    </CommentName>
-    <CommentEmail>
-      nopanic@email.xyz
-    </CommentEmail>
-    <CommentMessage>
-      Hello.
-    </CommentMessage>
-  </SingleComment>
-  <SingleComment>
-    <CommentName>
       Christopher
     </CommentName>
     <CommentEmail>
@@ -276,17 +266,6 @@ Both will allow you to make insert slots one into another:
     </CommentEmail>
     <CommentMessage>
       Nice job!
-    </CommentMessage>
-  </SingleComment>
-  <SingleComment>
-    <CommentName>
-      Silvio
-    </CommentName>
-    <CommentEmail>
-      bad@bing.co
-    </CommentEmail>
-    <CommentMessage>
-      Using slots.
     </CommentMessage>
   </SingleComment>
 </CommentList>
@@ -300,17 +279,93 @@ And each one will be rendered as a separate one.
   <div class="Comment-123xyz">
     <div>
       <div class="Name-123xyz">
-        Tony
+        Christopher
       </div>
       <div class="Email-123xyz">
-        nostress@duckduckgo.xyz
+        loylecapo@holly.wood
       </div>
     </div>
     <div class="Message-123xyz">
-      Hello.
+      Nice job!
     </div>
   </div>
+</div>
+```
+
+## Rendering non-slotted components
+
+To designate a place to render all components intended as non-slottable children, import the 
+NonSlotted component. 
+
+```js
+import createSlot, { NonSlotted } from 'react-slots';
+```
+
+Then insert it where you would like to process non-slottable children, as you would a slot:
+
+```jsx
+
+const CommentList = () => (
+  <div>
+    <NonSlotted scope={children} />
+    <SingleComment.Slot scope={children} multiple={true} withContext={true}>
+      <div>
+        <CommentName.SubSlot scope={SingleComment.Context} />
+        <CommentEmail.SubSlot scope={SingleComment.Context} />
+      </div>
+      <CommentMessage.SubSlot scope={SingleComment.Context} />
+    </SingleComment.Slot>
+  </div>
+);
+```
+
+Non-slotted components can similarly be inserted as context-dependent limited scope subslots
+through the NonSlotted.SubSlot component.
+
+```jsx
+
+const CommentList = () => (
+  <div>
+    <div><NonSlotted scope={children} /></div>
+    <SingleComment.Slot scope={children} multiple={true} withContext={true}>
+      <div><NonSlotted.SubSlot scope={SingleComment.Context} /></div>
+      <div>
+        <CommentName.SubSlot scope={SingleComment.Context} />
+        <CommentEmail.SubSlot scope={SingleComment.Context} />
+      </div>
+      <CommentMessage.SubSlot scope={SingleComment.Context} />
+    </SingleComment.Slot>
+  </div>
+);
+```
+
+Rendering a component with non-slotted components:
+
+```jsx
+<CommentList>
+  Comments:
+  <SingleComment>
+    Comment #1:
+    <CommentName>
+      Christopher
+    </CommentName>
+    <CommentEmail>
+      loylecapo@holly.wood
+    </CommentEmail>
+    <CommentMessage>
+      Nice job!
+    </CommentMessage>
+  </SingleComment>
+</CommentList>
+```
+
+In their designated place:
+
+```jsx
+<div>
+  <div>Comments:</div>
   <div class="Comment-123xyz">
+    <div>Comment #1:</div>
     <div>
       <div class="Name-123xyz">
         Christopher
@@ -323,21 +378,11 @@ And each one will be rendered as a separate one.
       Nice job!
     </div>
   </div>
-  <div class="Comment-123xyz">
-    <div>
-      <div class="Name-123xyz">
-        Silvio
-      </div>
-      <div class="Email-123xyz">
-        bad@bing.co
-      </div>
-    </div>
-    <div class="Message-123xyz">
-      Using slots.
-    </div>
-  </div>
 </div>
 ```
+
+Whitelist and blacklist options are also available if you wish to use some slottable components as
+non-slotted children.
 
 ## Conditional Rendering, Defaults and Fallbacks
 
@@ -347,9 +392,15 @@ is made from. This means that you can pass props into it and receive callbacks l
 You can also designate a default element if no children are passed to it through the children prop,
 as well as a fallback element to use if the slotted element is not included at all.
 
-If a slot's element is not included, all of the slot element's children will not be displayed either,
-allowing for a sort of conditional rendering.
+If a slottable element is not included, all of the slot element's children will not be displayed either,
+allowing for a sort of conditional rendering dependent on the rendering of the parent slot.
+However, it is more semantic to use native JSX conditional rendering on the top level.
 
+You can use the `childIs` property to designate, whether the default `children` prop is rendered as
+solely the default element, solely the fallback element or both, to avoid needlessly using the feedback prop.
+
+In addition, use defaultProps in the Element.Slot element to pass default props, passedProps to forward props
+from other places (overrides defaultProps) and fallBack props to pass props designated for the fallback component.
 
 ## Reusing Slots
 

@@ -34,9 +34,9 @@ interface ISlot<T> {
      */
     fallbackProps?: JSX.IntrinsicAttributes & React.PropsWithChildren<T>;
     /**
-     * Use the default element as the fallback
+     * Designate the children prop as the default element, the fallback element or both
      */
-    fallbackOnDefault?: boolean;
+    childIs?: 'feedback' | 'default' | 'both';
 }
 interface ISubSlot<T> extends Partial<ISlot<T>> {
     scope: React.Context<any>;
@@ -47,31 +47,18 @@ interface ISlotComponentCtx<T> extends React.FunctionComponent<T> {
 interface ISlotComponentSlot<T> extends ISlotComponentCtx<T> {
     Slot: React.FunctionComponent<ISlot<T>>;
 }
-interface ISlotComponent<T> extends ISlotComponentSlot<T> {
+export interface ISlotComponent<T> extends ISlotComponentSlot<T> {
     SubSlot: React.FunctionComponent<ISubSlot<T>>;
 }
 interface IOverloadCreateSlot {
     <T extends {}, S extends keyof JSX.IntrinsicElements>(Element?: React.ComponentType<T & Partial<JSX.IntrinsicElements[S]>>): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
     <S extends keyof JSX.IntrinsicElements, T extends {}>(Element?: React.ComponentType<T & Partial<JSX.IntrinsicElements[S]>>): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
-    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType<Partial<JSX.IntrinsicElements[T]>>): ISlotComponent<{
-        children?: any;
-    } & Partial<JSX.IntrinsicElements[T]>>;
+    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType<Partial<JSX.IntrinsicElements[T]>>): ISlotComponent<Partial<JSX.IntrinsicElements[T]>>;
     <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
-}
-interface INonSlotted {
-    scope: any;
-    slots: Array<ISlotComponent<any>>;
-}
-interface INonSubSlotted extends INonSlotted {
-    scope: React.Context<any>;
-}
-interface INonSlotComponent extends React.FC<INonSlotted> {
-    SubSlot: React.FunctionComponent<INonSubSlotted>;
 }
 /**
  * Slot constructor
  * @param {React.ComponentType<any>} [Element=React.Fragment] - Element for slotting, default is fragment
  */
 export declare const createSlot: IOverloadCreateSlot;
-export declare const NonSlotted: INonSlotComponent;
 export default createSlot;
