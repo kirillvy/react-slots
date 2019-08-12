@@ -58,7 +58,6 @@ Name | Type | Description
 --- | --- | ---
 scope | any | Elements passed for filtering
 
-## Применение компонента
 ## Using slots
 
 To begin using react-slots-library, import the slot creator.
