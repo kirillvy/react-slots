@@ -61,4 +61,6 @@ interface IOverloadCreateSlot {
  * @param {React.ComponentType<any>} [Element=React.Fragment] - Element for slotting, default is fragment
  */
 export declare const createSlot: IOverloadCreateSlot;
+import NonSlotted from './NonSlotted/index';
+export { NonSlotted };
 export default createSlot;

@@ -1,9 +1,8 @@
-# Компонент react-slots
-# react-slots
+# react-slots-library
 
 ## Общее описание
 
-react-slots is a library for managing React components as slots, with scoped, conditional and
+react-slots-library is a library for managing React components as slots, with scoped, conditional and
 multiple rendering. It can be used for creating reusable components and UI kits.
 
 ## Component properties
@@ -64,14 +63,11 @@ scope | any | Elements passed for filtering
 ## Применение компонента
 ## Using slots
 
-Чтобы начать икользовать Slot, импортируйте его конструктор
-To begin using react-slots, import the slot creator.
+To begin using react-slots-library, import the slot creator.
 
 ```js
-import * as createSlot from 'react-slots';
+import * as createSlot from 'react-slots-library';
 ```
-
-Затем создайте несколько нужных слотов для экспорта. В конструктор слота можно отправить конструктор элемента.
 
 Then create several slots for use in other components. The slot creator can accept elements and JSX intrinsic
 elements. For Typescript, you can also annotate the slot with the props that it accepts. For styled-components and
@@ -89,7 +85,6 @@ export const CardFlair = createSlot<'div', {color: 'red' | 'green'}>(MyStyledCom
 export const CardWarning = createSlot<{color: 'red' | 'green'}, 'span'>(MyCustomJSXComponent);
 ```
 
-После этого их можно вставлять в элемент через Slot:
 Now they can be inserted into the template element through the .Slot property. Make sure to include the scope.
 
 ```jsx
@@ -106,14 +101,12 @@ const Card = () => (
 );
 ```
 
-В файле, использующем слоты, импортируйте и их, и компонент:
 In the component using the slots, import them and the component.
 
 ```js
 import Card, { CardTopText, CardBottomText } from '../Card';
 ```
 
-Затем вставьте их в элемент:
 Then insert them into the element. The slotted elements **must** be the primary children of the element
 and not inserted into other elements in the hierarchy. Otherwise they will be rendered as ordinary elements.
 
@@ -298,7 +291,7 @@ To designate a place to render all components intended as non-slottable children
 NonSlotted component. 
 
 ```js
-import createSlot, { NonSlotted } from 'react-slots';
+import createSlot, { NonSlotted } from 'react-slots-library';
 ```
 
 Then insert it where you would like to process non-slottable children, as you would a slot:

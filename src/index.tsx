@@ -172,8 +172,8 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
     result.SubSlot.displayName = 'SubSlot';
     return result;
 };
-// import NonSlotted from './NonSlotted/index';
+import NonSlotted from './NonSlotted/index';
 
-// export {NonSlotted};
+export {NonSlotted};
 
 export default createSlot;
