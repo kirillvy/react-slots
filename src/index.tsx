@@ -79,7 +79,7 @@ const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlo
     fallback, fallbackProps, childIs },
 ) => {
   const SlottedChild: React.ReactElement[] = [];
-  if (scope.length === 0) {
+  if (scope === undefined || scope.length === 0) {
     return null;
   }
   const childrenCount = React.Children.count(scope);
