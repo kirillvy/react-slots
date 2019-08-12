@@ -1,7 +1,5 @@
 # react-slots-library
 
-## Общее описание
-
 react-slots-library is a library for managing React components as slots, with scoped, conditional and
 multiple rendering. It can be used for creating reusable components and UI kits.
 
