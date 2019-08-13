@@ -95,15 +95,14 @@ const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlo
         if (Element.Context.Provider === undefined) {
           return;
         }
-        SlottedChild.push((
+        SlottedChild.push(React.cloneElement(child, { key: i, ...defaultProps, ...passedProps }, (
         <Element.Context.Provider
           key={i}
           value={React.cloneElement(child, {...passedProps })}
         >
         {defaultElement}
         </Element.Context.Provider>
-        ),
-        );
+        )));
         return;
       }
       const props: any = child.props;
