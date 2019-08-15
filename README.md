@@ -416,3 +416,16 @@ Plans:
 - Unordered slot groups (group slots)
 - Package optimizations (tree-shaking)
 - Planned releases (from 0.1 onwards)
+
+
+## Branches
+
+With the milestones defined, the branches to work on the project are the following:
+
+M1/general
+
+Milestone 1, general master branch for the group of improvements.
+
+M1/14, milestone 1, issue 14 (issues based with this feature or group of features)
+
+M0/15, no milestone, issue 15 (general issue with the work of the library not linked to any milestone).
