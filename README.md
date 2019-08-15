@@ -402,4 +402,7 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
 Plans:
 - Full examples
 - Test coverage for ordinary and edge cases
-- Passing props other than children through Context API.
+- Passing props other than children through Context API (unique global slots).
+- Conditional rendering slots (full-featured, multi-scenario)
+- Unordered slot groups (group slots)
+- Package optimizations (tree-shaking)

@@ -1,6 +1,6 @@
 {
   "name": "react-slots-library",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Extended slot pattern for React",
   "main": "./lib/index.js",
   "files": [
@@ -19,7 +19,8 @@
     "test:jest": "CI=TRUE node --max_old_space_size=4096 ./node_modules/jest/bin/jest.js --env=jsdom --colors --coverage test'",
     "docs:storybook:run": "node --max_old_space_size=4096 ./node_modules/.bin/start-storybook -s ./src -p 6006",
     "build-storybook": "node --max_old_space_size=4096 ./node_modules/.bin/build-storybook",
-    "docs:storybook": "node --max_old_space_size=4096 ./node_modules/.bin/build-storybook -c .storybook -o ../../dist/storybook/app_client"
+    "docs:storybook": "node --max_old_space_size=4096 ./node_modules/.bin/build-storybook -c .storybook -o ../../dist/storybook/app_client",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
