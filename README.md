@@ -108,14 +108,14 @@ Then insert them into the element. The slotted elements **must** be the primary 
 and not inserted into other elements in the hierarchy. Otherwise they will be rendered as ordinary elements.
 
 ```jsx
-<Card>
+const CustomCard = () => <Card>
   <CardTopText>
     <p>Name of the Card</p>
   </CardTopText>
   <CardBottomText>
     <p>Description of the Card</p>
   </CardBottomText>
-</Card>
+</Card>;
 ```
 
 The result eill be rendered as 
@@ -229,7 +229,14 @@ const Comment = () => (
   </>
 );
 
-const CommentList = () => (
+const InheritanceCommentList = () => (
+  <div>
+    <div>Comments:</div>
+    <SingleComment.Slot scope={children} multiple={true} />
+  </div>
+)
+
+const CompositionCommentList = () => (
   <div>
     <div>Comments:</div>
     <SingleComment.Slot scope={children} multiple={true} withContext={true}>
@@ -402,7 +409,10 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
 Plans:
 - Full examples
 - Test coverage for ordinary and edge cases
-- Passing props other than children through Context API (unique global slots).
+- Explained usage of default, fallback and passed props.
+- Passing props other than children through Context API (unique global and component-level slots).
+- Caching, priority and garbage collection for global slots.
 - Conditional rendering slots (full-featured, multi-scenario)
 - Unordered slot groups (group slots)
 - Package optimizations (tree-shaking)
+- Planned releases (from 0.1 onwards)
