@@ -53,7 +53,7 @@ const NonSlottedComponent = ({ scope, exclude, include, all }: INonSlotted) => {
     childrenObj = useChildren(scope);
   }
   let rest: ISortChildrenEl[] = [];
-  if ((exclude && all !== false) || (include && all === true)) {
+  if ((!include && !exclude) || (exclude && all !== false) || (include && all === true)) {
     rest = childrenObj.rest;
   }
   const includeEls = resObject(include);
