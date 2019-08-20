@@ -218,7 +218,7 @@ export const useChildren = (scope: any): IIndexedChildren => {
   return result;
 };
 
-import NonSlotted from './NonSlotted/index';
+              import NonSlotted from './NonSlotted/index';
 export {NonSlotted};
 
 export default createSlot;

@@ -75,5 +75,6 @@ export declare const createSlot: IOverloadCreateSlot;
  */
 export declare const useChildren: (scope: any) => IIndexedChildren;
 import NonSlotted from './NonSlotted/index';
+export declare const useChildren: (scope: any) => IIndexedChildren;
 export { NonSlotted };
 export default createSlot;
