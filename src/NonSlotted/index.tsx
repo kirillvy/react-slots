@@ -3,7 +3,7 @@ import {ISlotComponent, IIndexedChildren, useChildren, ISortChildrenEl} from '..
 
 interface INonSlotted {
   /**
-   * Elements passed for filtering
+   * Elements or indexed children object passed for filtering
    */
   scope: any;
   /**

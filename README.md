@@ -435,17 +435,19 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
 
 ## Changelog
 
-- 0.1 - Performance optimizations, optional pre-indexing by useChildren function.
+- 0.1
+  - Performance optimizations, optional pre-indexing by useChildren function.
+  - clarifications on flags for non-slotted elements.
+  - clarifications on default, fallback and passed props.
 
 ## Roadmap to 1.0
 
 - 0.2
-  - clarifications on default, fallback and passed props.
-- 0.3
   - Conditional rendering slots
-- 0.4 (feature addition lock for 1.0)
+  - Unordered and ordered group slots
+- 0.3 (feature addition lock for 1.0)
   - unique global slots
-- 0.5 (preparation for 1.0)
+- 0.4 (preparation for 1.0)
   - Complete test coverage and full examples
   - Package optimizations
 - 1.0

@@ -14,7 +14,7 @@ interface ISlot<T> {
    */
   passedProps?: T;
   /**
-   * Elements passed for filtering
+   * Elements or indexed children object passed for filtering
    */
   scope: any;
   /**
