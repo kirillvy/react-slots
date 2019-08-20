@@ -14,7 +14,7 @@ The slot consumes an array of children and filters for ones marked as the compon
 
 Name | Type | Description
 --- | --- | ---
-scope | `any \| IndexedChildren` | Elements passed for filtering, indexed using `useChildren`
+scope | `any | IndexedChildren` | Elements passed for filtering, indexed using `useChildren`
 children? | `any` | Default children of element, if any.
 defaultProps? | `JSX.IntrinsicAttributes & React.PropsWithChildren<T>` | default props to use with default element
 passedProps? | `T` | props passed to the element from the component containing the slot
@@ -59,6 +59,79 @@ Same as NonSlotted, but consumes a context from a slot with `withContext` enable
 Name | Type | Description
 --- | --- | ---
 scope | any | Elements passed for filtering
+
+### ConditionalSlot
+
+Component which renders components under it only if the rules are followed.
+
+Name | Type | Description
+--- | --- | ---
+scope | `any` | Elements passed for filtering
+excludes | `Array<SlotComponent>` | Does not render if any of the excludes is in the scope.
+includes | `Array<SlotComponent>` | Does not render if any of the includes are not in the scope.
+condition | `any` | Truthy eval of conditions for implementations.
+Shorthand for `{ x === 5 && <ConditionalSlot /> }`
+
+Also available by adding .Conditional to any Slot, SubSlot or NonSlotted element.
+
+### ConditionalSlot.If
+
+Made for convenience, same as rendering elements other than ConditionalSlot.ElseIf and 
+ConditionalSlot.Else inside a conditional slot. 
+
+Name | Type | Description
+--- | --- | ---
+scope | `any` | Elements passed for filtering
+
+### ConditionalSlot.Else
+
+Component that renders if none of the elements have rendered. Must be the last child.
+
+Name | Type | Description
+--- | --- | ---
+scope | `any` | Elements passed for filtering
+
+### ConditionalSlot.ElseIf
+
+Same props as ConditionalSlot, but renders inside ConditionalSlot if the slot did not render. Can
+be nested. Same behavior as if nesting a ConditionalSlot inside a ConditionalSlot.Else, but
+it is possible to have multiple, the same way else-ifs work in JavaScript. Processed in
+the order added.
+
+### createGlobalSlotContext (0.3 onwards)
+
+Creates a Global Slot Context that can be inserted to perpetuate a global context to read and insert
+slots anywhere in the document. The goal is the equivalent of 
+
+### GlobalSlotContext.createSlot (0.3 onwards)
+
+Creates a Global Slottable Component dependent on said context. Works the same as createSlot,
+but accepts a maximum heap size. Default is 31 to avoid memory leaks.
+
+### GlobalSlotComponent (0.3 onwards)
+
+Same as ordinary Slottable Component, but created from GlobalSlotContext.createSlot and perpetuates the
+Global Slot Context it was created from. Can only be inserted in the GlobalSlotContext hierarchy or a
+critical error will occur.
+
+In addition, has some options for memory management:
+
+Name | Type | Description
+--- | --- | ---
+priority | `number` | Priority, otherwise components added later will be shown (until they are
+removed)
+lifetime | `number` | Number of milliseconds until removal from Global Slot Context
+eternalValuePropagation | `boolean` | Propagates the children even after the original content is removed
+
+The eternalValuePropagation allows you to propagate children forever or until the end of the noted
+lifetime. Unlike the non-eternal variant, it overwrites the previous eternal value, if it has the same or
+higher priority. If if has a limited lifetime, there will be no eternal value once it lapses.
+
+
+### GlobalSlotComponent.Slot (0.3 onwards)
+
+Slot for inserting slots from the Global Slot Context. Can perpetuate own, non-global context.
+Same properties as Component.Slot except scope.
 
 ## Using slots
 
@@ -443,7 +516,38 @@ solely the default element, solely the fallback element or both, to avoid needle
 In addition, use defaultProps in the Element.Slot element to pass default props, passedProps to forward props
 from other places (overrides defaultProps) and fallBack props to pass props designated for the fallback component.
 
-## Reusing Slots
+## Conditional Slots
+
+Sometimes, you may want to render content based on whether or not certain conditions apply.
+For most parameters, JSX is sufficient. However, you may also want to apply certain slots
+only if other slots are passed, or only if they are not passed. For this, use conditional slots.
+
+There are two types of conditional slots, purely conditional and regular slots with conditions. If you only
+want to render one slot, you can use Element.Slot.Conditional (or Element.SubSlot.Conditional,
+depending on your use case), to reduce the amount of layering in your JSX.
+
+Like the NonSlotted component, the ConditionalSlot component has `include` and `exclude` props, which
+accept arrays of slotted components. In addition, you can pass arrays of conditions into the `conditions`
+prop as shorthand.
+
+## Global Slots (0.3 onwards)
+
+Sometimes you may want to use slots to insert elements outside the slotted component. For this you should
+use global slots. 
+
+It is best to avoid using Global Slots when you do not need them, as overusing them will needlessly
+overcomplicate your app.
+
+When multiple global slottable components try to write to a slot, the one created later will be
+displayed. You may choose to adjust this using the priority prop. Once a component's lifecycle ends or
+the set lifetime is elapsed (whichever comes first), it is removed from the heap, unless it has eternal
+propagation enabled.
+
+Global Slottable Components are generally propagated until they are removed. However, you may choose to
+assign the value to be eternal, meaning that it will not be removed with the end of a component's
+lifecycle. Unlike the non-eternal components, they are overwritten.
+
+## Reusing Slots and Extending Components
 
 Once created, you can reuse slots in any part of your project. It's best to avoid nesting the same 
 slotted element inside itself, as this can lead to unpredictable behavior when using context.
@@ -454,20 +558,23 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
   - Performance optimizations, optional pre-indexing by useChildren function.
   - clarifications on flags for non-slotted elements.
   - clarifications on default, fallback and passed props.
+- 0.2 (feature addition lock for 1.0)
+  - Conditional rendering slots
+  - Unordered and ordered group slots
 
 ## Roadmap to 1.0
 
-- 0.2
-  - Conditional rendering slots
-  - Unordered and ordered group slots
-- 0.3 (feature addition lock for 1.0)
+- 0.3
   - unique global slots
 - 0.4 (preparation for 1.0)
   - Complete test coverage and full examples
   - Package optimizations
+  - Documentation
 - 1.0
   - breaking changes 
     - Mandatory pre-indexing with useChildren
+- 1.1
+  - Advanced filtering for conditional slots and non-slotted components.
 
 Plans:
 - Full examples

@@ -41,14 +41,10 @@ interface ISlot<T> {
 interface ISubSlot<T> extends Partial<ISlot<T>> {
     scope: React.Context<any>;
 }
-interface ISlotComponentCtx<T> extends React.FunctionComponent<T> {
+export interface ISlotComponent<T> extends React.FunctionComponent<T> {
     Context: React.Context<any>;
     displaySymbol: symbol;
-}
-interface ISlotComponentSlot<T> extends ISlotComponentCtx<T> {
     Slot: React.FunctionComponent<ISlot<T>>;
-}
-export interface ISlotComponent<T> extends ISlotComponentSlot<T> {
     SubSlot: React.FunctionComponent<ISubSlot<T>>;
 }
 interface IOverloadCreateSlot {
@@ -75,6 +71,5 @@ export declare const createSlot: IOverloadCreateSlot;
  */
 export declare const useChildren: (scope: any) => IIndexedChildren;
 import NonSlotted from './NonSlotted/index';
-export declare const useChildren: (scope: any) => IIndexedChildren;
 export { NonSlotted };
 export default createSlot;

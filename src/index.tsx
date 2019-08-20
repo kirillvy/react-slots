@@ -44,16 +44,10 @@ interface ISubSlot<T> extends Partial<ISlot<T>> {
   scope: React.Context<any>;
 }
 
-interface ISlotComponentCtx<T> extends React.FunctionComponent<T> {
+export interface ISlotComponent<T> extends React.FunctionComponent<T> {
   Context: React.Context<any>;
   displaySymbol: symbol;
-}
-
-interface ISlotComponentSlot<T> extends ISlotComponentCtx<T> {
   Slot: React.FunctionComponent<ISlot<T>>;
-}
-
-export interface ISlotComponent<T> extends ISlotComponentSlot<T> {
   SubSlot: React.FunctionComponent<ISubSlot<T>>;
 }
 
@@ -84,7 +78,7 @@ type SlotType<T = {}, S = {}> =
   T extends keyof JSX.IntrinsicElements ? S extends {} ? S & Partial<JSX.IntrinsicElements[T]> :
    Partial<JSX.IntrinsicElements[T]> : any;
 
-const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlot<T>> => (
+const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T>> => (
   { scope, children: defaultElement, multiple = false, defaultProps, passedProps, withContext,
     fallback, fallbackProps, childIs },
 ) => {
@@ -143,7 +137,7 @@ const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlo
   }
 };
 
-const SubSlotFactory = <T extends {}>(Element: ISlotComponentSlot<T>): React.FC<ISubSlot<T>> => (
+const SubSlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISubSlot<T>> => (
   { scope: Context, ...props },
 ) => {
   return <Context.Consumer>{(value) => <Element.Slot {...props} scope={value}/>}</Context.Consumer>;
@@ -157,30 +151,31 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
   Element: React.ComponentType | keyof JSX.IntrinsicElements = React.Fragment,
   ) => {
     type CurType = SlotType<T, S>;
-    const SlottedElement = ({ children, ...props }: any) => React.createElement(Element, props, children);
+    const SlottedElement = (
+      ({ children, ...props }: any) => React.createElement(Element, props, children)
+      ) as ISlotComponent<CurType>;
     SlottedElement.Context = React.createContext(null);
     SlottedElement.displaySymbol = Symbol();
-    SlottedElement.Slot = SlotFactory<CurType>(SlottedElement as ISlotComponentCtx<CurType>);
-    SlottedElement.SubSlot = SubSlotFactory<CurType>(SlottedElement as ISlotComponentSlot<CurType>);
-    const result = SlottedElement as ISlotComponent<CurType>;
+    SlottedElement.Slot = SlotFactory<CurType>(SlottedElement);
+    SlottedElement.SubSlot = SubSlotFactory<CurType>(SlottedElement);
     if (typeof Element !== 'string') {
-      result.defaultProps = Element.defaultProps;
-      result.contextTypes = Element.contextTypes;
-      result.Slot.displayName = `${Element.displayName}.Slot`;
-      result.propTypes = Element.propTypes;
+      SlottedElement.defaultProps = Element.defaultProps;
+      SlottedElement.contextTypes = Element.contextTypes;
+      SlottedElement.Slot.displayName = `${Element.displayName}.Slot`;
+      SlottedElement.propTypes = Element.propTypes;
       if (Element.displayName === undefined) {
-        result.Slot.displayName = 'Subcomponent.Slot';
+        SlottedElement.Slot.displayName = 'Subcomponent.Slot';
       }
     } else {
-      result.Slot.displayName = `${Element}.Slot`;
-      result.displayName = `${result.displayName}.SlottedElement`;
+      SlottedElement.Slot.displayName = `${Element}.Slot`;
+      SlottedElement.displayName = `${SlottedElement.displayName}.SlottedElement`;
       if (Element === undefined) {
-        result.Slot.displayName = 'Subcomponent.Slot';
-        result.displayName = `Subcomponent.SlottedElement`;
+        SlottedElement.Slot.displayName = 'Subcomponent.Slot';
+        SlottedElement.displayName = `Subcomponent.SlottedElement`;
       }
     }
-    result.SubSlot.displayName = 'SubSlot';
-    return result;
+    SlottedElement.SubSlot.displayName = 'SubSlot';
+    return SlottedElement;
 };
 
 /**
@@ -218,7 +213,7 @@ export const useChildren = (scope: any): IIndexedChildren => {
   return result;
 };
 
-              import NonSlotted from './NonSlotted/index';
-export {NonSlotted};
+import NonSlotted from './NonSlotted/index';
+export { NonSlotted };
 
 export default createSlot;
