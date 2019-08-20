@@ -13,7 +13,7 @@ interface ISlot<T> {
      */
     passedProps?: T;
     /**
-     * Elements passed for filtering
+     * Elements or indexed children object passed for filtering
      */
     scope: any;
     /**
@@ -43,6 +43,7 @@ interface ISubSlot<T> extends Partial<ISlot<T>> {
 }
 interface ISlotComponentCtx<T> extends React.FunctionComponent<T> {
     Context: React.Context<any>;
+    displaySymbol: symbol;
 }
 interface ISlotComponentSlot<T> extends ISlotComponentCtx<T> {
     Slot: React.FunctionComponent<ISlot<T>>;
@@ -56,11 +57,19 @@ interface IOverloadCreateSlot {
     <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType<Partial<JSX.IntrinsicElements[T]>>): ISlotComponent<Partial<JSX.IntrinsicElements[T]>>;
     <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
 }
+export interface IIndexedChildren {
+    [x: string]: ISortChildrenEl[];
+}
+export interface ISortChildrenEl {
+    index: number;
+    child: JSX.Element;
+}
 /**
  * Slot constructor
  * @param {React.ComponentType<any>} [Element=React.Fragment] - Element for slotting, default is fragment
  */
 export declare const createSlot: IOverloadCreateSlot;
 import NonSlotted from './NonSlotted/index';
+export declare const useChildren: (scope: any) => IIndexedChildren;
 export { NonSlotted };
 export default createSlot;

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {ISlotComponent} from '../index';
+import {ISlotComponent, IIndexedChildren, useChildren, ISortChildrenEl} from '../index';
 
 interface INonSlotted {
   /**
-   * Elements passed for filtering
+   * Elements or indexed children object passed for filtering
    */
   scope: any;
   /**
@@ -31,48 +31,57 @@ interface INonSlotComponent extends React.FC<INonSlotted> {
 const NonSlotFactory = (Element: React.FC<INonSlotted>): React.FC<INonSubSlotted> => (
   { scope: Context, ...props },
 ) => {
-  return <Context.Consumer>{(value) => <Element {...props} scope={value.props.children}/>}</Context.Consumer>;
+  return <Context.Consumer>{(value) => <Element {...props} scope={value}/>}</Context.Consumer>;
+};
+
+const resObject = (res?: Array<ISlotComponent<any>>) => {
+  if (res === undefined) {
+    return {};
+  }
+  return res.reduce((prev, el) => {
+    const childType: string = el.displaySymbol as any;
+    if (prev[childType] === undefined) {
+      prev[childType] = true;
+    }
+    return prev;
+  }, {} as { [x: string]: boolean});
 };
 
 const NonSlottedComponent = ({ scope, exclude, include, all }: INonSlotted) => {
-  const SlottedChild: React.ReactElement[] = [];
-  const childrenCount = React.Children.count(scope);
-  const ignoreSlot = (child: JSX.Element, i?: number) => {
-    if (!React.isValidElement(child)) {
-      if (child !== undefined) {
-        SlottedChild.push(child);
+  let childrenObj = scope as IIndexedChildren;
+  if (typeof childrenObj !== 'object' || childrenObj.$$isSlottedChildren === undefined) {
+    childrenObj = useChildren(scope);
+  }
+  let rest: ISortChildrenEl[] = [];
+  if ((exclude && all !== false) || (include && all === true)) {
+    rest = childrenObj.rest;
+  }
+  const includeEls = resObject(include);
+  const excludeEls = resObject(exclude);
+  const ignoreSlot = (el: symbol) => {
+    if (include) {
+      if (includeEls[el as any]) {
+        return true;
       }
-      return;
+      return false;
     }
-    if (child.type.hasOwnProperty('Slot')) {
-      if (include === undefined && exclude === undefined) {
-        return;
+    if (exclude) {
+      if (excludeEls[el as any]) {
+        return false;
       }
-      if (include !== undefined) {
-        if (include.every((el: any) => el !== child.type)) {
-          return;
-        }
-      }
-      if (exclude !== undefined &&
-        exclude.some((el: any) => el === child.type)) {
-        return;
-      }
-    }
-    if (i !== undefined) {
-      SlottedChild.push(React.cloneElement(child, { key: i }));
-    } else {
-      SlottedChild.push(child);
+      return true;
     }
   };
-  if (childrenCount === 1) {
-    ignoreSlot(React.Children.only(scope));
-  } else if (childrenCount > 1) {
-      React.Children.forEach(scope, ignoreSlot);
-  }
-  if (SlottedChild.length === 0) {
-    return null;
-  }
-  return <>{SlottedChild}</>;
+  const children = Object.getOwnPropertySymbols(childrenObj).reduce((prev, cur) => {
+    const res = ignoreSlot(cur);
+    if (res === true) {
+      return prev.concat(childrenObj[cur as any]);
+    }
+    return prev;
+  }, rest)
+  .sort((a, b) => a.index - b.index)
+  .map((el) => el.child);
+  return <>{children}</>;
 };
 
 NonSlottedComponent.SubSlot = NonSlotFactory(NonSlottedComponent);
