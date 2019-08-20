@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ISlotComponent } from '../index';
 interface INonSlotted {
     /**
-     * Elements passed for filtering
+     * Elements or indexed children object passed for filtering
      */
     scope: any;
     /**

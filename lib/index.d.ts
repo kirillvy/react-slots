@@ -13,7 +13,7 @@ interface ISlot<T> {
      */
     passedProps?: T;
     /**
-     * Elements passed for filtering
+     * Elements or indexed children object passed for filtering
      */
     scope: any;
     /**
@@ -57,7 +57,7 @@ interface IOverloadCreateSlot {
     <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType<Partial<JSX.IntrinsicElements[T]>>): ISlotComponent<Partial<JSX.IntrinsicElements[T]>>;
     <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
 }
-export interface ISortChildren {
+export interface IIndexedChildren {
     [x: string]: ISortChildrenEl[];
 }
 export interface ISortChildrenEl {
@@ -70,6 +70,6 @@ export interface ISortChildrenEl {
  */
 export declare const createSlot: IOverloadCreateSlot;
 import NonSlotted from './NonSlotted/index';
-export declare const useChildren: (scope: any) => ISortChildren;
+export declare const useChildren: (scope: any) => IIndexedChildren;
 export { NonSlotted };
 export default createSlot;
