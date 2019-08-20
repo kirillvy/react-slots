@@ -70,7 +70,7 @@ interface IOverloadCreateSlot {
   <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
 }
 
-export interface ISortChildren {
+export interface IIndexedChildren {
   [x: string]: ISortChildrenEl[];
 }
 
@@ -88,7 +88,7 @@ const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlo
   { scope, children: defaultElement, multiple = false, defaultProps, passedProps, withContext,
     fallback, fallbackProps, childIs },
 ) => {
-  let childrenObj = scope as ISortChildren;
+  let childrenObj = scope as IIndexedChildren;
   if (typeof scope !== 'object' || scope.$$isSlottedChildren === undefined) {
     childrenObj = useChildren(scope);
   }
@@ -184,12 +184,12 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
 };
 import NonSlotted from './NonSlotted/index';
 
-export const useChildren = (scope: any): ISortChildren => {
+export const useChildren = (scope: any): IIndexedChildren => {
   if (scope === undefined || scope.length === 0) {
     return {};
   }
   const childrenCount = React.Children.count(scope);
-  const result: ISortChildren = {};
+  const result: IIndexedChildren = {};
   const injectSlot = (child: JSX.Element, index: number) => {
     let childType = 'rest';
     if (React.isValidElement(child)) {

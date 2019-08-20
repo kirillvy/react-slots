@@ -14,7 +14,7 @@ The slot consumes an array of children and filters for ones marked as the compon
 
 Name | Type | Description
 --- | --- | ---
-scope | `any` | Elements passed for filtering
+scope | `any \| IndexedChildren` | Elements passed for filtering, indexed using `useChildren`
 children? | `any` | Default children of element, if any.
 defaultProps? | `JSX.IntrinsicAttributes & React.PropsWithChildren<T>` | default props to use with default element
 passedProps? | `T` | props passed to the element from the component containing the slot
@@ -49,6 +49,8 @@ Name | Type | Description
 scope | `any` | Elements passed for filtering
 exclude | `Array<SlotComponent>` | Array of slottable components for filtering out
 include | `Array<SlotComponent>` | Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
+all | `boolean` | Automatically include all non-slottable elements when doing include (on true)
+or automatically exclude when doing exclude (on false)
 
 ### NonSlotted.SubSlot
 
@@ -60,10 +62,10 @@ scope | any | Elements passed for filtering
 
 ## Using slots
 
-To begin using react-slots-library, import the slot creator.
+To begin using react-slots-library, import the slot creator and the children indexer.
 
 ```js
-import * as createSlot from 'react-slots-library';
+import { createSlot, useChildren }  from 'react-slots-library';
 ```
 
 Then create several slots for use in other components. The slot creator can accept elements and JSX intrinsic
@@ -85,17 +87,18 @@ export const CardWarning = createSlot<{color: 'red' | 'green'}, 'span'>(MyCustom
 Now they can be inserted into the template element through the .Slot property. Make sure to include the scope.
 
 ```jsx
-const Card = () => (
-  <div>
+const Card = ({children}) => {
+  const scope = useChildren(children);
+  return <div>
     <div>
-        <CardTopText.Slot scope={children} />
-        <CardFlair scope={children} />
+        <CardTopText.Slot scope={scope} />
+        <CardFlair.Slot scope={scope} />
     </div>
     <div>
-        <CardBottomText.Slot scope={children} />
+        <CardBottomText.Slot scope={scope} />
     </div>
-  </div>
-);
+  </div>;
+};
 ```
 
 In the component using the slots, import them and the component.
@@ -108,19 +111,22 @@ Then insert them into the element. The slotted elements **must** be the primary 
 and not inserted into other elements in the hierarchy. Otherwise they will be rendered as ordinary elements.
 
 ```jsx
-const CustomCard = () => <Card>
-  <CardTopText>
-    <p>Name of the Card</p>
-  </CardTopText>
-  <CardBottomText>
-    <p>Description of the Card</p>
-  </CardBottomText>
-</Card>;
+const CustomCard = ({children}) => {
+  const scope = useChildren(children);
+  return <Card>
+    <CardTopText>
+      <p>Name of the Card</p>
+    </CardTopText>
+    <CardBottomText>
+      <p>Description of the Card</p>
+    </CardBottomText>
+  </Card>;
+};
 ```
 
-The result eill be rendered as 
+The result will be rendered as 
 
-```jsx
+```html
 <div>
   <div>
       <p>Name of the Card</p>
@@ -136,12 +142,15 @@ To render multiple components in one slot, enable to `multiple` prop.
 ```jsx
 export const SingleComment = createSlot<'div'>(div);
 
-const CommentList = () => (
-  <div>
-    <div>Comments:</div>
-    <SingleComment.Slot scope={children} multiple={true} />
-  </div>
-);
+const CommentList = ({children}) => {
+  const scope = useChildren(children);
+  return (
+    <div>
+      <div>Comments:</div>
+      <SingleComment.Slot scope={scope} multiple={true} />
+    </div>
+  );
+};
 ```
 
 This will allow you to insert any number of components of that type.
@@ -161,7 +170,7 @@ This will allow you to insert any number of components of that type.
 ```
 
 And each one will be rendered as a separate one.
-```jsx
+```html
 <div>
   <div>Comments:</div>
   <div>
@@ -188,23 +197,28 @@ export const CommentName = createSlot<'div'>(Name);
 export const CommentEmail = createSlot<'div'>(Email);
 export const CommentMessage = createSlot<'div'>(Message);
 
-const CommentComponent = ({ children, ...props}) => (
+const CommentComponent = ({ children, ...props}) => {
+  const scope = useChildren(children);
+  return (
   <Comment {...props}>
     <div>
-      <CommentName.Slot scope={children} />
-      <CommentEmail.Slot scope={children} />
+      <CommentName.Slot scope={scope} />
+      <CommentEmail.Slot scope={scope} />
     </div>
-    <CommentMessage.Slot scope={children} />
+    <CommentMessage.Slot scope={scope} />
   </Comment>
-);
+  );
+};
 
 
 export const SingleComment = createSlot<'div'>(CommentComponent);
 
-const CommentList = () => (
+const CommentList = ({children}) => {
+  const scope = useChildren(children);
+  return (
   <div>
     <div>Comments:</div>
-    <SingleComment.Slot scope={children} multiple={true} />
+    <SingleComment.Slot scope={scope} multiple={true} />
   </div>
 );
 ```
@@ -219,27 +233,35 @@ export const CommentEmail = createSlot<'div'>(Email);
 export const CommentMessage = createSlot<'div'>(Message);
 export const SingleComment = createSlot<'div'>(Comment);
 
-const Comment = () => (
+const Comment = ({children}) => {
+  const scope = useChildren(children);
+  return (
   <>
     <div>
-      <CommentName.Slot scope={children} />
-      <CommentEmail.Slot scope={children} />
+      <CommentName.Slot scope={scope} />
+      <CommentEmail.Slot scope={scope} />
     </div>
-    <CommentMessage.Slot scope={children} />
+    <CommentMessage.Slot scope={scope} />
   </>
-);
+  );
+};
 
-const InheritanceCommentList = () => (
+const InheritanceCommentList = ({children}) => {
+  const scope = useChildren(children);
+  return (
   <div>
     <div>Comments:</div>
-    <SingleComment.Slot scope={children} multiple={true} />
+    <SingleComment.Slot scope={scope} multiple={true} />
   </div>
-)
+  )
+}
 
-const CompositionCommentList = () => (
+const CompositionCommentList = ({children}) => {
+  const scope = useChildren(children);
+  return (
   <div>
     <div>Comments:</div>
-    <SingleComment.Slot scope={children} multiple={true} withContext={true}>
+    <SingleComment.Slot scope={scope} multiple={true} withContext={true}>
       <div>
         <CommentName.SubSlot scope={SingleComment.Context} />
         <CommentEmail.SubSlot scope={SingleComment.Context} />
@@ -247,7 +269,8 @@ const CompositionCommentList = () => (
       <CommentMessage.SubSlot scope={SingleComment.Context} />
     </SingleComment.Slot>
   </div>
-);
+  );
+};
 ```
 
 Both will allow you to make insert slots one into another:
@@ -270,7 +293,7 @@ Both will allow you to make insert slots one into another:
 
 And each one will be rendered as a separate one.
 
-```jsx
+```html
 <div>
   <div>Comments:</div>
   <div class="Comment-123xyz">
@@ -302,10 +325,12 @@ Then insert it where you would like to process non-slottable children, as you wo
 
 ```jsx
 
-const CommentList = () => (
+const CommentList = ({children}) => {
+  const scope = useChildren(children);
+  return (
   <div>
-    <NonSlotted scope={children} />
-    <SingleComment.Slot scope={children} multiple={true} withContext={true}>
+    <NonSlotted scope={scope} />
+    <SingleComment.Slot scope={scope} multiple={true} withContext={true}>
       <div>
         <CommentName.SubSlot scope={SingleComment.Context} />
         <CommentEmail.SubSlot scope={SingleComment.Context} />
@@ -321,10 +346,12 @@ through the NonSlotted.SubSlot component.
 
 ```jsx
 
-const CommentList = () => (
+const CommentList = ({children}) => {
+  const scope = useChildren(children);
+  return (
   <div>
-    <div><NonSlotted scope={children} /></div>
-    <SingleComment.Slot scope={children} multiple={true} withContext={true}>
+    <div><NonSlotted scope={scope} /></div>
+    <SingleComment.Slot scope={scope} multiple={true} withContext={true}>
       <div><NonSlotted.SubSlot scope={SingleComment.Context} /></div>
       <div>
         <CommentName.SubSlot scope={SingleComment.Context} />
@@ -358,7 +385,7 @@ Rendering a component with non-slotted components:
 
 In their designated place:
 
-```jsx
+```html
 <div>
   <div>Comments:</div>
   <div class="Comment-123xyz">
@@ -379,7 +406,9 @@ In their designated place:
 ```
 
 Whitelist and blacklist options are also available if you wish to use some slottable components as
-non-slotted children.
+non-slotted children. By default, the whitelist (`include`) includes only the listed slottable elements, 
+and the blacklist (`exclude`) includes all elements except the explicitly excluded slottable ones.
+However, you can include or exclude the non-slottable elements using the `all` flag.
 
 ## Conditional Rendering, Defaults and Fallbacks
 
@@ -404,7 +433,24 @@ from other places (overrides defaultProps) and fallBack props to pass props desi
 Once created, you can reuse slots in any part of your project. It's best to avoid nesting the same 
 slotted element inside itself, as this can lead to unpredictable behavior when using context.
 
+## Changelog
+
+- 0.1 - Performance optimizations, optional pre-indexing by useChildren function.
+
 ## Roadmap to 1.0
+
+- 0.2
+  - clarifications on default, fallback and passed props.
+- 0.3
+  - Conditional rendering slots
+- 0.4 (feature addition lock for 1.0)
+  - unique global slots
+- 0.5 (preparation for 1.0)
+  - Complete test coverage and full examples
+  - Package optimizations
+- 1.0
+  - breaking changes 
+    - Mandatory pre-indexing with useChildren
 
 Plans:
 - Full examples
