@@ -29,7 +29,7 @@ const Card: React.FC = ({children}) => (
         <CardBottomText.Slot scope={children} />
     </div>
     nonslotted:
-    <NonSlotted scope={children} include={[CardBottomText]} />
+    <NonSlotted scope={children} include={[CardBottomText]} all={true} />
   </div>
 );
 

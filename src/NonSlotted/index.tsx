@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ISlotComponent, ISortChildren, useChildren, ISortChildrenEl} from '../index';
+import {ISlotComponent, IIndexedChildren, useChildren, ISortChildrenEl} from '../index';
 
 interface INonSlotted {
   /**
@@ -34,19 +34,28 @@ const NonSlotFactory = (Element: React.FC<INonSlotted>): React.FC<INonSubSlotted
   return <Context.Consumer>{(value) => <Element {...props} scope={value}/>}</Context.Consumer>;
 };
 
-const NonSlottedComponent = ({ scope, exclude, include, all }: INonSlotted) => {
-  let childrenObj = scope as ISortChildren;
-  if (typeof childrenObj !== 'object' || childrenObj.$$isSlottedChildren === undefined) {
-    childrenObj = useChildren(scope);
+const resObject = (res?: Array<ISlotComponent<any>>) => {
+  if (res === undefined) {
+    return {};
   }
-  const resObject = (res?: Array<ISlotComponent<any>>) => res === undefined ? {} : res.reduce((prev, el) => {
-    let childType = '';
-    childType = el.displaySymbol as any;
+  return res.reduce((prev, el) => {
+    const childType: string = el.displaySymbol as any;
     if (prev[childType] === undefined) {
       prev[childType] = true;
     }
     return prev;
   }, {} as { [x: string]: boolean});
+};
+
+const NonSlottedComponent = ({ scope, exclude, include, all }: INonSlotted) => {
+  let childrenObj = scope as IIndexedChildren;
+  if (typeof childrenObj !== 'object' || childrenObj.$$isSlottedChildren === undefined) {
+    childrenObj = useChildren(scope);
+  }
+  let rest: ISortChildrenEl[] = [];
+  if ((exclude && all !== false) || (include && all === true)) {
+    rest = childrenObj.rest;
+  }
   const includeEls = resObject(include);
   const excludeEls = resObject(exclude);
   const ignoreSlot = (el: symbol) => {
@@ -63,14 +72,13 @@ const NonSlottedComponent = ({ scope, exclude, include, all }: INonSlotted) => {
       return true;
     }
   };
-  console.log(childrenObj);
   const children = Object.getOwnPropertySymbols(childrenObj).reduce((prev, cur) => {
     const res = ignoreSlot(cur);
     if (res === true) {
       return prev.concat(childrenObj[cur as any]);
     }
     return prev;
-  }, childrenObj.rest || [] as ISortChildrenEl[])
+  }, rest)
   .sort((a, b) => a.index - b.index)
   .map((el) => el.child);
   return <>{children}</>;
