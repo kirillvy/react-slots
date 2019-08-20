@@ -5,7 +5,7 @@ interface ISlot<T> {
      */
     children?: any;
     /**
-     * default props to use with default element
+     * default props to use when the default element is rendered
      */
     defaultProps?: JSX.IntrinsicAttributes & React.PropsWithChildren<T>;
     /**
@@ -69,7 +69,11 @@ export interface ISortChildrenEl {
  * @param {React.ComponentType<any>} [Element=React.Fragment] - Element for slotting, default is fragment
  */
 export declare const createSlot: IOverloadCreateSlot;
-import NonSlotted from './NonSlotted/index';
+/**
+ * Indexes React children for faster access by Slot components
+ * @param scope - react children, in any format
+ */
 export declare const useChildren: (scope: any) => IIndexedChildren;
+import NonSlotted from './NonSlotted/index';
 export { NonSlotted };
 export default createSlot;
