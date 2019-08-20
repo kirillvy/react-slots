@@ -6,7 +6,7 @@ interface ISlot<T> {
    */
   children?: any;
   /**
-   * default props to use with default element
+   * default props to use when the default element is rendered
    */
   defaultProps?: JSX.IntrinsicAttributes & React.PropsWithChildren<T>;
   /**
@@ -101,7 +101,7 @@ const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlo
         return null;
       }
       const contextChildren = React.cloneElement(child, {...passedProps });
-      return React.cloneElement(child, { key: i, ...defaultProps, ...passedProps }, (
+      return React.cloneElement(child, { key: i, ...passedProps }, (
       <Element.Context.Provider
         key={i}
         value={useChildren(contextChildren.props.children)}
@@ -112,18 +112,18 @@ const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlo
     }
     const props: any = child.props;
     if (props.hasOwnProperty('children')) {
-      return React.cloneElement(child, { key: i, ...defaultProps, ...passedProps });
+      return React.cloneElement(child, { key: i, ...passedProps });
     } else {
       return React.cloneElement(child, { key: i, ...defaultProps, ...passedProps }, defaultElement);
     }
   };
   const res = childrenObj[Element.displaySymbol as any];
   if (res === undefined) {
-    if (fallback !== undefined) {
-      return React.cloneElement(fallback, fallbackProps);
-    }
     if ((childIs === 'feedback' || childIs === 'both') && defaultElement !== undefined) {
       return React.cloneElement(defaultElement, fallbackProps);
+    }
+    if (fallback !== undefined) {
+      return React.cloneElement(fallback, fallbackProps);
     }
     return null;
   } else {
@@ -182,8 +182,11 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
     result.SubSlot.displayName = 'SubSlot';
     return result;
 };
-import NonSlotted from './NonSlotted/index';
 
+/**
+ * Indexes React children for faster access by Slot components
+ * @param scope - react children, in any format
+ */
 export const useChildren = (scope: any): IIndexedChildren => {
   if (scope === undefined || scope.length === 0) {
     return {};
@@ -215,6 +218,7 @@ export const useChildren = (scope: any): IIndexedChildren => {
   return result;
 };
 
+import NonSlotted from './NonSlotted/index';
 export {NonSlotted};
 
 export default createSlot;

@@ -410,6 +410,21 @@ non-slotted children. By default, the whitelist (`include`) includes only the li
 and the blacklist (`exclude`) includes all elements except the explicitly excluded slottable ones.
 However, you can include or exclude the non-slottable elements using the `all` flag.
 
+## Default, fallback and passed props
+
+By default, only the props applied to the Slottable component are applied. However, it is also possible
+to pass props to the component from the Slot, for example, if you want specific props to be passed
+to the component if the default element is displayed. For this, you can use the `defaultProps`. These
+will be enacted each time the default element is displayed.
+
+You may also want to pass props if the default element is not displayed, and the prop's children are
+displayed instead. For this, use the `passedProps`. They will be applied in all cases, except the special
+case where the slot has no children, but is still rendered (for example, it controls the rendering of
+a component already defined in the template). In that case, the passed props will override the
+default props.
+
+Lastly, separate props may be applied to the component through the `fallbackProps` prop.
+
 ## Conditional Rendering, Defaults and Fallbacks
 
 By default, if a slot is inserted with no children, it will be diplayed as the element the slot
