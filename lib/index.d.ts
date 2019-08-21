@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ConditionalSlot, { IConditionalSlot } from './ConditionalSlot';
+import ConditionalSlot, { IConditionalSlot, IConditionalSlotBase } from './ConditionalSlot';
 interface ISlot<T> {
     /**
      * Default children of element, if any. Otherwise, nothing will be shown.
@@ -46,11 +46,15 @@ export interface ISlotConditional<T> extends React.FunctionComponent<T> {
     displaySymbol: symbol;
     Conditional: IConditionalSlot<T>;
 }
+export interface ISubSlotConditional<T> extends React.FunctionComponent<T> {
+    displaySymbol: symbol;
+    Conditional: React.FC<T & IConditionalSlotBase>;
+}
 export interface ISlotComponent<T> extends React.FunctionComponent<T> {
     Context: React.Context<any>;
     displaySymbol: symbol;
     Slot: ISlotConditional<ISlot<T>>;
-    SubSlot: ISlotConditional<ISubSlot<T>>;
+    SubSlot: ISubSlotConditional<ISubSlot<T>>;
 }
 interface IOverloadCreateSlot {
     <T extends {}, S extends keyof JSX.IntrinsicElements>(Element?: React.ComponentType<T & Partial<JSX.IntrinsicElements[S]>>): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;

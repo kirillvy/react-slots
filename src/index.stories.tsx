@@ -21,7 +21,7 @@ export const CardBottomText = createSlot();
 
 const Card: React.FC = ({children}) => (
   <div>
-    <ConditionalSlot condition={true} scope={children}>
+    <ConditionalSlot condition={true} excludes={[CardBottomText]} scope={children}>
       hello1
       <ConditionalSlot.If condition={false} scope={children}>
         hello2

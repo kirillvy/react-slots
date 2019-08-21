@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {ISlotComponent, IIndexedChildren, useChildren} from '../index';
-import NonSlotted from '../NonSlotted'
-import {ISlotConditional} from '..'
+import NonSlotted from '../NonSlotted';
+import {ISlotConditional} from '..';
 
 export interface IConditionalSlotBase {
   children?: any;
@@ -17,6 +17,9 @@ export interface IConditionalSlotBase {
    * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
    */
   includes?: Array<ISlotComponent<any>>;
+  /**
+   * Truthy eval of conditions for implementations.
+   */
   condition?: any;
 }
 

@@ -70,8 +70,7 @@ Name | Type | Description
 scope? | `any` | Elements passed for filtering
 excludes? | `Array<SlotComponent>` | Does not render if any of the excludes is in the scope.
 includes? | `Array<SlotComponent>` | Does not render if any of the includes are not in the scope.
-condition? | `any` | Truthy eval of conditions for implementations.
-Shorthand for `{ x === 5 && <ConditionalSlot /> }`
+condition? | `any` | Truthy eval of conditions for implementations. Shorthand for `{ x === 5 && <ConditionalSlot /> }`
 
 Also available by adding .Conditional to any Slot, SubSlot or NonSlotted element.
 
