@@ -18,6 +18,10 @@ interface INonSlotted {
      * Filter out all slottable components, overrides include and exclude properties
      */
     all?: boolean;
+    /**
+     * Group all elements in order added.
+     */
+    grouped?: boolean;
 }
 interface INonSubSlotted extends INonSlotted {
     scope: React.Context<any>;
@@ -28,5 +32,5 @@ interface INonSlotComponent extends React.FC<INonSlotted> {
 export declare const resObject: (res?: (ISlotComponent<any> | IConditionalSlot<{}>)[] | undefined) => {
     [x: string]: boolean;
 };
-declare const NonSlotted: INonSlotComponent;
-export default NonSlotted;
+declare const FilterSlot: INonSlotComponent;
+export default FilterSlot;

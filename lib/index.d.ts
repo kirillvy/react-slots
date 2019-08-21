@@ -62,9 +62,7 @@ interface IOverloadCreateSlot {
     <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType<Partial<JSX.IntrinsicElements[T]>>): ISlotComponent<Partial<JSX.IntrinsicElements[T]>>;
     <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
 }
-export interface IIndexedChildren {
-    [x: string]: ISortChildrenEl[];
-}
+export declare type IIndexedChildren = Map<symbol | string, ISortChildrenEl[]>;
 export interface ISortChildrenEl {
     index: number;
     child: JSX.Element;
@@ -78,8 +76,9 @@ export declare const createSlot: IOverloadCreateSlot;
  * Indexes React children for faster access by Slot components
  * @param scope - react children, in any format
  */
-export declare const useChildren: (scope: any) => IIndexedChildren;
-import NonSlotted from './NonSlotted';
-export { NonSlotted };
+export declare const useChildren: (scope: any) => Map<string | symbol, ISortChildrenEl[]>;
+import FilterSlot from './FilterSlot';
+export { FilterSlot as NonSlotted };
+export { FilterSlot };
 export { ConditionalSlot };
 export default createSlot;
