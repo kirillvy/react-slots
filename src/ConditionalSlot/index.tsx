@@ -3,7 +3,7 @@ import {ISlotComponent, IIndexedChildren, useChildren} from '../index';
 import NonSlotted from '../NonSlotted'
 import {ISlotConditional} from '..'
 
-export interface IConditionalSlotBase<T = any> {
+export interface IConditionalSlotBase {
   children?: any;
   /**
    * Elements or indexed children object passed for filtering
@@ -12,11 +12,11 @@ export interface IConditionalSlotBase<T = any> {
   /**
    * Array of slottable components for filtering out
    */
-  excludes?: Array<ISlotComponent<T>>;
+  excludes?: Array<ISlotComponent<any>>;
   /**
    * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
    */
-  includes?: Array<ISlotComponent<T>>;
+  includes?: Array<ISlotComponent<any>>;
   condition?: any;
 }
 

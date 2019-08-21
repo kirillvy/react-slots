@@ -53,11 +53,16 @@ export interface ISlotConditional<T> extends React.FunctionComponent<T> {
   Conditional: IConditionalSlot<T>;
 }
 
+export interface ISubSlotConditional<T> extends React.FunctionComponent<T> {
+  displaySymbol: symbol;
+  Conditional: React.FC<T & IConditionalSlotBase>;
+}
+
 export interface ISlotComponent<T> extends React.FunctionComponent<T> {
   Context: React.Context<any>;
   displaySymbol: symbol;
   Slot: ISlotConditional<ISlot<T>>;
-  SubSlot: ISlotConditional<ISubSlot<T>>;
+  SubSlot: ISubSlotConditional<ISubSlot<T>>;
 }
 
 interface IOverloadCreateSlot {
@@ -152,6 +157,12 @@ const SubSlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISub
   return <Context.Consumer>{(value) => <Element.Slot {...props} scope={value}/>}</Context.Consumer>;
 };
 
+const ConditionalSubSlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISubSlot<T>> => (
+  { scope: Context, ...props },
+) => {
+  return <Context.Consumer>{(value) => <Element.Slot.Conditional {...props} scope={value}/>}</Context.Consumer>;
+};
+
 /**
  * Slot constructor
  * @param {React.ComponentType<any>} [Element=React.Fragment] - Element for slotting, default is fragment
@@ -170,7 +181,7 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
     SlottedElement.Slot.Conditional = createConditionalSlot(SlottedElement.Slot as React.ComponentType);
     SlottedElement.SubSlot = SubSlotFactory<CurType>(SlottedElement) as ISlotConditional<ISubSlot<CurType>>;
     SlottedElement.SubSlot.displaySymbol = Symbol();
-    SlottedElement.SubSlot.Conditional = createConditionalSlot(SlottedElement.SubSlot as React.ComponentType);
+    SlottedElement.SubSlot.Conditional = ConditionalSubSlotFactory<CurType>(SlottedElement);
     if (typeof Element !== 'string') {
       SlottedElement.defaultProps = Element.defaultProps;
       SlottedElement.contextTypes = Element.contextTypes;
