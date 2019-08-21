@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ISlotComponent } from '../index';
+import { IConditionalSlot } from '../ConditionalSlot';
 interface INonSlotted {
     /**
      * Elements or indexed children object passed for filtering
@@ -8,7 +9,7 @@ interface INonSlotted {
     /**
      * Array of slottable components for filtering out
      */
-    exclude?: Array<ISlotComponent<any>>;
+    exclude?: Array<ISlotComponent<any> | IConditionalSlot>;
     /**
      * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
      */
@@ -24,5 +25,8 @@ interface INonSubSlotted extends INonSlotted {
 interface INonSlotComponent extends React.FC<INonSlotted> {
     SubSlot: React.FunctionComponent<INonSubSlotted>;
 }
+export declare const resObject: (res?: (ISlotComponent<any> | IConditionalSlot<{}>)[] | undefined) => {
+    [x: string]: boolean;
+};
 declare const NonSlotted: INonSlotComponent;
 export default NonSlotted;

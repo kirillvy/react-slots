@@ -1,5 +1,9 @@
 import * as React from 'react';
 
+import ConditionalSlot, {
+  IConditionalSlot, IConditionalSlotBase, createConditionalSlot,
+} from './ConditionalSlot';
+
 interface ISlot<T> {
   /**
    * Default children of element, if any. Otherwise, nothing will be shown.
@@ -44,11 +48,16 @@ interface ISubSlot<T> extends Partial<ISlot<T>> {
   scope: React.Context<any>;
 }
 
+export interface ISlotConditional<T> extends React.FunctionComponent<T> {
+  displaySymbol: symbol;
+  Conditional: IConditionalSlot<T>;
+}
+
 export interface ISlotComponent<T> extends React.FunctionComponent<T> {
   Context: React.Context<any>;
   displaySymbol: symbol;
-  Slot: React.FunctionComponent<ISlot<T>>;
-  SubSlot: React.FunctionComponent<ISubSlot<T>>;
+  Slot: ISlotConditional<ISlot<T>>;
+  SubSlot: ISlotConditional<ISubSlot<T>>;
 }
 
 interface IOverloadCreateSlot {
@@ -156,8 +165,12 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
       ) as ISlotComponent<CurType>;
     SlottedElement.Context = React.createContext(null);
     SlottedElement.displaySymbol = Symbol();
-    SlottedElement.Slot = SlotFactory<CurType>(SlottedElement);
-    SlottedElement.SubSlot = SubSlotFactory<CurType>(SlottedElement);
+    SlottedElement.Slot = SlotFactory<CurType>(SlottedElement) as ISlotConditional<ISlot<CurType>>;
+    SlottedElement.Slot.displaySymbol = Symbol();
+    SlottedElement.Slot.Conditional = createConditionalSlot(SlottedElement.Slot as React.ComponentType);
+    SlottedElement.SubSlot = SubSlotFactory<CurType>(SlottedElement) as ISlotConditional<ISubSlot<CurType>>;
+    SlottedElement.SubSlot.displaySymbol = Symbol();
+    SlottedElement.SubSlot.Conditional = createConditionalSlot(SlottedElement.SubSlot as React.ComponentType);
     if (typeof Element !== 'string') {
       SlottedElement.defaultProps = Element.defaultProps;
       SlottedElement.contextTypes = Element.contextTypes;
@@ -175,6 +188,7 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
       }
     }
     SlottedElement.SubSlot.displayName = 'SubSlot';
+    SlottedElement.SubSlot.displayName = 'SubSlot';
     return SlottedElement;
 };
 
@@ -190,7 +204,7 @@ export const useChildren = (scope: any): IIndexedChildren => {
   const result: IIndexedChildren = {};
   const injectSlot = (child: JSX.Element, index: number) => {
     let childType = 'rest';
-    if (React.isValidElement(child)) {
+    if (React.isValidElement(child) && child.type !== undefined) {
       const obj: any = child.type;
       if (obj.hasOwnProperty('displayName')) {
         childType = obj.displayName || 'rest';
@@ -205,7 +219,7 @@ export const useChildren = (scope: any): IIndexedChildren => {
     result[childType].push({index, child});
   };
   if (childrenCount === 1) {
-    injectSlot(React.Children.only(scope), 0);
+    injectSlot(scope, 0);
   } else if (childrenCount > 1) {
       React.Children.forEach(scope, injectSlot);
   }
@@ -213,7 +227,8 @@ export const useChildren = (scope: any): IIndexedChildren => {
   return result;
 };
 
-import NonSlotted from './NonSlotted/index';
+import NonSlotted from './NonSlotted';
 export { NonSlotted };
+export { ConditionalSlot };
 
 export default createSlot;

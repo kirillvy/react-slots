@@ -2,6 +2,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withReadme } from 'storybook-readme';
 import {createSlot, NonSlotted} from '.';
+import ConditionalSlot from './ConditionalSlot';
 
 /**
  * imports of README file
@@ -20,10 +21,26 @@ export const CardBottomText = createSlot();
 
 const Card: React.FC = ({children}) => (
   <div>
+    <ConditionalSlot condition={true} scope={children}>
+      hello1
+      <ConditionalSlot.If condition={false} scope={children}>
+        hello2
+      </ConditionalSlot.If>
+      <ConditionalSlot.ElseIf condition={false} scope={children}>
+        hello3
+      </ConditionalSlot.ElseIf>
+      <ConditionalSlot.ElseIf condition={false} scope={children}>
+        hello4
+      </ConditionalSlot.ElseIf>
+      <ConditionalSlot.Else>
+        hello5
+      </ConditionalSlot.Else>
+    </ConditionalSlot>
     <div>
-      <CardContextCard.Slot scope={children} withContext={true}>
+      <CardContextCard.Slot.Conditional condition={true} scope={children} withContext={true}>
+          conditional card
           <CardTopText.SubSlot scope={CardContextCard.Context} multiple={true} />
-      </CardContextCard.Slot>
+      </CardContextCard.Slot.Conditional>
     </div>
     <div>
         <CardBottomText.Slot scope={children} />

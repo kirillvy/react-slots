@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {ISlotComponent, IIndexedChildren, useChildren, ISortChildrenEl} from '../index';
+import { IConditionalSlot } from '../ConditionalSlot';
 
 interface INonSlotted {
   /**
@@ -9,7 +10,7 @@ interface INonSlotted {
   /**
    * Array of slottable components for filtering out
    */
-  exclude?: Array<ISlotComponent<any>>;
+  exclude?: Array<ISlotComponent<any> | IConditionalSlot>;
   /**
    * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
    */
@@ -34,7 +35,7 @@ const NonSlotFactory = (Element: React.FC<INonSlotted>): React.FC<INonSubSlotted
   return <Context.Consumer>{(value) => <Element {...props} scope={value}/>}</Context.Consumer>;
 };
 
-const resObject = (res?: Array<ISlotComponent<any>>) => {
+export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot>) => {
   if (res === undefined) {
     return {};
   }
@@ -54,7 +55,7 @@ const NonSlottedComponent = ({ scope, exclude, include, all }: INonSlotted) => {
   }
   let rest: ISortChildrenEl[] = [];
   if ((exclude && all !== false) || (include && all === true)) {
-    rest = childrenObj.rest;
+    rest = childrenObj.rest || [];
   }
   const includeEls = resObject(include);
   const excludeEls = resObject(exclude);

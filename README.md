@@ -62,34 +62,23 @@ scope | any | Elements passed for filtering
 
 ### ConditionalSlot
 
-Component which renders components under it only if the rules are followed.
+Component which renders components under it only if the rules are followed. Can also act
+as a declaration of an if-elseif-else block. Perpetuates a context that becomes the scope of its children.
 
 Name | Type | Description
 --- | --- | ---
-scope | `any` | Elements passed for filtering
-excludes | `Array<SlotComponent>` | Does not render if any of the excludes is in the scope.
-includes | `Array<SlotComponent>` | Does not render if any of the includes are not in the scope.
-condition | `any` | Truthy eval of conditions for implementations.
+scope? | `any` | Elements passed for filtering
+excludes? | `Array<SlotComponent>` | Does not render if any of the excludes is in the scope.
+includes? | `Array<SlotComponent>` | Does not render if any of the includes are not in the scope.
+condition? | `any` | Truthy eval of conditions for implementations.
 Shorthand for `{ x === 5 && <ConditionalSlot /> }`
 
 Also available by adding .Conditional to any Slot, SubSlot or NonSlotted element.
 
 ### ConditionalSlot.If
 
-Made for convenience, same as rendering elements other than ConditionalSlot.ElseIf and 
-ConditionalSlot.Else inside a conditional slot. 
-
-Name | Type | Description
---- | --- | ---
-scope | `any` | Elements passed for filtering
-
-### ConditionalSlot.Else
-
-Component that renders if none of the elements have rendered. Must be the last child.
-
-Name | Type | Description
---- | --- | ---
-scope | `any` | Elements passed for filtering
+Made for convenience, same as rendering elements directly inside of a conditional block but can
+be used to create a separate if block in an if-else block that can render its own if-else.
 
 ### ConditionalSlot.ElseIf
 
@@ -97,6 +86,10 @@ Same props as ConditionalSlot, but renders inside ConditionalSlot if the slot di
 be nested. Same behavior as if nesting a ConditionalSlot inside a ConditionalSlot.Else, but
 it is possible to have multiple, the same way else-ifs work in JavaScript. Processed in
 the order added.
+
+### ConditionalSlot.Else
+
+Component that renders if none of the elements have rendered. Must be the last child.
 
 ### createGlobalSlotContext (0.3 onwards)
 
