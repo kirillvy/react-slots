@@ -55,7 +55,7 @@ grouped? | `boolean` | Groups elements by component type
 
 ### FilterSlot.SubSlot
 
-Same as NonSlotted, but consumes a context from a slot with `withContext` enabled.
+Same as FilterSlot, but consumes a context from a slot with `withContext` enabled.
 
 Name | Type | Description
 --- | --- | ---
@@ -73,7 +73,7 @@ excludes? | `Array<SlotComponent>` | Does not render if any of the excludes is i
 includes? | `Array<SlotComponent>` | Does not render if any of the includes are not in the scope.
 condition? | `any` | Truthy eval of conditions for implementations. Shorthand for `{ x === 5 && <ConditionalSlot /> }`
 
-Also available by adding .Conditional to any Slot, SubSlot or NonSlotted element.
+Also available by adding .Conditional to any Slot, SubSlot or FilterSlot element.
 
 ### ConditionalSlot.If
 
@@ -381,10 +381,10 @@ And each one will be rendered as a separate one.
 ## Rendering non-slotted components
 
 To designate a place to render all components intended as non-slottable children, import the 
-NonSlotted component. 
+FilterSlot component. 
 
 ```js
-import createSlot, { NonSlotted } from 'react-slots-library';
+import createSlot, { FilterSlot } from 'react-slots-library';
 ```
 
 Then insert it where you would like to process non-slottable children, as you would a slot:
@@ -395,7 +395,7 @@ const CommentList = ({children}) => {
   const scope = useChildren(children);
   return (
   <div>
-    <NonSlotted scope={scope} />
+    <FilterSlot scope={scope} />
     <SingleComment.Slot scope={scope} multiple={true} withContext={true}>
       <div>
         <CommentName.SubSlot scope={SingleComment.Context} />
@@ -408,7 +408,7 @@ const CommentList = ({children}) => {
 ```
 
 Non-slotted components can similarly be inserted as context-dependent limited scope subslots
-through the NonSlotted.SubSlot component.
+through the FilterSlot.SubSlot component.
 
 ```jsx
 
@@ -416,9 +416,9 @@ const CommentList = ({children}) => {
   const scope = useChildren(children);
   return (
   <div>
-    <div><NonSlotted scope={scope} /></div>
+    <div><FilterSlot scope={scope} /></div>
     <SingleComment.Slot scope={scope} multiple={true} withContext={true}>
-      <div><NonSlotted.SubSlot scope={SingleComment.Context} /></div>
+      <div><FilterSlot.SubSlot scope={SingleComment.Context} /></div>
       <div>
         <CommentName.SubSlot scope={SingleComment.Context} />
         <CommentEmail.SubSlot scope={SingleComment.Context} />
@@ -519,7 +519,7 @@ There are two types of conditional slots, purely conditional and regular slots w
 want to render one slot, you can use Element.Slot.Conditional (or Element.SubSlot.Conditional,
 depending on your use case), to reduce the amount of layering in your JSX.
 
-Like the NonSlotted component, the ConditionalSlot component has `include` and `exclude` props, which
+Like the FilterSlot component, the ConditionalSlot component has `include` and `exclude` props, which
 accept arrays of slotted components. In addition, you can pass arrays of conditions into the `conditions`
 prop as shorthand.
 
@@ -568,6 +568,7 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
     - Mandatory pre-indexing with useChildren
 - 1.1
   - Advanced filtering for conditional slots and non-slotted components.
+  - NonSlotted (now FilterSlot) is deprecated
 
 Plans:
 - Full examples
