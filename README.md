@@ -39,7 +39,7 @@ Name | Type | Description
 --- | --- | ---
 scope | `React.Context` | Elements passed for filtering
 
-### NonSlotted
+### FilterSlot
 
 Equivalent of `{children}` for non-slottable elements. Can include a whitelist (include) or blacklist(exclude),
 otherwise filters out all slottable elements.
@@ -51,8 +51,9 @@ exclude | `Array<SlotComponent>` | Array of slottable components for filtering o
 include | `Array<SlotComponent>` | Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
 all | `boolean` | Automatically include all non-slottable elements when doing include (on true)
 or automatically exclude when doing exclude (on false)
+grouped? | `boolean` | Groups elements by component type
 
-### NonSlotted.SubSlot
+### FilterSlot.SubSlot
 
 Same as NonSlotted, but consumes a context from a slot with `withContext` enabled.
 

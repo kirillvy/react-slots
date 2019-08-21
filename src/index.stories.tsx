@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withReadme } from 'storybook-readme';
-import {createSlot, NonSlotted} from '.';
-import ConditionalSlot from './ConditionalSlot';
+import {createSlot, NonSlotted, ConditionalSlot} from '.';
 
 /**
  * imports of README file
@@ -12,7 +11,6 @@ import Readme from './README.md';
 /**
  * imports of component
  */
-
 const stories = storiesOf('Components', module);
 
 export const CardContextCard = createSlot();
@@ -45,8 +43,10 @@ const Card: React.FC = ({children}) => (
     <div>
         <CardBottomText.Slot scope={children} />
     </div>
-    nonslotted:
-    <NonSlotted scope={children} include={[CardBottomText]} all={true} />
+    nonslotted grouped:
+    <NonSlotted scope={children} include={[CardBottomText]} all={true} grouped={true} />
+    nonslotted ungrouped:
+    <NonSlotted scope={children} include={[CardBottomText]} all={true} grouped={false} />
   </div>
 );
 
@@ -56,6 +56,7 @@ stories.add(
     <>f
     <Card>
       xzzxvv
+      <div>ggg</div>
       <CardContextCard>
         <CardTopText>
           <p>Name of the Card</p>

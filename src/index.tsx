@@ -78,9 +78,7 @@ interface IOverloadCreateSlot {
   <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
 }
 
-export interface IIndexedChildren {
-  [x: string]: ISortChildrenEl[];
-}
+export type IIndexedChildren = Map<symbol | string, ISortChildrenEl[]>;
 
 export interface ISortChildrenEl {
   index: number;
@@ -97,7 +95,7 @@ const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T
     fallback, fallbackProps, childIs },
 ) => {
   let childrenObj = scope as IIndexedChildren;
-  if (typeof scope !== 'object' || scope.$$isSlottedChildren === undefined) {
+  if (typeof scope !== 'object' || scope.get === undefined) {
     childrenObj = useChildren(scope);
   }
   const injectSlot = (child: JSX.Element, i?: number) => {
@@ -119,13 +117,16 @@ const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T
       ));
     }
     const props: any = child.props;
+    if (child.props === undefined) {
+      return child;
+    }
     if (props.hasOwnProperty('children')) {
       return React.cloneElement(child, { key: i, ...passedProps });
     } else {
       return React.cloneElement(child, { key: i, ...defaultProps, ...passedProps }, defaultElement);
     }
   };
-  const res = childrenObj[Element.displaySymbol as any];
+  const res = childrenObj.get(Element.displaySymbol);
   if (res === undefined) {
     if ((childIs === 'feedback' || childIs === 'both') && defaultElement !== undefined) {
       return React.cloneElement(defaultElement, fallbackProps);
@@ -209,37 +210,43 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
  */
 export const useChildren = (scope: any): IIndexedChildren => {
   if (scope === undefined || scope.length === 0) {
-    return {};
+    return new Map();
   }
   const childrenCount = React.Children.count(scope);
-  const result: IIndexedChildren = {};
+  const result = new Map<symbol | string, ISortChildrenEl[]>();
   const injectSlot = (child: JSX.Element, index: number) => {
-    let childType = 'rest';
+    let childType = 'string';
     if (React.isValidElement(child) && child.type !== undefined) {
       const obj: any = child.type;
       if (obj.hasOwnProperty('displayName')) {
-        childType = obj.displayName || 'rest';
+        childType = obj.displayName || 'string';
+      } else {
+        childType = obj;
       }
       if (obj.hasOwnProperty('displaySymbol')) {
         childType = obj.displaySymbol;
       }
     }
-    if (result[childType] === undefined) {
-      result[childType] = [];
+    const resultGet = result.get(childType);
+    if (resultGet === undefined) {
+      result.set(childType, [{index, child}]);
+    } else {
+      resultGet.push({index, child});
+      result.set(childType, resultGet);
     }
-    result[childType].push({index, child});
   };
   if (childrenCount === 1) {
     injectSlot(scope, 0);
   } else if (childrenCount > 1) {
       React.Children.forEach(scope, injectSlot);
   }
-  result.$$isSlottedChildren = [];
+  result.set('$$isSlottedChildren', []);
   return result;
 };
 
-import NonSlotted from './NonSlotted';
-export { NonSlotted };
+import FilterSlot from './FilterSlot';
+export { FilterSlot as NonSlotted };
+export { FilterSlot };
 export { ConditionalSlot };
 
 export default createSlot;

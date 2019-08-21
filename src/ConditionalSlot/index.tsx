@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {ISlotComponent, IIndexedChildren, useChildren} from '../index';
-import NonSlotted from '../NonSlotted';
+import FilterSlot from '../FilterSlot';
 import {ISlotConditional} from '..';
 
 export interface IConditionalSlotBase {
@@ -35,11 +35,11 @@ const elDisplay = Symbol();
 
 const evalIf = ({scope, excludes, includes, condition}: IConditionalSlotBase) => {
   let childrenObj = scope as IIndexedChildren;
-  if (typeof childrenObj !== 'object' || childrenObj.$$isSlottedChildren === undefined) {
+  if (typeof childrenObj !== 'object' || childrenObj.get === undefined) {
     childrenObj = useChildren(scope);
   }
-  const include = scope && includes ? includes.every((el) => childrenObj[el.displaySymbol as any] !== undefined) : true;
-  const exclude = scope && excludes ? excludes.every((el) => childrenObj[el.displaySymbol as any] === undefined) : true;
+  const include = scope && includes ? includes.every((el) => childrenObj.get(el.displaySymbol) !== undefined) : true;
+  const exclude = scope && excludes ? excludes.every((el) => childrenObj.get(el.displaySymbol) === undefined) : true;
   const conditional = condition !== undefined ? Boolean(condition) : true;
   return include && exclude && conditional;
 };
@@ -52,7 +52,7 @@ export function createConditionalSlot(
     const scopeObj = useChildren(children);
     const evalResult = parent === undefined ? evalIf({scope, excludes, includes, condition}) : true;
     if (evalResult) {
-      const obj = scopeObj[ConditionalSlot.displaySymbol as any];
+      const obj = scopeObj.get(ConditionalSlot.displaySymbol);
       let res: React.ReactNode = null;
       if (obj !== undefined) {
         for (let i = 0, onIf = false; i < obj.length; i++) {
@@ -82,7 +82,7 @@ export function createConditionalSlot(
       }
       const elProps = Element === React.Fragment ? {} : {scope, ...newProps};
       return React.createElement(Element, elProps, [
-        <NonSlotted key={0} scope={children} exclude={[ConditionalSlot]} />,
+        <FilterSlot key={0} scope={children} exclude={[ConditionalSlot]} />,
         res,
       ]);
     }

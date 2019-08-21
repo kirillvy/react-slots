@@ -19,6 +19,10 @@ interface INonSlotted {
    * Filter out all slottable components, overrides include and exclude properties
    */
   all?: boolean;
+  /**
+   * Group all elements in order added.
+   */
+  grouped?: boolean;
 }
 
 interface INonSubSlotted extends INonSlotted {
@@ -48,20 +52,19 @@ export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot>) =
   }, {} as { [x: string]: boolean});
 };
 
-const NonSlottedComponent = ({ scope, exclude, include, all }: INonSlotted) => {
+const NonSlottedComponent = ({ scope, exclude, include, grouped, all }: INonSlotted) => {
   let childrenObj = scope as IIndexedChildren;
-  if (typeof childrenObj !== 'object' || childrenObj.$$isSlottedChildren === undefined) {
+  if (typeof childrenObj !== 'object' || childrenObj.get === undefined) {
     childrenObj = useChildren(scope);
-  }
-  let rest: ISortChildrenEl[] = [];
-  if ((exclude && all !== false) || (include && all === true)) {
-    rest = childrenObj.rest || [];
   }
   const includeEls = resObject(include);
   const excludeEls = resObject(exclude);
-  const ignoreSlot = (el: symbol) => {
+  const ignoreSlot = (el: symbol | string) => {
     if (include) {
       if (includeEls[el as any]) {
+        return true;
+      }
+      if (typeof el !== 'symbol' && all === true) {
         return true;
       }
       return false;
@@ -73,20 +76,23 @@ const NonSlottedComponent = ({ scope, exclude, include, all }: INonSlotted) => {
       return true;
     }
   };
-  const children = Object.getOwnPropertySymbols(childrenObj).reduce((prev, cur) => {
-    const res = ignoreSlot(cur);
+  const prev: ISortChildrenEl[] = [];
+  childrenObj.forEach((value, key) => {
+    const res = ignoreSlot(key);
     if (res === true) {
-      return prev.concat(childrenObj[cur as any]);
+      prev.push(...value);
     }
-    return prev;
-  }, rest)
-  .sort((a, b) => a.index - b.index)
+  });
+  if (grouped === true) {
+    return <>{prev.map((el) => el.child)}</>;
+  }
+  const children: JSX.Element[] = prev.sort((a, b) => a.index - b.index)
   .map((el) => el.child);
   return <>{children}</>;
 };
 
 NonSlottedComponent.SubSlot = NonSlotFactory(NonSlottedComponent);
 
-const NonSlotted: INonSlotComponent = NonSlottedComponent;
+const FilterSlot: INonSlotComponent = NonSlottedComponent;
 
-export default NonSlotted;
+export default FilterSlot;
