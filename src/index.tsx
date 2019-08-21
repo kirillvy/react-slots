@@ -1,5 +1,9 @@
 import * as React from 'react';
 
+import ConditionalSlot, {
+  IConditionalSlot, IConditionalSlotBase, createConditionalSlot,
+} from './ConditionalSlot';
+
 interface ISlot<T> {
   /**
    * Default children of element, if any. Otherwise, nothing will be shown.
@@ -44,17 +48,21 @@ interface ISubSlot<T> extends Partial<ISlot<T>> {
   scope: React.Context<any>;
 }
 
-interface ISlotComponentCtx<T> extends React.FunctionComponent<T> {
+export interface ISlotConditional<T> extends React.FunctionComponent<T> {
+  displaySymbol: symbol;
+  Conditional: IConditionalSlot<T>;
+}
+
+export interface ISubSlotConditional<T> extends React.FunctionComponent<T> {
+  displaySymbol: symbol;
+  Conditional: React.FC<T & IConditionalSlotBase>;
+}
+
+export interface ISlotComponent<T> extends React.FunctionComponent<T> {
   Context: React.Context<any>;
   displaySymbol: symbol;
-}
-
-interface ISlotComponentSlot<T> extends ISlotComponentCtx<T> {
-  Slot: React.FunctionComponent<ISlot<T>>;
-}
-
-export interface ISlotComponent<T> extends ISlotComponentSlot<T> {
-  SubSlot: React.FunctionComponent<ISubSlot<T>>;
+  Slot: ISlotConditional<ISlot<T>>;
+  SubSlot: ISubSlotConditional<ISubSlot<T>>;
 }
 
 interface IOverloadCreateSlot {
@@ -70,9 +78,7 @@ interface IOverloadCreateSlot {
   <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
 }
 
-export interface IIndexedChildren {
-  [x: string]: ISortChildrenEl[];
-}
+export type IIndexedChildren = Map<symbol | string, ISortChildrenEl[]>;
 
 export interface ISortChildrenEl {
   index: number;
@@ -84,12 +90,12 @@ type SlotType<T = {}, S = {}> =
   T extends keyof JSX.IntrinsicElements ? S extends {} ? S & Partial<JSX.IntrinsicElements[T]> :
    Partial<JSX.IntrinsicElements[T]> : any;
 
-const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlot<T>> => (
+const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T>> => (
   { scope, children: defaultElement, multiple = false, defaultProps, passedProps, withContext,
     fallback, fallbackProps, childIs },
 ) => {
   let childrenObj = scope as IIndexedChildren;
-  if (typeof scope !== 'object' || scope.$$isSlottedChildren === undefined) {
+  if (typeof scope !== 'object' || scope.get === undefined) {
     childrenObj = useChildren(scope);
   }
   const injectSlot = (child: JSX.Element, i?: number) => {
@@ -111,13 +117,16 @@ const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlo
       ));
     }
     const props: any = child.props;
+    if (child.props === undefined) {
+      return child;
+    }
     if (props.hasOwnProperty('children')) {
       return React.cloneElement(child, { key: i, ...passedProps });
     } else {
       return React.cloneElement(child, { key: i, ...defaultProps, ...passedProps }, defaultElement);
     }
   };
-  const res = childrenObj[Element.displaySymbol as any];
+  const res = childrenObj.get(Element.displaySymbol);
   if (res === undefined) {
     if ((childIs === 'feedback' || childIs === 'both') && defaultElement !== undefined) {
       return React.cloneElement(defaultElement, fallbackProps);
@@ -143,10 +152,16 @@ const SlotFactory = <T extends {}>(Element: ISlotComponentCtx<T>): React.FC<ISlo
   }
 };
 
-const SubSlotFactory = <T extends {}>(Element: ISlotComponentSlot<T>): React.FC<ISubSlot<T>> => (
+const SubSlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISubSlot<T>> => (
   { scope: Context, ...props },
 ) => {
   return <Context.Consumer>{(value) => <Element.Slot {...props} scope={value}/>}</Context.Consumer>;
+};
+
+const ConditionalSubSlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISubSlot<T>> => (
+  { scope: Context, ...props },
+) => {
+  return <Context.Consumer>{(value) => <Element.Slot.Conditional {...props} scope={value}/>}</Context.Consumer>;
 };
 
 /**
@@ -157,30 +172,36 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
   Element: React.ComponentType | keyof JSX.IntrinsicElements = React.Fragment,
   ) => {
     type CurType = SlotType<T, S>;
-    const SlottedElement = ({ children, ...props }: any) => React.createElement(Element, props, children);
+    const SlottedElement = (
+      ({ children, ...props }: any) => React.createElement(Element, props, children)
+      ) as ISlotComponent<CurType>;
     SlottedElement.Context = React.createContext(null);
     SlottedElement.displaySymbol = Symbol();
-    SlottedElement.Slot = SlotFactory<CurType>(SlottedElement as ISlotComponentCtx<CurType>);
-    SlottedElement.SubSlot = SubSlotFactory<CurType>(SlottedElement as ISlotComponentSlot<CurType>);
-    const result = SlottedElement as ISlotComponent<CurType>;
+    SlottedElement.Slot = SlotFactory<CurType>(SlottedElement) as ISlotConditional<ISlot<CurType>>;
+    SlottedElement.Slot.displaySymbol = Symbol();
+    SlottedElement.Slot.Conditional = createConditionalSlot(SlottedElement.Slot as React.ComponentType);
+    SlottedElement.SubSlot = SubSlotFactory<CurType>(SlottedElement) as ISlotConditional<ISubSlot<CurType>>;
+    SlottedElement.SubSlot.displaySymbol = Symbol();
+    SlottedElement.SubSlot.Conditional = ConditionalSubSlotFactory<CurType>(SlottedElement);
     if (typeof Element !== 'string') {
-      result.defaultProps = Element.defaultProps;
-      result.contextTypes = Element.contextTypes;
-      result.Slot.displayName = `${Element.displayName}.Slot`;
-      result.propTypes = Element.propTypes;
+      SlottedElement.defaultProps = Element.defaultProps;
+      SlottedElement.contextTypes = Element.contextTypes;
+      SlottedElement.Slot.displayName = `${Element.displayName}.Slot`;
+      SlottedElement.propTypes = Element.propTypes;
       if (Element.displayName === undefined) {
-        result.Slot.displayName = 'Subcomponent.Slot';
+        SlottedElement.Slot.displayName = 'Subcomponent.Slot';
       }
     } else {
-      result.Slot.displayName = `${Element}.Slot`;
-      result.displayName = `${result.displayName}.SlottedElement`;
+      SlottedElement.Slot.displayName = `${Element}.Slot`;
+      SlottedElement.displayName = `${SlottedElement.displayName}.SlottedElement`;
       if (Element === undefined) {
-        result.Slot.displayName = 'Subcomponent.Slot';
-        result.displayName = `Subcomponent.SlottedElement`;
+        SlottedElement.Slot.displayName = 'Subcomponent.Slot';
+        SlottedElement.displayName = `Subcomponent.SlottedElement`;
       }
     }
-    result.SubSlot.displayName = 'SubSlot';
-    return result;
+    SlottedElement.SubSlot.displayName = 'SubSlot';
+    SlottedElement.SubSlot.displayName = 'SubSlot';
+    return SlottedElement;
 };
 
 /**
@@ -189,36 +210,43 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
  */
 export const useChildren = (scope: any): IIndexedChildren => {
   if (scope === undefined || scope.length === 0) {
-    return {};
+    return new Map();
   }
   const childrenCount = React.Children.count(scope);
-  const result: IIndexedChildren = {};
+  const result = new Map<symbol | string, ISortChildrenEl[]>();
   const injectSlot = (child: JSX.Element, index: number) => {
-    let childType = 'rest';
-    if (React.isValidElement(child)) {
+    let childType = 'string';
+    if (React.isValidElement(child) && child.type !== undefined) {
       const obj: any = child.type;
       if (obj.hasOwnProperty('displayName')) {
-        childType = obj.displayName || 'rest';
+        childType = obj.displayName || 'string';
+      } else {
+        childType = obj;
       }
       if (obj.hasOwnProperty('displaySymbol')) {
         childType = obj.displaySymbol;
       }
     }
-    if (result[childType] === undefined) {
-      result[childType] = [];
+    const resultGet = result.get(childType);
+    if (resultGet === undefined) {
+      result.set(childType, [{index, child}]);
+    } else {
+      resultGet.push({index, child});
+      result.set(childType, resultGet);
     }
-    result[childType].push({index, child});
   };
   if (childrenCount === 1) {
-    injectSlot(React.Children.only(scope), 0);
+    injectSlot(scope, 0);
   } else if (childrenCount > 1) {
       React.Children.forEach(scope, injectSlot);
   }
-  result.$$isSlottedChildren = [];
+  result.set('$$isSlottedChildren', []);
   return result;
 };
 
-              import NonSlotted from './NonSlotted/index';
-export {NonSlotted};
+import FilterSlot from './FilterSlot';
+export { FilterSlot as NonSlotted };
+export { FilterSlot };
+export { ConditionalSlot };
 
 export default createSlot;
