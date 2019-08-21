@@ -177,9 +177,8 @@ Then insert them into the element. The slotted elements **must** be the primary 
 and not inserted into other elements in the hierarchy. Otherwise they will be rendered as ordinary elements.
 
 ```jsx
-const CustomCard = ({children}) => {
-  const scope = useChildren(children);
-  return <Card>
+const CustomCard = () => (
+  <Card>
     <CardTopText>
       <p>Name of the Card</p>
     </CardTopText>
@@ -187,7 +186,7 @@ const CustomCard = ({children}) => {
       <p>Description of the Card</p>
     </CardBottomText>
   </Card>;
-};
+);
 ```
 
 The result will be rendered as 
