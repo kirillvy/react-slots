@@ -49,42 +49,54 @@ export function createConditionalSlot(
   ): IConditionalSlot {
   function ConditionalSlot(props: IConditionalSlotBase) {
     const {children, scope, excludes, includes, condition, ...newProps} = props;
+    const elProps = Element === React.Fragment ? {} : {scope, ...newProps};
     const scopeObj = useChildren(children);
     const evalResult = parent === undefined ? evalIf({scope, excludes, includes, condition}) : true;
-    if (evalResult) {
-      const obj = scopeObj.get(ConditionalSlot.displaySymbol);
-      let res: React.ReactNode = null;
-      if (obj !== undefined) {
-        for (let i = 0, onIf = false; i < obj.length; i++) {
-          const cur: any = obj[i].child;
-          const valid = evalIf(cur.props);
+    const obj = scopeObj.get(ConditionalSlot.displaySymbol);
+    let res: React.ReactNode = null;
+    let onIf = false;
+    if (obj !== undefined) {
+      for (let i = 0; i < obj.length; i++) {
+        const cur: any = obj[i].child;
+        const valid = evalIf(cur.props);
+        if (valid) {
+          res = cur;
+        }
+        if (onIf === false && cur.type.typeSymbol === ConditionalSlot.If.typeSymbol) {
+          onIf = true;
           if (valid) {
-            res = cur;
-          }
-          if (onIf === false) {
-            if (valid && cur.type.typeSymbol === ConditionalSlot.If.typeSymbol) {
-              break;
-            }
-            onIf = true;
-            continue;
-          }
-          if (cur.type.typeSymbol === ConditionalSlot.ElseIf.typeSymbol) {
-            if (valid) {
-              break;
-            }
-            continue;
-          }
-          if (cur.type.typeSymbol === ConditionalSlot.Else.typeSymbol) {
-            res = cur;
             break;
           }
+          continue;
+        }
+        if (cur.type.typeSymbol === ConditionalSlot.ElseIf.typeSymbol) {
+          if (valid) {
+            break;
+          }
+          continue;
+        }
+        if (cur.type.typeSymbol === ConditionalSlot.Else.typeSymbol) {
+          res = cur;
+          break;
         }
       }
-      const elProps = Element === React.Fragment ? {} : {scope, ...newProps};
-      return React.createElement(Element, elProps, [
+    }
+    if (evalResult) {
+      if (onIf && res !== null && res !== undefined) {
+        return React.createElement(Element, elProps, [
+          <FilterSlot key={0} scope={children} exclude={[ConditionalSlot]} />,
+          res,
+        ]
+        );
+      }
+      return React.createElement(Element, elProps,
         <FilterSlot key={0} scope={children} exclude={[ConditionalSlot]} />,
+      );
+    }
+    if (res !== null && onIf === false) {
+      return React.createElement(Element, elProps,
         res,
-      ]);
+      );
     }
     return null;
   }

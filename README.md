@@ -14,7 +14,7 @@ The slot consumes an array of children and filters for ones marked as the compon
 
 Name | Type | Description
 --- | --- | ---
-scope | `any | IndexedChildren` | Elements passed for filtering, indexed using `useChildren`
+scope | `any \| IndexedChildren` | Elements passed for filtering, indexed using `useChildren`
 children? | `any` | Default children of element, if any.
 defaultProps? | `JSX.IntrinsicAttributes & React.PropsWithChildren<T>` | default props to use with default element
 passedProps? | `T` | props passed to the element from the component containing the slot
@@ -22,7 +22,7 @@ multiple? | `boolean` | Display all if multiple slots are passed
 withContext? | `boolean` | Components are composed through their immediate children
 fallback? | `any` | fallback to use if slot is not used
 fallbackProps? | `JSX.IntrinsicAttributes & React.PropsWithChildren<T>` | default props to use with default element
-childIs? | `'feedback' | 'default' | 'both'` | Designate the children prop as the default element, the fallback element or both
+childIs? | `'feedback' \| 'default' \| 'both'` | Designate the children prop as the default element, the fallback element or both
 
 ### Component.SubSlot
 
@@ -91,17 +91,17 @@ the order added.
 
 Component that renders if none of the elements have rendered. Must be the last child.
 
-### createGlobalSlotContext (0.3 onwards)
+### createGlobalSlotContext
 
 Creates a Global Slot Context that can be inserted to perpetuate a global context to read and insert
 slots anywhere in the document. The goal is the equivalent of 
 
-### GlobalSlotContext.createSlot (0.3 onwards)
+### GlobalSlotContext.createSlot
 
 Creates a Global Slottable Component dependent on said context. Works the same as createSlot,
 but accepts a maximum heap size. Default is 31 to avoid memory leaks.
 
-### GlobalSlotComponent (0.3 onwards)
+### GlobalSlotComponent
 
 Same as ordinary Slottable Component, but created from GlobalSlotContext.createSlot and perpetuates the
 Global Slot Context it was created from. Can only be inserted in the GlobalSlotContext hierarchy or a
@@ -522,7 +522,7 @@ Like the FilterSlot component, the ConditionalSlot component has `include` and `
 accept arrays of slotted components. In addition, you can pass arrays of conditions into the `conditions`
 prop as shorthand.
 
-## Global Slots (0.3 onwards)
+## Global Slots
 
 Sometimes you may want to use slots to insert elements outside the slotted component. For this you should
 use global slots. 
@@ -553,11 +553,11 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
 - 0.2 (feature addition lock for 1.0)
   - Conditional rendering slots
   - Unordered and ordered group slots
+- 0.3
+  - Unique global slots
 
 ## Roadmap to 1.0
 
-- 0.3
-  - unique global slots
 - 0.4 (preparation for 1.0)
   - Complete test coverage and full examples
   - Package optimizations
@@ -572,13 +572,9 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
 Plans:
 - Full examples
 - Test coverage for ordinary and edge cases
-- Explained usage of default, fallback and passed props.
 - Passing props other than children through Context API (unique global and component-level slots).
 - Caching, priority and garbage collection for global slots.
-- Conditional rendering slots (full-featured, multi-scenario)
-- Unordered slot groups (group slots)
 - Package optimizations (tree-shaking)
-- Planned releases (from 0.1 onwards)
 
 
 ## Branches
