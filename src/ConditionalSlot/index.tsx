@@ -60,7 +60,6 @@ export function createConditionalSlot(
     const obj = scopeObj.get(ConditionalSlot.displaySymbol);
     let res: React.ReactNode = null;
     let [onIf, pastIf] = [false, false];
-    console.log(scopeObj);
     if (obj !== undefined) {
       for (let i = 0; i < obj.length; i++) {
         const cur: any = obj[i].child;
