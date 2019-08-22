@@ -78,7 +78,9 @@ Also available by adding .Conditional to any Slot, SubSlot or FilterSlot element
 ### ConditionalSlot.If
 
 Made for convenience, same as rendering elements directly inside of a conditional block but can
-be used to create a separate if block in an if-else block that can render its own if-else.
+be used to create a separate if block in an if-else block that can render its own if-else. Creating an
+If element alongside non-conditional slots inside a Conditional Slot creates an if-else block that renders
+alongside the pre-existing elements.
 
 ### ConditionalSlot.ElseIf
 

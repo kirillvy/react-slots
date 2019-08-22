@@ -19,11 +19,11 @@ export const CardBottomText = createSlot();
 
 const Card: React.FC = ({children}) => (
   <div>
-    <ConditionalSlot condition={false} excludes={[]} scope={children}>
+    <ConditionalSlot condition={true} excludes={[]} scope={children}>
       hello1
-      {/* <ConditionalSlot.If condition={false} scope={children}>
+      <ConditionalSlot.If condition={true} scope={children}>
         hello2
-      </ConditionalSlot.If> */}
+      </ConditionalSlot.If>
       <ConditionalSlot.ElseIf condition={false} scope={children}>
         hello3
       </ConditionalSlot.ElseIf>

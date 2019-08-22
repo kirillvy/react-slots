@@ -54,7 +54,7 @@ export function createConditionalSlot(
     const evalResult = parent === undefined ? evalIf({scope, excludes, includes, condition}) : true;
     const obj = scopeObj.get(ConditionalSlot.displaySymbol);
     let res: React.ReactNode = null;
-    let onIf = false;
+    let [onIf, pastIf] = [false, false];
     if (obj !== undefined) {
       for (let i = 0; i < obj.length; i++) {
         const cur: any = obj[i].child;
@@ -62,7 +62,11 @@ export function createConditionalSlot(
         if (valid) {
           res = cur;
         }
-        if (onIf === false && cur.type.typeSymbol === ConditionalSlot.If.typeSymbol) {
+        if (
+          onIf === false
+          && pastIf === false
+          && cur.type.typeSymbol === ConditionalSlot.If.typeSymbol
+          ) {
           onIf = true;
           if (valid) {
             break;
@@ -70,6 +74,7 @@ export function createConditionalSlot(
           continue;
         }
         if (cur.type.typeSymbol === ConditionalSlot.ElseIf.typeSymbol) {
+          pastIf = true;
           if (valid) {
             break;
           }
@@ -83,10 +88,9 @@ export function createConditionalSlot(
     }
     if (evalResult) {
       if (onIf && res !== null && res !== undefined) {
-        return React.createElement(Element, elProps, [
+        return React.createElement(Element, elProps,
           <FilterSlot key={0} scope={children} exclude={[ConditionalSlot]} />,
           res,
-        ]
         );
       }
       return React.createElement(Element, elProps,
