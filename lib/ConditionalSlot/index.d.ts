@@ -26,6 +26,6 @@ export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase 
     displaySymbol: symbol;
     typeSymbol: symbol;
 }
-export declare function createConditionalSlot(Element?: React.ComponentType, parent?: IConditionalSlot): IConditionalSlot;
+export declare function createConditionalSlot(Element?: React.ComponentType, typeSymbol?: symbol, parent?: IConditionalSlot): IConditionalSlot;
 declare const ConditionalSlotElement: IConditionalSlot;
 export default ConditionalSlotElement;

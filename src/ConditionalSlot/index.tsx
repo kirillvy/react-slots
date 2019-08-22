@@ -32,6 +32,9 @@ export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase 
 }
 
 const elDisplay = Symbol();
+const IF = Symbol();
+const ELSEIF = Symbol();
+const ELSE = Symbol();
 
 const evalIf = ({scope, excludes, includes, condition}: IConditionalSlotBase) => {
   let childrenObj = scope as IIndexedChildren;
@@ -45,7 +48,9 @@ const evalIf = ({scope, excludes, includes, condition}: IConditionalSlotBase) =>
 };
 
 export function createConditionalSlot(
-  Element: React.ComponentType = React.Fragment, parent?: IConditionalSlot,
+  Element: React.ComponentType = React.Fragment,
+  typeSymbol: symbol = IF,
+  parent?: IConditionalSlot,
   ): IConditionalSlot {
   function ConditionalSlot(props: IConditionalSlotBase) {
     const {children, scope, excludes, includes, condition, ...newProps} = props;
@@ -105,11 +110,11 @@ export function createConditionalSlot(
     return null;
   }
   ConditionalSlot.displaySymbol = elDisplay;
-  ConditionalSlot.typeSymbol = Symbol();
+  ConditionalSlot.typeSymbol = typeSymbol;
   if (parent === undefined) {
-    const If = createConditionalSlot(React.Fragment, ConditionalSlot);
-    const Else = createConditionalSlot(React.Fragment, ConditionalSlot);
-    const ElseIf = createConditionalSlot(React.Fragment, ConditionalSlot);
+    const If = createConditionalSlot(React.Fragment, IF, ConditionalSlot);
+    const Else = createConditionalSlot(React.Fragment, ELSEIF, ConditionalSlot);
+    const ElseIf = createConditionalSlot(React.Fragment, ELSE, ConditionalSlot);
     ConditionalSlot.If = If;
     ConditionalSlot.ElseIf = Else;
     ConditionalSlot.Else = ElseIf;
