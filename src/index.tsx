@@ -24,7 +24,7 @@ interface ISlot<T> {
   /**
    * Slottable component test
    */
-  test?: <T = any>(props: T) => boolean;
+  test?: <S = any>(props: S) => boolean;
   /**
    * Display all if multiple slots are passed
    */
