@@ -1,6 +1,10 @@
 import * as React from 'react';
 import {ISlotComponent, IIndexedChildren, useChildren, ISortChildrenEl} from '../index';
-import { IConditionalSlot } from '../ConditionalSlot';
+import { IConditionalSlot,
+  IConditionsComponent,
+  isConditionsComponent,
+  evalSlots,
+} from '../ConditionalSlot';
 
 interface INonSlotted {
   /**
@@ -10,11 +14,11 @@ interface INonSlotted {
   /**
    * Array of slottable components for filtering out
    */
-  exclude?: Array<ISlotComponent<any> | IConditionalSlot>;
+  exclude?: Array<ISlotComponent<any> | IConditionalSlot | IConditionsComponent>;
   /**
    * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
    */
-  include?: Array<ISlotComponent<any>>;
+  include?: Array<ISlotComponent<any> | IConditionsComponent>;
   /**
    * Filter out all slottable components, overrides include and exclude properties
    */
@@ -39,14 +43,22 @@ const NonSlotFactory = (Element: React.FC<INonSlotted>): React.FC<INonSubSlotted
   return <Context.Consumer>{(value) => <Element {...props} scope={value}/>}</Context.Consumer>;
 };
 
-export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot>) => {
+export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot | IConditionsComponent>) => {
   if (res === undefined) {
     return {};
   }
   return res.reduce((prev, el) => {
-    const childType: string = el.displaySymbol as any;
-    if (prev[childType] === undefined) {
-      prev[childType] = true;
+    if (isConditionsComponent(el)) {
+      const {component, condition} = el;
+      if (React.isValidElement(component)) {
+        const childType: string = component.displaySymbol as any;
+        prev[childType] = (childType !== undefined && condition(component.props) === true);
+      }
+    } else {
+      const childType: string = el.displaySymbol as any;
+      if (prev[childType] === undefined) {
+        prev[childType] = true;
+      }
     }
     return prev;
   }, {} as { [x: string]: boolean});

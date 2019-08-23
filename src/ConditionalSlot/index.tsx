@@ -12,15 +12,22 @@ export interface IConditionalSlotBase {
   /**
    * Array of slottable components for filtering out
    */
-  excludes?: Array<ISlotComponent<any>>;
+  excludes?: TConditionalSlotArray;
   /**
    * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
    */
-  includes?: Array<ISlotComponent<any>>;
+  includes?: TConditionalSlotArray;
   /**
    * Truthy eval of conditions for implementations.
    */
   condition?: any;
+}
+
+type TConditionalSlotArray = Array<ISlotComponent<any> | IConditionsComponent>;
+
+export interface IConditionsComponent {
+  component: ISlotComponent<any>;
+  condition: <T = any>(props: T) => boolean;
 }
 
 export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase & T> {
@@ -36,13 +43,32 @@ const IF = Symbol();
 const ELSEIF = Symbol();
 const ELSE = Symbol();
 
-const evalIf = ({scope, excludes, includes, condition}: IConditionalSlotBase) => {
+export const isConditionsComponent = (
+  entity: ISlotComponent<any> | IConditionsComponent | IConditionalSlot,
+  ): entity is IConditionsComponent => {
+  return (entity as IConditionsComponent).condition !== undefined;
+};
+
+export const evalSlots = (arr: TConditionalSlotArray, childrenObj: IIndexedChildren) => {
+  return arr.every((el) => {
+    if (isConditionsComponent(el)) {
+      const {component, condition} = el;
+      if (React.isValidElement(component)) {
+        return childrenObj.get(component.displaySymbol) !== undefined && condition(component.props) === true;
+      }
+      return false;
+    }
+    return childrenObj.get(el.displaySymbol) !== undefined;
+  });
+};
+
+const slotEvalIf = ({scope, excludes, includes, condition}: IConditionalSlotBase) => {
   let childrenObj = scope as IIndexedChildren;
   if (typeof childrenObj !== 'object' || childrenObj.get === undefined) {
     childrenObj = useChildren(scope);
   }
-  const include = scope && includes ? includes.every((el) => childrenObj.get(el.displaySymbol) !== undefined) : true;
-  const exclude = scope && excludes ? excludes.every((el) => childrenObj.get(el.displaySymbol) === undefined) : true;
+  const include = scope && includes ? evalSlots(includes, childrenObj) : true;
+  const exclude = scope && excludes ? evalSlots(excludes, childrenObj) : true;
   const conditional = condition !== undefined ? Boolean(condition) : true;
   return include && exclude && conditional;
 };
@@ -56,14 +82,14 @@ export function createConditionalSlot(
     const {children, scope, excludes, includes, condition, ...newProps} = props;
     const elProps = Element === React.Fragment ? {} : {scope, ...newProps};
     const scopeObj = useChildren(children);
-    const evalResult = parent === undefined ? evalIf({scope, excludes, includes, condition}) : true;
+    const evalResult = parent === undefined ? slotEvalIf({scope, excludes, includes, condition}) : true;
     const obj = scopeObj.get(ConditionalSlot.displaySymbol);
     let res: React.ReactNode = null;
     let [onIf, pastIf] = [false, false];
     if (obj !== undefined) {
       for (let i = 0; i < obj.length; i++) {
         const cur: any = obj[i].child;
-        const valid = evalIf(cur.props);
+        const valid = slotEvalIf(cur.props);
         if (valid) {
           res = cur;
         }
