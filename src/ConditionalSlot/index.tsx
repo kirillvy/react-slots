@@ -26,8 +26,14 @@ export interface IConditionalSlotBase {
 type TConditionalSlotArray = Array<ISlotComponent<any> | IConditionsComponent>;
 
 export interface IConditionsComponent {
-  component: ISlotComponent<any>;
-  condition: <T = any>(props: T) => boolean;
+  /**
+   * Slottable component for filtering
+   */
+  slot: ISlotComponent<any>;
+  /**
+   * Slottable component test
+   */
+  test: <T = any>(props: T) => boolean;
 }
 
 export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase & T> {
@@ -46,15 +52,15 @@ const ELSE = Symbol();
 export const isConditionsComponent = (
   entity: ISlotComponent<any> | IConditionsComponent | IConditionalSlot,
   ): entity is IConditionsComponent => {
-  return (entity as IConditionsComponent).condition !== undefined;
+  return (entity as IConditionsComponent).test !== undefined;
 };
 
 export const evalSlots = (arr: TConditionalSlotArray, childrenObj: IIndexedChildren) => {
   return arr.every((el) => {
     if (isConditionsComponent(el)) {
-      const {component, condition} = el;
-      if (React.isValidElement(component)) {
-        return childrenObj.get(component.displaySymbol) !== undefined && condition(component.props) === true;
+      const {slot, test} = el;
+      if (React.isValidElement(slot)) {
+        return childrenObj.get(slot.displaySymbol) !== undefined && test(slot.props) === true;
       }
       return false;
     }

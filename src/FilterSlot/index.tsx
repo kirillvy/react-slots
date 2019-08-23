@@ -49,10 +49,10 @@ export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot | I
   }
   return res.reduce((prev, el) => {
     if (isConditionsComponent(el)) {
-      const {component, condition} = el;
-      if (React.isValidElement(component)) {
-        const childType: string = component.displaySymbol as any;
-        prev[childType] = (childType !== undefined && condition(component.props) === true);
+      const {slot, test} = el;
+      if (React.isValidElement(slot)) {
+        const childType: string = slot.displaySymbol as any;
+        prev[childType] = (childType !== undefined && test(slot.props) === true);
       }
     } else {
       const childType: string = el.displaySymbol as any;

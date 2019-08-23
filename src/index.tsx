@@ -22,6 +22,10 @@ interface ISlot<T> {
    */
   scope: any;
   /**
+   * Slottable component test
+   */
+  test?: <T = any>(props: T) => boolean;
+  /**
    * Display all if multiple slots are passed
    */
   multiple?: boolean;
@@ -92,7 +96,7 @@ type SlotType<T = {}, S = {}> =
 
 const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T>> => (
   { scope, children: defaultElement, multiple = false, defaultProps, passedProps, withContext,
-    fallback, fallbackProps, childIs },
+    fallback, fallbackProps, childIs, test },
 ) => {
   let childrenObj = scope as IIndexedChildren;
   if (typeof scope !== 'object' || scope.get === undefined) {
@@ -137,13 +141,16 @@ const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T
     return null;
   } else {
     if (multiple === true) {
-      const element = res.reduce((prev, {index, child}) => {
+      let element = res.reduce((prev, {index, child}) => {
         const el = injectSlot(child, index);
         if (el !== null) {
           prev.push(el);
         }
         return prev;
       }, [] as Array<React.FunctionComponentElement<any>>);
+      if (test !== undefined) {
+        element = element.filter((el) => test(el.props));
+      }
       return <>{element}</>;
     } else {
       const {child} = res[0];
