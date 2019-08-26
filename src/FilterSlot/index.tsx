@@ -1,12 +1,13 @@
 import * as React from 'react';
-import {ISlotComponent, IIndexedChildren, useChildren, ISortChildrenEl} from '../index';
-import { IConditionalSlot,
+import { ISlotComponent, IIndexedChildren, ISortChildrenEl } from '../index';
+import useChildren from '../utils/useChildren';
+import {
+  IConditionalSlot,
   IConditionsComponent,
   isConditionsComponent,
-  evalSlots,
 } from '../ConditionalSlot';
 
-interface INonSlotted {
+interface IFilterSlot {
   /**
    * Elements or indexed children object passed for filtering
    */
@@ -29,18 +30,18 @@ interface INonSlotted {
   grouped?: boolean;
 }
 
-interface INonSubSlotted extends INonSlotted {
+interface IFilterSubSlot extends IFilterSlot {
   scope: React.Context<any>;
 }
 
-interface INonSlotComponent extends React.FC<INonSlotted> {
-  SubSlot: React.FunctionComponent<INonSubSlotted>;
+interface IFilterSlotComponent extends React.FC<IFilterSlot> {
+  SubSlot: React.FunctionComponent<IFilterSubSlot>;
 }
 
-const NonSlotFactory = (Element: React.FC<INonSlotted>): React.FC<INonSubSlotted> => (
+const FilterSlotFactory = (Element: React.FC<IFilterSlot>): React.FC<IFilterSubSlot> => (
   { scope: Context, ...props },
 ) => {
-  return <Context.Consumer>{(value) => <Element {...props} scope={value}/>}</Context.Consumer>;
+  return <Context.Consumer>{(value) => <Element {...props} scope={value} />}</Context.Consumer>;
 };
 
 export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot | IConditionsComponent>) => {
@@ -49,7 +50,7 @@ export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot | I
   }
   return res.reduce((prev, el) => {
     if (isConditionsComponent(el)) {
-      const {slot, test} = el;
+      const { slot, test } = el;
       if (React.isValidElement(slot)) {
         const childType: string = slot.displaySymbol as any;
         prev[childType] = (childType !== undefined && test(slot.props) === true);
@@ -61,10 +62,10 @@ export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot | I
       }
     }
     return prev;
-  }, {} as { [x: string]: boolean});
+  }, {} as { [x: string]: boolean });
 };
 
-const NonSlottedComponent = ({ scope, exclude, include, grouped, all }: INonSlotted) => {
+const FilterSlotComponent = ({ scope, exclude, include, grouped, all }: IFilterSlot) => {
   let childrenObj = scope as IIndexedChildren;
   if (typeof childrenObj !== 'object' || childrenObj.get === undefined) {
     childrenObj = useChildren(scope);
@@ -99,12 +100,12 @@ const NonSlottedComponent = ({ scope, exclude, include, grouped, all }: INonSlot
     return <>{prev.map((el) => el.child)}</>;
   }
   const children: JSX.Element[] = prev.sort((a, b) => a.index - b.index)
-  .map((el) => el.child);
+    .map((el) => el.child);
   return <>{children}</>;
 };
 
-NonSlottedComponent.SubSlot = NonSlotFactory(NonSlottedComponent);
+FilterSlotComponent.SubSlot = FilterSlotFactory(FilterSlotComponent);
 
-const FilterSlot: INonSlotComponent = NonSlottedComponent;
+const FilterSlot: IFilterSlotComponent = FilterSlotComponent;
 
 export default FilterSlot;

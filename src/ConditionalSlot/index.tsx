@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import {ISlotComponent, IIndexedChildren, useChildren} from '../index';
+import React from 'react';
+import { ISlotComponent, IIndexedChildren } from '../index';
+import useChildren from '../utils/useChildren';
 import FilterSlot from '../FilterSlot';
-import {ISlotConditional} from '..';
 
 export interface IConditionalSlotBase {
   children?: any;

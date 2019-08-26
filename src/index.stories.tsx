@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withReadme } from 'storybook-readme';
-import {createSlot, NonSlotted, ConditionalSlot} from '.';
+import {createSlot, FilterSlot, ConditionalSlot} from '.';
 
 /**
  * imports of README file
@@ -44,9 +44,9 @@ const Card: React.FC = ({children}) => (
         <CardBottomText.Slot scope={children} />
     </div>
     nonslotted grouped:
-    <NonSlotted scope={children} include={[CardBottomText]} all={true} grouped={true} />
+    <FilterSlot scope={children} include={[CardBottomText]} all={true} grouped={true} />
     nonslotted ungrouped:
-    <NonSlotted scope={children} include={[CardBottomText]} all={true} grouped={false} />
+    <FilterSlot scope={children} include={[CardBottomText]} all={true} grouped={false} />
   </div>
 );
 
