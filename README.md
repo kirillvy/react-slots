@@ -14,7 +14,7 @@ The slot consumes an array of children and filters for ones marked as the compon
 
 Name | Type | Description
 --- | --- | ---
-scope | `any | IndexedChildren` | Elements passed for filtering, indexed using `useChildren`
+scope | `any \| IndexedChildren` | Elements passed for filtering, indexed using `useChildren`
 children? | `any` | Default children of element, if any.
 defaultProps? | `JSX.IntrinsicAttributes & React.PropsWithChildren<T>` | default props to use with default element
 passedProps? | `T` | props passed to the element from the component containing the slot
@@ -22,7 +22,7 @@ multiple? | `boolean` | Display all if multiple slots are passed
 withContext? | `boolean` | Components are composed through their immediate children
 fallback? | `any` | fallback to use if slot is not used
 fallbackProps? | `JSX.IntrinsicAttributes & React.PropsWithChildren<T>` | default props to use with default element
-childIs? | `'feedback' | 'default' | 'both'` | Designate the children prop as the default element, the fallback element or both
+childIs? | `'feedback' \| 'default' \| 'both'` | Designate the children prop as the default element, the fallback element or both
 
 ### Component.SubSlot
 
@@ -78,7 +78,9 @@ Also available by adding .Conditional to any Slot, SubSlot or FilterSlot element
 ### ConditionalSlot.If
 
 Made for convenience, same as rendering elements directly inside of a conditional block but can
-be used to create a separate if block in an if-else block that can render its own if-else.
+be used to create a separate if block in an if-else block that can render its own if-else. Creating an
+If element alongside non-conditional slots inside a Conditional Slot creates an if-else block that renders
+alongside the pre-existing elements.
 
 ### ConditionalSlot.ElseIf
 
@@ -90,41 +92,6 @@ the order added.
 ### ConditionalSlot.Else
 
 Component that renders if none of the elements have rendered. Must be the last child.
-
-### createGlobalSlotContext (0.3 onwards)
-
-Creates a Global Slot Context that can be inserted to perpetuate a global context to read and insert
-slots anywhere in the document. The goal is the equivalent of 
-
-### GlobalSlotContext.createSlot (0.3 onwards)
-
-Creates a Global Slottable Component dependent on said context. Works the same as createSlot,
-but accepts a maximum heap size. Default is 31 to avoid memory leaks.
-
-### GlobalSlotComponent (0.3 onwards)
-
-Same as ordinary Slottable Component, but created from GlobalSlotContext.createSlot and perpetuates the
-Global Slot Context it was created from. Can only be inserted in the GlobalSlotContext hierarchy or a
-critical error will occur.
-
-In addition, has some options for memory management:
-
-Name | Type | Description
---- | --- | ---
-priority | `number` | Priority, otherwise components added later will be shown (until they are
-removed)
-lifetime | `number` | Number of milliseconds until removal from Global Slot Context
-eternalValuePropagation | `boolean` | Propagates the children even after the original content is removed
-
-The eternalValuePropagation allows you to propagate children forever or until the end of the noted
-lifetime. Unlike the non-eternal variant, it overwrites the previous eternal value, if it has the same or
-higher priority. If if has a limited lifetime, there will be no eternal value once it lapses.
-
-
-### GlobalSlotComponent.Slot (0.3 onwards)
-
-Slot for inserting slots from the Global Slot Context. Can perpetuate own, non-global context.
-Same properties as Component.Slot except scope.
 
 ## Using slots
 
@@ -522,23 +489,6 @@ Like the FilterSlot component, the ConditionalSlot component has `include` and `
 accept arrays of slotted components. In addition, you can pass arrays of conditions into the `conditions`
 prop as shorthand.
 
-## Global Slots (0.3 onwards)
-
-Sometimes you may want to use slots to insert elements outside the slotted component. For this you should
-use global slots. 
-
-It is best to avoid using Global Slots when you do not need them, as overusing them will needlessly
-overcomplicate your app.
-
-When multiple global slottable components try to write to a slot, the one created later will be
-displayed. You may choose to adjust this using the priority prop. Once a component's lifecycle ends or
-the set lifetime is elapsed (whichever comes first), it is removed from the heap, unless it has eternal
-propagation enabled.
-
-Global Slottable Components are generally propagated until they are removed. However, you may choose to
-assign the value to be eternal, meaning that it will not be removed with the end of a component's
-lifecycle. Unlike the non-eternal components, they are overwritten.
-
 ## Reusing Slots and Extending Components
 
 Once created, you can reuse slots in any part of your project. It's best to avoid nesting the same 
@@ -556,9 +506,7 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
 
 ## Roadmap to 1.0
 
-- 0.3
-  - unique global slots
-- 0.4 (preparation for 1.0)
+- 0.3 (preparation for 1.0)
   - Complete test coverage and full examples
   - Package optimizations
   - Documentation
@@ -572,13 +520,9 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
 Plans:
 - Full examples
 - Test coverage for ordinary and edge cases
-- Explained usage of default, fallback and passed props.
 - Passing props other than children through Context API (unique global and component-level slots).
 - Caching, priority and garbage collection for global slots.
-- Conditional rendering slots (full-featured, multi-scenario)
-- Unordered slot groups (group slots)
 - Package optimizations (tree-shaking)
-- Planned releases (from 0.1 onwards)
 
 
 ## Branches

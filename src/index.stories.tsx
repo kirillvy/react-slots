@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withReadme } from 'storybook-readme';
-import {createSlot, NonSlotted, ConditionalSlot} from '.';
+import {createSlot, FilterSlot, ConditionalSlot} from '.';
 
 /**
  * imports of README file
@@ -19,9 +19,9 @@ export const CardBottomText = createSlot();
 
 const Card: React.FC = ({children}) => (
   <div>
-    <ConditionalSlot condition={true} excludes={[CardBottomText]} scope={children}>
+    <ConditionalSlot condition={true} excludes={[]} scope={children}>
       hello1
-      <ConditionalSlot.If condition={false} scope={children}>
+      <ConditionalSlot.If condition={true} scope={children}>
         hello2
       </ConditionalSlot.If>
       <ConditionalSlot.ElseIf condition={false} scope={children}>
@@ -44,11 +44,12 @@ const Card: React.FC = ({children}) => (
         <CardBottomText.Slot scope={children} />
     </div>
     nonslotted grouped:
-    <NonSlotted scope={children} include={[CardBottomText]} all={true} grouped={true} />
+    <FilterSlot scope={children} include={[CardBottomText]} all={true} grouped={true} />
     nonslotted ungrouped:
-    <NonSlotted scope={children} include={[CardBottomText]} all={true} grouped={false} />
+    <FilterSlot scope={children} include={[CardBottomText]} all={true} grouped={false} />
   </div>
 );
+
 
 stories.add(
   'Card component',
@@ -58,6 +59,9 @@ stories.add(
       xzzxvv
       <div>ggg</div>
       <CardContextCard>
+        <CardTopText.After>
+          <p>yes card here</p>
+        </CardTopText.After>
         <CardTopText>
           <p>Name of the Card</p>
         </CardTopText>
@@ -67,6 +71,9 @@ stories.add(
         <CardTopText>
           <p>Name of the Card 3</p>
         </CardTopText>
+        <CardTopText.Before>
+          <p>no card here</p>
+        </CardTopText.Before>
         <CardTopText>
           <p>Name of the Card 4</p>
         </CardTopText>

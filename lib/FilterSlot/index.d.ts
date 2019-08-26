@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ISlotComponent } from '../index';
-import { IConditionalSlot } from '../ConditionalSlot';
-interface INonSlotted {
+import { IConditionalSlot, IConditionsComponent } from '../ConditionalSlot';
+interface IFilterSlot {
     /**
      * Elements or indexed children object passed for filtering
      */
@@ -9,11 +9,11 @@ interface INonSlotted {
     /**
      * Array of slottable components for filtering out
      */
-    exclude?: Array<ISlotComponent<any> | IConditionalSlot>;
+    exclude?: Array<ISlotComponent<any> | IConditionalSlot | IConditionsComponent>;
     /**
      * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
      */
-    include?: Array<ISlotComponent<any>>;
+    include?: Array<ISlotComponent<any> | IConditionsComponent>;
     /**
      * Filter out all slottable components, overrides include and exclude properties
      */
@@ -23,14 +23,14 @@ interface INonSlotted {
      */
     grouped?: boolean;
 }
-interface INonSubSlotted extends INonSlotted {
+interface IFilterSubSlot extends IFilterSlot {
     scope: React.Context<any>;
 }
-interface INonSlotComponent extends React.FC<INonSlotted> {
-    SubSlot: React.FunctionComponent<INonSubSlotted>;
+interface IFilterSlotComponent extends React.FC<IFilterSlot> {
+    SubSlot: React.FunctionComponent<IFilterSubSlot>;
 }
-export declare const resObject: (res?: (ISlotComponent<any> | IConditionalSlot<{}>)[] | undefined) => {
+export declare const resObject: (res?: (ISlotComponent<any> | IConditionalSlot<{}> | IConditionsComponent)[] | undefined) => {
     [x: string]: boolean;
 };
-declare const FilterSlot: INonSlotComponent;
+declare const FilterSlot: IFilterSlotComponent;
 export default FilterSlot;
