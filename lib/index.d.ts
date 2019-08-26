@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ConditionalSlot, { IConditionalSlot, IConditionalSlotBase } from './ConditionalSlot';
+import useChildren from './utils/useChildren';
 interface ISlot<T> {
     /**
      * Default children of element, if any. Otherwise, nothing will be shown.
@@ -17,6 +18,10 @@ interface ISlot<T> {
      * Elements or indexed children object passed for filtering
      */
     scope: any;
+    /**
+     * Slottable component test
+     */
+    test?: <S = any>(props: S) => boolean;
     /**
      * Display all if multiple slots are passed
      */
@@ -72,13 +77,7 @@ export interface ISortChildrenEl {
  * @param {React.ComponentType<any>} [Element=React.Fragment] - Element for slotting, default is fragment
  */
 export declare const createSlot: IOverloadCreateSlot;
-/**
- * Indexes React children for faster access by Slot components
- * @param scope - react children, in any format
- */
-export declare const useChildren: (scope: any) => Map<string | symbol, ISortChildrenEl[]>;
 import FilterSlot from './FilterSlot';
 export { FilterSlot as NonSlotted };
-export { FilterSlot };
-export { ConditionalSlot };
+export { FilterSlot as FilterSlot, useChildren, ConditionalSlot };
 export default createSlot;
