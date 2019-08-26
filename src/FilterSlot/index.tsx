@@ -66,10 +66,7 @@ export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot | I
 };
 
 const FilterSlotComponent = ({ scope, exclude, include, grouped, all }: IFilterSlot) => {
-  let childrenObj = scope as IIndexedChildren;
-  if (typeof childrenObj !== 'object' || childrenObj.get === undefined) {
-    childrenObj = useChildren(scope);
-  }
+  const childrenObj = useChildren(scope);
   const includeEls = resObject(include);
   const excludeEls = resObject(exclude);
   const ignoreSlot = (el: symbol | string) => {

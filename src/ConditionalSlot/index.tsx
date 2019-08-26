@@ -69,10 +69,7 @@ export const evalSlots = (arr: TConditionalSlotArray, childrenObj: IIndexedChild
 };
 
 const slotEvalIf = ({scope, excludes, includes, condition}: IConditionalSlotBase) => {
-  let childrenObj = scope as IIndexedChildren;
-  if (typeof childrenObj !== 'object' || childrenObj.get === undefined) {
-    childrenObj = useChildren(scope);
-  }
+  const childrenObj = useChildren(scope);
   const include = scope && includes ? evalSlots(includes, childrenObj) : true;
   const exclude = scope && excludes ? evalSlots(excludes, childrenObj) : true;
   const conditional = condition !== undefined ? Boolean(condition) : true;

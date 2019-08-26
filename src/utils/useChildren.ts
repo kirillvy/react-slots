@@ -6,6 +6,13 @@ import {IIndexedChildren, ISortChildrenEl} from '..';
  * @param scope - react children, in any format
  */
 const useChildren = (scope: any): IIndexedChildren => {
+  if (
+    typeof scope === 'object' &&
+    scope.get !== undefined &&
+    scope.get('$$isSlottedChildren') !== undefined
+  ) {
+    return scope as IIndexedChildren;
+  }
   if (scope === undefined || scope.length === 0) {
     return new Map();
   }

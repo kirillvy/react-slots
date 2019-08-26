@@ -50,6 +50,7 @@ const Card: React.FC = ({children}) => (
   </div>
 );
 
+
 stories.add(
   'Card component',
   withReadme(Readme, () => (
@@ -58,6 +59,9 @@ stories.add(
       xzzxvv
       <div>ggg</div>
       <CardContextCard>
+        <CardTopText.After>
+          <p>yes card here</p>
+        </CardTopText.After>
         <CardTopText>
           <p>Name of the Card</p>
         </CardTopText>
@@ -67,6 +71,9 @@ stories.add(
         <CardTopText>
           <p>Name of the Card 3</p>
         </CardTopText>
+        <CardTopText.Before>
+          <p>no card here</p>
+        </CardTopText.Before>
         <CardTopText>
           <p>Name of the Card 4</p>
         </CardTopText>
