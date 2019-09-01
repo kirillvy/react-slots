@@ -11,6 +11,10 @@ interface ISlot<T> {
    */
   children?: any;
   /**
+   * Props that will always be rendered, no matter the scenario
+   */
+  props?: T;
+  /**
    * default props to use when the default element is rendered
    */
   defaultProps?: JSX.IntrinsicAttributes & React.PropsWithChildren<T>;
@@ -46,7 +50,18 @@ interface ISlot<T> {
   /**
    * Designate the children prop as the default element, the fallback element or both
    */
-  childIs?: 'feedback' | 'default' | 'both';
+  childIs?: 'fallback' | 'default' | 'both';
+  /**
+   * Component is always rendered.
+   */
+  unconditional?: boolean;
+}
+
+interface IRenderAs {
+  /**
+   * Element injected for rendering instead of default. Any props will have to be compatible.
+   */
+  renderAs?: React.ComponentType | keyof JSX.IntrinsicElements;
 }
 
 interface ISubSlot<T> extends Partial<ISlot<T>> {
@@ -75,14 +90,14 @@ export interface ISlotComponent<T> extends React.FunctionComponent<T> {
 interface IOverloadCreateSlot {
   <T extends {}, S extends keyof JSX.IntrinsicElements>(
     Element?: React.ComponentType<T & Partial<JSX.IntrinsicElements[S]>>,
-  ): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
+  ): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]> & IRenderAs>;
   <S extends keyof JSX.IntrinsicElements, T extends {}>(
     Element?: React.ComponentType<T & Partial<JSX.IntrinsicElements[S]>>,
-  ): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
+  ): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]> & IRenderAs>;
   <T extends keyof JSX.IntrinsicElements>(
     Element: T | React.ComponentType<Partial<JSX.IntrinsicElements[T]>>,
-  ): ISlotComponent<Partial<JSX.IntrinsicElements[T]>>;
-  <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
+  ): ISlotComponent<Partial<JSX.IntrinsicElements[T]> & IRenderAs>;
+  <T extends {}>(Element?: React.ComponentType): ISlotComponent<T & IRenderAs>;
 }
 
 interface IHeaderFooter extends React.FunctionComponent {
@@ -105,19 +120,19 @@ type SlotType<T = {}, S = {}> =
 
 const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T>> => (
   { scope, children: defaultElement, multiple = false, defaultProps, passedProps, withContext,
-    fallback, fallbackProps, childIs, test },
+    fallback, fallbackProps, props, childIs, test },
 ) => {
   const childrenObj = useChildren(scope);
   const injectSlot = (child: JSX.Element, i?: number) => {
     if (withContext === true  && defaultElement !== undefined) {
-      if (childIs === 'feedback') {
+      if (childIs === 'fallback') {
         return null;
       }
       if (Element.Context.Provider === undefined) {
         return null;
       }
-      const contextChildren = React.cloneElement(child, {...passedProps });
-      return React.cloneElement(child, { key: i, ...passedProps }, (
+      const contextChildren = React.cloneElement(child, {...props, ...passedProps });
+      return React.cloneElement(child, { key: i, ...props, ...passedProps }, (
       <Element.Context.Provider
         key={i}
         value={useChildren(contextChildren.props.children)}
@@ -126,23 +141,24 @@ const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T
       </Element.Context.Provider>
       ));
     }
-    const props: any = child.props;
+    const childProps: any = child.props;
     if (child.props === undefined) {
       return child;
     }
-    if (props.hasOwnProperty('children')) {
-      return React.cloneElement(child, { key: i, ...passedProps });
+    if (childProps.hasOwnProperty('children')) {
+      return React.cloneElement(child, { key: i, ...props, ...passedProps });
     } else {
-      return React.cloneElement(child, { key: i, ...defaultProps, ...passedProps }, defaultElement);
+      return React.cloneElement(child, { key: i, ...props, ...defaultProps, ...passedProps }, defaultElement);
     }
   };
   const res = childrenObj.get(Element.displaySymbol);
   const headersList = childrenObj.get(Element.Before.displaySymbol) || [];
   const footersList = childrenObj.get(Element.After.displaySymbol) || [];
+  console.log(headersList)
   const headers = headersList.map((el) => el.child);
   const footers = footersList.map((el) => el.child);
   if (res === undefined) {
-    if ((childIs === 'feedback' || childIs === 'both') && defaultElement !== undefined) {
+    if ((childIs === 'fallback' || childIs === 'both') && defaultElement !== undefined) {
       return React.cloneElement(defaultElement, fallbackProps);
     }
     if (fallback !== undefined) {
@@ -181,8 +197,9 @@ const ConditionalSubSlotFactory = <T extends {}>(Element: ISlotComponent<T>): Re
   return <Context.Consumer>{(value) => <Element.Slot.Conditional {...props} scope={value}/>}</Context.Consumer>;
 };
 
-const Header: React.FC = ({children}) => React.createElement(React.Fragment, {}, children);
-const Footer: React.FC = ({children}) => React.createElement(React.Fragment, {}, children);
+const HeaderFooter: () => React.FC<IRenderAs> = () => (
+  {children, renderAs}
+  ) => React.createElement(renderAs || React.Fragment, {}, children);
 
 /**
  * Slot constructor
@@ -193,22 +210,26 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
   ) => {
     type CurType = SlotType<T, S>;
     const SlottedElement = (
-      ({ children, ...props }: any) => React.createElement(Element, props, children)
-      ) as ISlotComponent<CurType>;
+        (
+          { children, renderAs, ...props }: any,
+        ) => React.createElement(renderAs || Element, props, children)
+      ) as unknown as ISlotComponent<CurType>;
     SlottedElement.Context = React.createContext(null);
     SlottedElement.displaySymbol = Symbol();
+    SlottedElement.Before = HeaderFooter() as IHeaderFooter;
+    SlottedElement.Before.displaySymbol = Symbol();
+    SlottedElement.Before.Conditional = createConditionalSlot(SlottedElement.Before as React.ComponentType);
+    SlottedElement.Before.Conditional.displaySymbol = SlottedElement.Before.displaySymbol;
+    SlottedElement.After = HeaderFooter() as IHeaderFooter;
+    SlottedElement.After.displaySymbol = Symbol();
+    SlottedElement.After.Conditional = createConditionalSlot(SlottedElement.After as React.ComponentType);
+    SlottedElement.After.Conditional.displaySymbol = SlottedElement.After.displaySymbol;
     SlottedElement.Slot = SlotFactory<CurType>(SlottedElement) as ISlotConditional<ISlot<CurType>>;
     SlottedElement.Slot.displaySymbol = Symbol();
     SlottedElement.Slot.Conditional = createConditionalSlot(SlottedElement.Slot as React.ComponentType);
     SlottedElement.SubSlot = SubSlotFactory<CurType>(SlottedElement) as ISlotConditional<ISubSlot<CurType>>;
     SlottedElement.SubSlot.displaySymbol = Symbol();
     SlottedElement.SubSlot.Conditional = ConditionalSubSlotFactory<CurType>(SlottedElement);
-    SlottedElement.Before = Header as IHeaderFooter;
-    SlottedElement.Before.displaySymbol = Symbol();
-    SlottedElement.Before.Conditional = createConditionalSlot(SlottedElement.Before as React.ComponentType);
-    SlottedElement.After = Footer as IHeaderFooter;
-    SlottedElement.After.displaySymbol = Symbol();
-    SlottedElement.After.Conditional = createConditionalSlot(SlottedElement.After as React.ComponentType);
     if (typeof Element !== 'string') {
       SlottedElement.defaultProps = Element.defaultProps;
       SlottedElement.contextTypes = Element.contextTypes;

@@ -8,6 +8,11 @@ multiple rendering. It can be used for creating reusable components and UI kits.
 The main component created by the createSlot function accepts and passes the same props as
 the component or JSX element indicated.
 
+
+Name | Type | Description
+--- | --- | ---
+renderAs | `React.ComponentType \| keyof JSX.IntrinsicElements` | Element injected for rendering instead of default. Any props will have to be compatible.
+
 ### Component.Slot
 
 The slot consumes an array of children and filters for ones marked as the component
