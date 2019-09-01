@@ -154,7 +154,6 @@ const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T
   const res = childrenObj.get(Element.displaySymbol);
   const headersList = childrenObj.get(Element.Before.displaySymbol) || [];
   const footersList = childrenObj.get(Element.After.displaySymbol) || [];
-  console.log(headersList)
   const headers = headersList.map((el) => el.child);
   const footers = footersList.map((el) => el.child);
   if (res === undefined) {
@@ -198,7 +197,7 @@ const ConditionalSubSlotFactory = <T extends {}>(Element: ISlotComponent<T>): Re
 };
 
 const HeaderFooter: () => React.FC<IRenderAs> = () => (
-  {children, renderAs}
+  {children, renderAs},
   ) => React.createElement(renderAs || React.Fragment, {}, children);
 
 /**

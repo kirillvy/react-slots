@@ -60,7 +60,7 @@ const Card2: React.FC = ({ children }) => (
       Text before conditional card
     </CardContextCard.Before>
   </Card>
-)
+);
 
 stories.add(
   'Card component',
