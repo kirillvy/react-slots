@@ -3,6 +3,12 @@
 react-slots-library is a library for managing React components as slots, with scoped, conditional and
 multiple rendering. It can be used for creating reusable components and UI kits.
 
+To begin, install with
+
+```
+npm i react-slots-library
+```
+
 ## Component properties
 
 The main component created by the createSlot function accepts and passes the same props as
@@ -19,7 +25,7 @@ The slot consumes an array of children and filters for ones marked as the compon
 
 Name | Type | Description
 --- | --- | ---
-scope | `any \| IndexedChildren` | Elements passed for filtering, indexed using `useChildren`
+scope | `any \| IndexedChildren` | Elements passed for filtering, indexed using `useScope`
 children? | `any` | Default children of element, if any.
 defaultProps? | `JSX.IntrinsicAttributes & React.PropsWithChildren<T>` | default props to use with default element
 passedProps? | `T` | props passed to the element from the component containing the slot
@@ -103,7 +109,7 @@ Component that renders if none of the elements have rendered. Must be the last c
 To begin using react-slots-library, import the slot creator and the children indexer.
 
 ```js
-import { createSlot, useChildren }  from 'react-slots-library';
+import { createSlot, useScope }  from 'react-slots-library';
 ```
 
 Then create several slots for use in other components. The slot creator can accept elements and JSX intrinsic
@@ -126,7 +132,7 @@ Now they can be inserted into the template element through the .Slot property. M
 
 ```jsx
 const Card = ({children}) => {
-  const scope = useChildren(children);
+  const scope = useScope(children);
   return <div>
     <div>
         <CardTopText.Slot scope={scope} />
@@ -180,7 +186,7 @@ To render multiple components in one slot, enable to `multiple` prop.
 export const SingleComment = createSlot<'div'>(div);
 
 const CommentList = ({children}) => {
-  const scope = useChildren(children);
+  const scope = useScope(children);
   return (
     <div>
       <div>Comments:</div>
@@ -235,7 +241,7 @@ export const CommentEmail = createSlot<'div'>(Email);
 export const CommentMessage = createSlot<'div'>(Message);
 
 const CommentComponent = ({ children, ...props}) => {
-  const scope = useChildren(children);
+  const scope = useScope(children);
   return (
   <Comment {...props}>
     <div>
@@ -251,7 +257,7 @@ const CommentComponent = ({ children, ...props}) => {
 export const SingleComment = createSlot<'div'>(CommentComponent);
 
 const CommentList = ({children}) => {
-  const scope = useChildren(children);
+  const scope = useScope(children);
   return (
   <div>
     <div>Comments:</div>
@@ -271,7 +277,7 @@ export const CommentMessage = createSlot<'div'>(Message);
 export const SingleComment = createSlot<'div'>(Comment);
 
 const Comment = ({children}) => {
-  const scope = useChildren(children);
+  const scope = useScope(children);
   return (
   <>
     <div>
@@ -284,7 +290,7 @@ const Comment = ({children}) => {
 };
 
 const InheritanceCommentList = ({children}) => {
-  const scope = useChildren(children);
+  const scope = useScope(children);
   return (
   <div>
     <div>Comments:</div>
@@ -294,7 +300,7 @@ const InheritanceCommentList = ({children}) => {
 }
 
 const CompositionCommentList = ({children}) => {
-  const scope = useChildren(children);
+  const scope = useScope(children);
   return (
   <div>
     <div>Comments:</div>
@@ -363,7 +369,7 @@ Then insert it where you would like to process non-slottable children, as you wo
 ```jsx
 
 const CommentList = ({children}) => {
-  const scope = useChildren(children);
+  const scope = useScope(children);
   return (
   <div>
     <FilterSlot scope={scope} />
@@ -384,7 +390,7 @@ through the FilterSlot.SubSlot component.
 ```jsx
 
 const CommentList = ({children}) => {
-  const scope = useChildren(children);
+  const scope = useScope(children);
   return (
   <div>
     <div><FilterSlot scope={scope} /></div>
@@ -502,7 +508,7 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
 ## Changelog
 
 - 0.1
-  - Performance optimizations, optional pre-indexing by useChildren function.
+  - Performance optimizations, optional pre-indexing by useScope function.
   - clarifications on flags for non-slotted elements.
   - clarifications on default, fallback and passed props.
 - 0.2 (feature addition lock for 1.0)
@@ -517,7 +523,7 @@ slotted element inside itself, as this can lead to unpredictable behavior when u
   - Documentation
 - 1.0
   - breaking changes 
-    - Mandatory pre-indexing with useChildren
+    - Mandatory pre-indexing with useScope
 - 1.1
   - Advanced filtering for conditional slots and non-slotted components.
   - NonSlotted (now FilterSlot) is deprecated

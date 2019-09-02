@@ -3,9 +3,9 @@ import * as React from 'react';
 import ConditionalSlot, {
   IConditionalSlot, IConditionalSlotBase, createConditionalSlot,
 } from './ConditionalSlot';
-import useChildren from './utils/useChildren';
+import useScope from './utils/useScope';
 
-interface ISlot<T> {
+interface ISlot<T = any> {
   /**
    * Default children of element, if any. Otherwise, nothing will be shown.
    */
@@ -57,11 +57,13 @@ interface ISlot<T> {
   unconditional?: boolean;
 }
 
-interface IRenderAs {
+type TAny = any;
+
+interface IRenderAs extends TAny {
   /**
    * Element injected for rendering instead of default. Any props will have to be compatible.
    */
-  renderAs?: React.ComponentType | keyof JSX.IntrinsicElements;
+  renderAs: React.ComponentType | keyof JSX.IntrinsicElements;
 }
 
 interface ISubSlot<T> extends Partial<ISlot<T>> {
@@ -78,7 +80,7 @@ export interface ISubSlotConditional<T> extends React.FunctionComponent<T> {
   Conditional: React.FC<T & IConditionalSlotBase>;
 }
 
-export interface ISlotComponent<T> extends React.FunctionComponent<T> {
+export interface ISlotComponent<T = any> extends React.FunctionComponent<T | IRenderAs | {children?: any}> {
   Context: React.Context<any>;
   displaySymbol: symbol;
   Slot: ISlotConditional<ISlot<T>>;
@@ -88,16 +90,17 @@ export interface ISlotComponent<T> extends React.FunctionComponent<T> {
 }
 
 interface IOverloadCreateSlot {
-  <T extends {}, S extends keyof JSX.IntrinsicElements>(
-    Element?: React.ComponentType<T & Partial<JSX.IntrinsicElements[S]>>,
-  ): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]> & IRenderAs>;
-  <S extends keyof JSX.IntrinsicElements, T extends {}>(
-    Element?: React.ComponentType<T & Partial<JSX.IntrinsicElements[S]>>,
-  ): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]> & IRenderAs>;
+  (Element: keyof JSX.IntrinsicElements | React.ComponentType): ISlotComponent;
   <T extends keyof JSX.IntrinsicElements>(
-    Element: T | React.ComponentType<Partial<JSX.IntrinsicElements[T]>>,
-  ): ISlotComponent<Partial<JSX.IntrinsicElements[T]> & IRenderAs>;
-  <T extends {}>(Element?: React.ComponentType): ISlotComponent<T & IRenderAs>;
+    Element: T | React.ComponentType,
+  ): ISlotComponent<Partial<JSX.IntrinsicElements[T]>>;
+  <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
+  <S extends keyof JSX.IntrinsicElements, T extends {}>(
+    Element?: React.ComponentType,
+  ): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
+  <T extends {}, S extends keyof JSX.IntrinsicElements>(
+    Element?: React.ComponentType,
+  ): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 
 interface IHeaderFooter extends React.FunctionComponent {
@@ -122,7 +125,7 @@ const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T
   { scope, children: defaultElement, multiple = false, defaultProps, passedProps, withContext,
     fallback, fallbackProps, props, childIs, test },
 ) => {
-  const childrenObj = useChildren(scope);
+  const childrenObj = useScope(scope);
   const injectSlot = (child: JSX.Element, i?: number) => {
     if (withContext === true  && defaultElement !== undefined) {
       if (childIs === 'fallback') {
@@ -135,7 +138,7 @@ const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T
       return React.cloneElement(child, { key: i, ...props, ...passedProps }, (
       <Element.Context.Provider
         key={i}
-        value={useChildren(contextChildren.props.children)}
+        value={useScope(contextChildren.props.children)}
       >
       {defaultElement}
       </Element.Context.Provider>
@@ -196,9 +199,11 @@ const ConditionalSubSlotFactory = <T extends {}>(Element: ISlotComponent<T>): Re
   return <Context.Consumer>{(value) => <Element.Slot.Conditional {...props} scope={value}/>}</Context.Consumer>;
 };
 
-const HeaderFooter: () => React.FC<IRenderAs> = () => (
-  {children, renderAs},
-  ) => React.createElement(renderAs || React.Fragment, {}, children);
+const SlottableElement: (
+    defaultElement?: React.ComponentType | keyof JSX.IntrinsicElements,
+  ) => React.FC<IRenderAs> = (defaultElement = React.Fragment) => (
+  {children, renderAs, ...props},
+  ) => React.createElement(renderAs || defaultElement, props, children);
 
 /**
  * Slot constructor
@@ -208,18 +213,14 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
   Element: React.ComponentType | keyof JSX.IntrinsicElements = React.Fragment,
   ) => {
     type CurType = SlotType<T, S>;
-    const SlottedElement = (
-        (
-          { children, renderAs, ...props }: any,
-        ) => React.createElement(renderAs || Element, props, children)
-      ) as unknown as ISlotComponent<CurType>;
+    const SlottedElement = SlottableElement(Element) as ISlotComponent<CurType>;
     SlottedElement.Context = React.createContext(null);
     SlottedElement.displaySymbol = Symbol();
-    SlottedElement.Before = HeaderFooter() as IHeaderFooter;
+    SlottedElement.Before = SlottableElement() as IHeaderFooter;
     SlottedElement.Before.displaySymbol = Symbol();
     SlottedElement.Before.Conditional = createConditionalSlot(SlottedElement.Before as React.ComponentType);
     SlottedElement.Before.Conditional.displaySymbol = SlottedElement.Before.displaySymbol;
-    SlottedElement.After = HeaderFooter() as IHeaderFooter;
+    SlottedElement.After = SlottableElement() as IHeaderFooter;
     SlottedElement.After.displaySymbol = Symbol();
     SlottedElement.After.Conditional = createConditionalSlot(SlottedElement.After as React.ComponentType);
     SlottedElement.After.Conditional.displaySymbol = SlottedElement.After.displaySymbol;
@@ -251,7 +252,11 @@ export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} 
 };
 
 import FilterSlot from './FilterSlot';
-export { FilterSlot as NonSlotted };
-export { FilterSlot as FilterSlot, useChildren, ConditionalSlot };
+
+export { FilterSlot,
+  FilterSlot as NonSlotted,
+  useScope,
+  useScope as useChildren,
+  ConditionalSlot };
 
 export default createSlot;

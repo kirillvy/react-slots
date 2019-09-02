@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ConditionalSlot, { IConditionalSlot, IConditionalSlotBase } from './ConditionalSlot';
-import useChildren from './utils/useChildren';
-interface ISlot<T> {
+import useScope from './utils/useScope';
+interface ISlot<T = any> {
     /**
      * Default children of element, if any. Otherwise, nothing will be shown.
      */
@@ -52,11 +52,12 @@ interface ISlot<T> {
      */
     unconditional?: boolean;
 }
-interface IRenderAs {
+declare type TAny = any;
+interface IRenderAs extends TAny {
     /**
      * Element injected for rendering instead of default. Any props will have to be compatible.
      */
-    renderAs?: React.ComponentType | keyof JSX.IntrinsicElements;
+    renderAs: React.ComponentType | keyof JSX.IntrinsicElements;
 }
 interface ISubSlot<T> extends Partial<ISlot<T>> {
     scope: React.Context<any>;
@@ -69,7 +70,9 @@ export interface ISubSlotConditional<T> extends React.FunctionComponent<T> {
     displaySymbol: symbol;
     Conditional: React.FC<T & IConditionalSlotBase>;
 }
-export interface ISlotComponent<T> extends React.FunctionComponent<T> {
+export interface ISlotComponent<T = any> extends React.FunctionComponent<T | IRenderAs | {
+    children?: any;
+}> {
     Context: React.Context<any>;
     displaySymbol: symbol;
     Slot: ISlotConditional<ISlot<T>>;
@@ -78,10 +81,11 @@ export interface ISlotComponent<T> extends React.FunctionComponent<T> {
     After: IHeaderFooter;
 }
 interface IOverloadCreateSlot {
-    <T extends {}, S extends keyof JSX.IntrinsicElements>(Element?: React.ComponentType<T & Partial<JSX.IntrinsicElements[S]>>): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]> & IRenderAs>;
-    <S extends keyof JSX.IntrinsicElements, T extends {}>(Element?: React.ComponentType<T & Partial<JSX.IntrinsicElements[S]>>): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]> & IRenderAs>;
-    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType<Partial<JSX.IntrinsicElements[T]>>): ISlotComponent<Partial<JSX.IntrinsicElements[T]> & IRenderAs>;
-    <T extends {}>(Element?: React.ComponentType): ISlotComponent<T & IRenderAs>;
+    (Element: keyof JSX.IntrinsicElements | React.ComponentType): ISlotComponent;
+    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType): ISlotComponent<Partial<JSX.IntrinsicElements[T]>>;
+    <T extends {}>(Element?: React.ComponentType): ISlotComponent<T>;
+    <S extends keyof JSX.IntrinsicElements, T extends {}>(Element?: React.ComponentType): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
+    <T extends {}, S extends keyof JSX.IntrinsicElements>(Element?: React.ComponentType): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 interface IHeaderFooter extends React.FunctionComponent {
     displaySymbol: symbol;
@@ -99,6 +103,5 @@ export interface ISortChildrenEl {
  */
 export declare const createSlot: IOverloadCreateSlot;
 import FilterSlot from './FilterSlot';
-export { FilterSlot as NonSlotted };
-export { FilterSlot as FilterSlot, useChildren, ConditionalSlot };
+export { FilterSlot, FilterSlot as NonSlotted, useScope, useScope as useChildren, ConditionalSlot };
 export default createSlot;

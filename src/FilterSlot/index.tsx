@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ISlotComponent, IIndexedChildren, ISortChildrenEl } from '../index';
-import useChildren from '../utils/useChildren';
+import useScope from '../utils/useScope';
 import {
   IConditionalSlot,
   IConditionsComponent,
@@ -66,7 +66,7 @@ export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot | I
 };
 
 const FilterSlotComponent = ({ scope, exclude, include, grouped, all }: IFilterSlot) => {
-  const childrenObj = useChildren(scope);
+  const childrenObj = useScope(scope);
   const includeEls = resObject(include);
   const excludeEls = resObject(exclude);
   const ignoreSlot = (el: symbol | string) => {

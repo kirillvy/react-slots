@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withReadme } from 'storybook-readme';
-import { createSlot, useChildren, FilterSlot, ConditionalSlot } from '.';
+import { createSlot, useScope, FilterSlot, ConditionalSlot } from '.';
 
 /**
  * imports of README file
@@ -18,7 +18,7 @@ export const CardTopText = createSlot();
 export const CardBottomText = createSlot<'div'>('div');
 
 const Card: React.FC = ({ children }) => {
-  const scope = useChildren(children);
+  const scope = useScope(children);
   return (
     <div>
       <ConditionalSlot condition={true} excludes={[]} scope={scope}>
@@ -79,7 +79,7 @@ stories.add(
           <CardTopText>
             <p>Name of the Card 2</p>
           </CardTopText>
-          <CardTopText renderAs={'div'} onClick={() => alert('hello')}>
+          <CardTopText onClick={() => alert('hello')}>
             <p>Name of the Card 3</p>
           </CardTopText>
           <CardTopText.Before>

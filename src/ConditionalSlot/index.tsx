@@ -1,6 +1,6 @@
 import React from 'react';
 import { ISlotComponent, IIndexedChildren } from '../index';
-import useChildren from '../utils/useChildren';
+import useScope from '../utils/useScope';
 import FilterSlot from '../FilterSlot';
 
 export interface IConditionalSlotBase {
@@ -69,7 +69,7 @@ export const evalSlots = (arr: TConditionalSlotArray, childrenObj: IIndexedChild
 };
 
 const slotEvalIf = ({scope, excludes, includes, condition}: IConditionalSlotBase) => {
-  const childrenObj = useChildren(scope);
+  const childrenObj = useScope(scope);
   const include = scope && includes ? evalSlots(includes, childrenObj) : true;
   const exclude = scope && excludes ? evalSlots(excludes, childrenObj) : true;
   const conditional = condition !== undefined ? Boolean(condition) : true;
@@ -84,7 +84,7 @@ export function createConditionalSlot(
   function ConditionalSlot(props: IConditionalSlotBase) {
     const {children, scope, excludes, includes, condition, ...newProps} = props;
     const elProps = Element === React.Fragment ? {} : {scope, ...newProps};
-    const scopeObj = useChildren(children);
+    const scopeObj = useScope(children);
     const evalResult = parent === undefined ? slotEvalIf({scope, excludes, includes, condition}) : true;
     const obj = scopeObj.get(ConditionalSlot.displaySymbol);
     let res: React.ReactNode = null;

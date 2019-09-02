@@ -5,7 +5,7 @@ import {IIndexedChildren, ISortChildrenEl} from '..';
  * Indexes React children for faster access by Slot components
  * @param scope - react children, in any format
  */
-const useChildren = (scope: any): IIndexedChildren => {
+const useScope = (scope: any): IIndexedChildren => {
   if (
     typeof scope === 'object' &&
     scope.get !== undefined &&
@@ -48,4 +48,4 @@ const useChildren = (scope: any): IIndexedChildren => {
   return result;
 };
 
-export default useChildren;
+export default useScope;
