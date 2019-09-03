@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISlotComponent } from '../index';
+import { ISlotComponent } from '../utils/createSlot';
 export interface IConditionalSlotBase {
     children?: any;
     /**
@@ -37,8 +37,6 @@ export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase 
     displaySymbol: symbol;
     typeSymbol: symbol;
 }
-export declare const isConditionsComponent: (entity: ISlotComponent<any> | IConditionalSlot<{}> | IConditionsComponent) => entity is IConditionsComponent;
-export declare const evalSlots: (arr: (ISlotComponent<any> | IConditionsComponent)[], childrenObj: Map<string | symbol, import("..").ISortChildrenEl[]>) => boolean;
 export declare function createConditionalSlot(Element?: React.ComponentType, typeSymbol?: symbol, parent?: IConditionalSlot): IConditionalSlot;
 declare const ConditionalSlotElement: IConditionalSlot;
 export default ConditionalSlotElement;

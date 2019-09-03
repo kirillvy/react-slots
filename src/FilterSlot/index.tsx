@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { ISlotComponent, IIndexedChildren, ISortChildrenEl } from '../index';
-import useScope from '../utils/useScope';
+import { ISlotComponent, ISortChildrenEl } from '../utils/createSlot';
+import useScope, {isConditionsComponent} from '../utils/useScope';
 import {
   IConditionalSlot,
   IConditionsComponent,
-  isConditionsComponent,
 } from '../ConditionalSlot';
 
 interface IFilterSlot {

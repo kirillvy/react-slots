@@ -19,13 +19,17 @@ Name | Type | Description
 --- | --- | ---
 renderAs | `React.ComponentType \| keyof JSX.IntrinsicElements` | Element injected for rendering instead of default. Any props will have to be compatible.
 
+### ScopeMap
+
+The scope object, can be used to search for Includes and Excludes, as with ConditionalSlot.
+
 ### Component.Slot
 
 The slot consumes an array of children and filters for ones marked as the component
 
 Name | Type | Description
 --- | --- | ---
-scope | `any \| IndexedChildren` | Elements passed for filtering, indexed using `useScope`
+scope | `any \| ScopeMap` | Elements passed for filtering, indexed using `useScope`
 children? | `any` | Default children of element, if any.
 defaultProps? | `JSX.IntrinsicAttributes & React.PropsWithChildren<T>` | default props to use with default element
 passedProps? | `T` | props passed to the element from the component containing the slot

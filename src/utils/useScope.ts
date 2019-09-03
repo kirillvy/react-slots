@@ -1,23 +1,65 @@
 import React from 'react';
-import {IIndexedChildren, ISortChildrenEl} from '..';
+import { ISortChildrenEl, ISlotComponent } from './createSlot';
+import { IConditionalSlot } from '../ConditionalSlot';
 
 /**
  * Indexes React children for faster access by Slot components
  * @param scope - react children, in any format
  */
-const useScope = (scope: any): IIndexedChildren => {
-  if (
-    typeof scope === 'object' &&
-    scope.get !== undefined &&
-    scope.get('$$isSlottedChildren') !== undefined
-  ) {
-    return scope as IIndexedChildren;
+
+export interface IConditionsComponent {
+  /**
+   * Slottable component for filtering
+   */
+  slot: ISlotComponent<any>;
+  /**
+   * Slottable component test
+   */
+  test: <T = any>(props: T) => boolean;
+}
+
+type TConditionalSlot = ISlotComponent<any> | IConditionsComponent;
+type TConditionalSlotArray = Array<ISlotComponent<any> | IConditionsComponent>;
+
+export const isConditionsComponent = (
+  entity: ISlotComponent<any> | IConditionsComponent | IConditionalSlot,
+  ): entity is IConditionsComponent => {
+  return (entity as IConditionsComponent).test !== undefined;
+};
+
+class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
+  public includes(...arr: TConditionalSlotArray) {
+    return this.evalSlots(arr);
+  }
+  public excludes(...arr: TConditionalSlotArray) {
+    return !this.evalSlots(arr);
+  }
+  private evalSlots(arr: TConditionalSlot[]) {
+    return arr.every((el) => {
+      if (isConditionsComponent(el)) {
+        const {slot, test} = el;
+        if (React.isValidElement(slot)) {
+          return this.get(slot.displaySymbol) !== undefined && test(slot.props) === true;
+        }
+        return false;
+      }
+      return this.get(el.displaySymbol) !== undefined;
+    });
+  }
+}
+// function ScopeMap() { };
+// ScopeMap.prototype = new Map;
+// ScopeMap.prototype.add = ScopeMap.prototype.push
+
+const useScope = (scope: any): ScopeMap => {
+  if (scope instanceof ScopeMap) {
+    return scope;
   }
   if (scope === undefined || scope.length === 0) {
-    return new Map();
+    return new ScopeMap();
   }
   const childrenCount = React.Children.count(scope);
-  const result = new Map<symbol | string, ISortChildrenEl[]>();
+  const result = new ScopeMap();
   const injectSlot = (child: JSX.Element, index: number) => {
     let childType = 'string';
     if (React.isValidElement(child) && child.type !== undefined) {

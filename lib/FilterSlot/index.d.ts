@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ISlotComponent } from '../index';
+import { ISlotComponent } from '../utils/createSlot';
 import { IConditionalSlot, IConditionsComponent } from '../ConditionalSlot';
 interface IFilterSlot {
     /**
@@ -29,7 +29,7 @@ interface IFilterSubSlot extends IFilterSlot {
 interface IFilterSlotComponent extends React.FC<IFilterSlot> {
     SubSlot: React.FunctionComponent<IFilterSubSlot>;
 }
-export declare const resObject: (res?: (ISlotComponent<any> | IConditionalSlot<{}> | IConditionsComponent)[] | undefined) => {
+export declare const resObject: (res?: (IConditionalSlot<{}> | ISlotComponent<any> | IConditionsComponent)[] | undefined) => {
     [x: string]: boolean;
 };
 declare const FilterSlot: IFilterSlotComponent;

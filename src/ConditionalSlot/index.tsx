@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISlotComponent, IIndexedChildren } from '../index';
+import { ISlotComponent } from '../utils/createSlot';
 import useScope from '../utils/useScope';
 import FilterSlot from '../FilterSlot';
 
@@ -49,29 +49,10 @@ const IF = Symbol();
 const ELSEIF = Symbol();
 const ELSE = Symbol();
 
-export const isConditionsComponent = (
-  entity: ISlotComponent<any> | IConditionsComponent | IConditionalSlot,
-  ): entity is IConditionsComponent => {
-  return (entity as IConditionsComponent).test !== undefined;
-};
-
-export const evalSlots = (arr: TConditionalSlotArray, childrenObj: IIndexedChildren) => {
-  return arr.every((el) => {
-    if (isConditionsComponent(el)) {
-      const {slot, test} = el;
-      if (React.isValidElement(slot)) {
-        return childrenObj.get(slot.displaySymbol) !== undefined && test(slot.props) === true;
-      }
-      return false;
-    }
-    return childrenObj.get(el.displaySymbol) !== undefined;
-  });
-};
-
 const slotEvalIf = ({scope, excludes, includes, condition}: IConditionalSlotBase) => {
   const childrenObj = useScope(scope);
-  const include = scope && includes ? evalSlots(includes, childrenObj) : true;
-  const exclude = scope && excludes ? evalSlots(excludes, childrenObj) : true;
+  const include = scope && includes ? childrenObj.includes(...includes) : true;
+  const exclude = scope && excludes ? childrenObj.excludes(...excludes) : true;
   const conditional = condition !== undefined ? Boolean(condition) : true;
   return include && exclude && conditional;
 };

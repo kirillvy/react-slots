@@ -53,18 +53,22 @@ const Card: React.FC = ({ children }) => {
   );
 };
 
-const Card2: React.FC = ({ children }) => (
-  <Card>
-    {children}
-    <CardContextCard.Before>
-      Text before conditional card
-    </CardContextCard.Before>
-  </Card>
-);
+const Card2: React.FC = ({ children }) => {
+  const scope = useScope(children);
+  return (
+    <Card>
+      {children}
+      <CardContextCard.Before>
+        Text before conditional card
+      </CardContextCard.Before>
+    </Card>
+  );
+};
 
 stories.add(
   'Card component',
   withReadme(Readme, () => (
+
     <>f
     <Card2>
         xzzxvv
