@@ -1,6 +1,5 @@
 import React from 'react';
 import { ISortChildrenEl, ISlotComponent } from './createSlot';
-// import { IConditionalSlot } from '../ConditionalSlot';
 
 /**
  * Indexes React children for faster access by Slot components
@@ -26,15 +25,15 @@ export const isConditionsComponent = (
   return (entity as IConditionsComponent).test !== undefined;
 };
 
+const ScopeType = Symbol();
+
 /**
  * Scope object. Slottable elements are tracked as Element.DisplaySymbol
  * Custom components as Element.DisplayName.
  */
 class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
   private lastIndex = -1;
-  constructor() {
-    super();
-  }
+  private instanceType = ScopeType;
   /**
    * Injects element into the scope
    * @param child JSX element to inject
@@ -177,6 +176,9 @@ class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
     return this.get(el.displaySymbol) !== undefined;
   }
 }
+Object.defineProperty(ScopeMap, Symbol.hasInstance, {
+  value: (i: any) => i.instanceType === ScopeType,
+});
 /**
  * Creates scope object for work with slots
  * @param scope - React Children prop

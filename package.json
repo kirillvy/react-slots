@@ -31,10 +31,7 @@
     "slots",
     "react"
   ],
-  "sideEffects": [
-    "./src/ConditionalSlot/index.tsx",
-    "./src/FilterSlot/index.tsx"
-  ],
+  "sideEffects": false,
   "author": "Kirill Vysokolov",
   "license": "MIT",
   "devDependencies": {

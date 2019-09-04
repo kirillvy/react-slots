@@ -98,5 +98,5 @@ export declare type SlotType<T = {}, S = {}> = T extends {} ? S extends keyof JS
  * Slot constructor
  * @param {React.ComponentType<any>} [Element=React.Fragment] - Element for slotting, default is fragment
  */
-export declare const createSlot: IOverloadCreateSlot;
+declare const createSlot: IOverloadCreateSlot;
 export default createSlot;

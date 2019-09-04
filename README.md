@@ -19,10 +19,6 @@ Name | Type | Description
 --- | --- | ---
 renderAs | `React.ComponentType \| keyof JSX.IntrinsicElements` | Element injected for rendering instead of default. Any props will have to be compatible.
 
-### ScopeMap
-
-The scope object, can be used to search for Includes and Excludes, as with ConditionalSlot.
-
 ### Component.Slot
 
 The slot consumes an array of children and filters for ones marked as the component
@@ -60,7 +56,7 @@ scope | `React.Context` | Elements passed for filtering
 To begin using react-slots-library, import the slot creator and the children indexer.
 
 ```js
-import { createSlot, useScope }  from 'react-slots-library';
+import createSlot, { useScope }  from 'react-slots-library';
 ```
 
 Then create several slots for use in other components. The slot creator can accept elements and JSX intrinsic
@@ -437,6 +433,9 @@ solely the default element, solely the fallback element or both, to avoid needle
 In addition, use defaultProps in the Element.Slot element to pass default props, passedProps to forward props
 from other places (overrides defaultProps) and fallBack props to pass props designated for the fallback component.
 
+### ScopeMap
+
+The scope object, can be used to search for Includes and Excludes, as with ConditionalSlot.
 
 ### FilterSlot
 
@@ -490,7 +489,7 @@ the order added.
 
 ### ConditionalSlot.Else
 
-Component that renders if none of the elements have rendered. Must be the last child.
+Component that renders if none of the elements have rendered. Must be the last child, or conditional elements after it won't render..
 
 ## Conditional Slots
 

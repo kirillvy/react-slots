@@ -195,7 +195,7 @@ const SlottableElement: (
  * Slot constructor
  * @param {React.ComponentType<any>} [Element=React.Fragment] - Element for slotting, default is fragment
  */
-export const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} = {}>(
+const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} = {}>(
   Element: React.ComponentType | keyof JSX.IntrinsicElements = React.Fragment,
   ) => {
     type CurType = SlotType<T, S>;

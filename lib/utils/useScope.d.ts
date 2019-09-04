@@ -22,7 +22,7 @@ export declare const isConditionsComponent: (entity: IConditionsComponent | ISlo
  */
 declare class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
     private lastIndex;
-    constructor();
+    private instanceType;
     /**
      * Injects element into the scope
      * @param child JSX element to inject
