@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withReadme } from 'storybook-readme';
-import { createSlot, useScope, FilterSlot, ConditionalSlot } from '.';
+import createSlot, { createConditionalSlot, useScope, ConditionalSlot, FilterSlot } from '.';
 
 /**
  * imports of README file
@@ -13,34 +13,35 @@ import Readme from './README.md';
  */
 const stories = storiesOf('Components', module);
 
-export const CardContextCard = createSlot();
+export const CardContextCard = createConditionalSlot();
 export const CardTopText = createSlot();
+export const CardTopTexts = createSlot();
 export const CardBottomText = createSlot<'div'>('div');
 
 const Card: React.FC = ({ children }) => {
   const scope = useScope(children);
   return (
     <div>
-      <ConditionalSlot condition={true} excludes={[]} scope={scope}>
+      <ConditionalSlot condition={true} scope={scope}>
         hello1
-    <ConditionalSlot.If condition={true} scope={scope}>
+        <ConditionalSlot.If condition={false} scope={scope}>
           hello2
-    </ConditionalSlot.If>
-        <ConditionalSlot.ElseIf condition={false} scope={scope}>
+        </ConditionalSlot.If>
+        <ConditionalSlot.ElseIf condition={true} scope={scope}>
           hello3
-    </ConditionalSlot.ElseIf>
+        </ConditionalSlot.ElseIf>
         <ConditionalSlot.ElseIf condition={false} scope={scope}>
           hello4
-    </ConditionalSlot.ElseIf>
+        </ConditionalSlot.ElseIf>
         <ConditionalSlot.Else>
           hello5
-    </ConditionalSlot.Else>
+        </ConditionalSlot.Else>
       </ConditionalSlot>
       <div>
-        <CardContextCard.Slot scope={scope} withContext={true}>
+        <CardContextCard.Slot.Conditional condition={true} scope={scope} withContext={true}>
           conditional card
-        <CardTopText.SubSlot scope={CardContextCard.Context} multiple={true} />
-        </CardContextCard.Slot>
+          <CardTopText.SubSlot scope={CardContextCard.Context} multiple={true} />
+        </CardContextCard.Slot.Conditional>
       </div>
       <div>
         <CardBottomText.Slot scope={scope} />
@@ -83,7 +84,7 @@ stories.add(
           <CardTopText>
             <p>Name of the Card 2</p>
           </CardTopText>
-          <CardTopText onClick={() => alert('hello')}>
+          <CardTopText>
             <p>Name of the Card 3</p>
           </CardTopText>
           <CardTopText.Before>

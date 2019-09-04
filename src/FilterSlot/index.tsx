@@ -1,10 +1,6 @@
 import * as React from 'react';
-import { ISlotComponent, ISortChildrenEl } from '../utils/createSlot';
-import useScope, {isConditionsComponent} from '../utils/useScope';
-import {
-  IConditionalSlot,
-  IConditionsComponent,
-} from '../ConditionalSlot';
+import { ISortChildrenEl } from '../utils/createSlot';
+import useScope, {TConditionalSlot} from '../utils/useScope';
 
 interface IFilterSlot {
   /**
@@ -14,11 +10,11 @@ interface IFilterSlot {
   /**
    * Array of slottable components for filtering out
    */
-  exclude?: Array<ISlotComponent<any> | IConditionalSlot | IConditionsComponent>;
+  exclude?: TConditionalSlot[];
   /**
    * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
    */
-  include?: Array<ISlotComponent<any> | IConditionsComponent>;
+  include?: TConditionalSlot[];
   /**
    * Filter out all slottable components, overrides include and exclude properties
    */
@@ -43,61 +39,21 @@ const FilterSlotFactory = (Element: React.FC<IFilterSlot>): React.FC<IFilterSubS
   return <Context.Consumer>{(value) => <Element {...props} scope={value} />}</Context.Consumer>;
 };
 
-export const resObject = (res?: Array<ISlotComponent<any> | IConditionalSlot | IConditionsComponent>) => {
-  if (res === undefined) {
-    return {};
-  }
-  return res.reduce((prev, el) => {
-    if (isConditionsComponent(el)) {
-      const { slot, test } = el;
-      if (React.isValidElement(slot)) {
-        const childType: string = slot.displaySymbol as any;
-        prev[childType] = (childType !== undefined && test(slot.props) === true);
-      }
-    } else {
-      const childType: string = el.displaySymbol as any;
-      if (prev[childType] === undefined) {
-        prev[childType] = true;
-      }
-    }
-    return prev;
-  }, {} as { [x: string]: boolean });
-};
-
 const FilterSlotComponent = ({ scope, exclude, include, grouped, all }: IFilterSlot) => {
   const childrenObj = useScope(scope);
-  const includeEls = resObject(include);
-  const excludeEls = resObject(exclude);
-  const ignoreSlot = (el: symbol | string) => {
-    if (include) {
-      if (includeEls[el as any]) {
-        return true;
-      }
-      if (typeof el !== 'symbol' && all === true) {
-        return true;
-      }
-      return false;
+  let prev = [] as ISortChildrenEl[];
+  if (exclude) {
+    prev = childrenObj.excludeSlots(exclude, all);
+  } else if (include) {
+    prev = childrenObj.includeSlots(include);
+    if (all) {
+      prev.push(...childrenObj.nonSlotted());
     }
-    if (exclude) {
-      if (excludeEls[el as any]) {
-        return false;
-      }
-      return true;
-    }
-  };
-  const prev: ISortChildrenEl[] = [];
-  childrenObj.forEach((value, key) => {
-    const res = ignoreSlot(key);
-    if (res === true) {
-      prev.push(...value);
-    }
-  });
-  if (grouped === true) {
-    return <>{prev.map((el) => el.child)}</>;
   }
-  const children: JSX.Element[] = prev.sort((a, b) => a.index - b.index)
-    .map((el) => el.child);
-  return <>{children}</>;
+  if (grouped === true) {
+    return <>{childrenObj.mapEls(prev)}</>;
+  }
+  return <>{childrenObj.sortEls(prev)}</>;
 };
 
 FilterSlotComponent.SubSlot = FilterSlotFactory(FilterSlotComponent);

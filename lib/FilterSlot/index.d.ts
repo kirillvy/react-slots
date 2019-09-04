@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ISlotComponent } from '../utils/createSlot';
-import { IConditionalSlot, IConditionsComponent } from '../ConditionalSlot';
+import { TConditionalSlot } from '../utils/useScope';
 interface IFilterSlot {
     /**
      * Elements or indexed children object passed for filtering
@@ -9,11 +8,11 @@ interface IFilterSlot {
     /**
      * Array of slottable components for filtering out
      */
-    exclude?: Array<ISlotComponent<any> | IConditionalSlot | IConditionsComponent>;
+    exclude?: TConditionalSlot[];
     /**
      * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
      */
-    include?: Array<ISlotComponent<any> | IConditionsComponent>;
+    include?: TConditionalSlot[];
     /**
      * Filter out all slottable components, overrides include and exclude properties
      */
@@ -29,8 +28,5 @@ interface IFilterSubSlot extends IFilterSlot {
 interface IFilterSlotComponent extends React.FC<IFilterSlot> {
     SubSlot: React.FunctionComponent<IFilterSubSlot>;
 }
-export declare const resObject: (res?: (IConditionalSlot<{}> | ISlotComponent<any> | IConditionsComponent)[] | undefined) => {
-    [x: string]: boolean;
-};
 declare const FilterSlot: IFilterSlotComponent;
 export default FilterSlot;

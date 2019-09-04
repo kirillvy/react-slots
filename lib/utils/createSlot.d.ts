@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { IConditionalSlot, IConditionalSlotBase } from '../ConditionalSlot';
-interface ISlot<T = any> {
+export interface ISlot<T = any> {
     /**
      * Default children of element, if any. Otherwise, nothing will be shown.
      */
@@ -58,24 +57,24 @@ interface IRenderAs extends TAny {
      */
     renderAs: React.ComponentType | keyof JSX.IntrinsicElements;
 }
-interface ISubSlot<T> extends Partial<ISlot<T>> {
+export interface ISubSlot<T> extends Partial<ISlot<T>> {
     scope: React.Context<any>;
 }
-export interface ISlotConditional<T> extends React.FunctionComponent<T> {
+export interface ISlotElement<T> extends React.FunctionComponent<ISlot<T>> {
     displaySymbol: symbol;
-    Conditional: IConditionalSlot<T>;
 }
-export interface ISubSlotConditional<T> extends React.FunctionComponent<T> {
+export interface ISubSlotElement<T> extends React.FunctionComponent<ISubSlot<T>> {
     displaySymbol: symbol;
-    Conditional: React.FC<T & IConditionalSlotBase>;
 }
-export interface ISlotComponent<T = any> extends React.FunctionComponent<T | IRenderAs | {
+export interface ISlotComponentBase<T = any> extends React.FunctionComponent<T | IRenderAs | {
     children?: any;
 }> {
     Context: React.Context<any>;
     displaySymbol: symbol;
-    Slot: ISlotConditional<ISlot<T>>;
-    SubSlot: ISubSlotConditional<ISubSlot<T>>;
+}
+export interface ISlotComponent<T = any> extends ISlotComponentBase<T> {
+    Slot: ISlotElement<T>;
+    SubSlot: ISlotElement<T>;
     Before: IHeaderFooter;
     After: IHeaderFooter;
 }
@@ -86,15 +85,15 @@ interface IOverloadCreateSlot {
     <S extends keyof JSX.IntrinsicElements, T extends {}>(Element?: React.ComponentType): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
     <T extends {}, S extends keyof JSX.IntrinsicElements>(Element?: React.ComponentType): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
 }
-interface IHeaderFooter extends React.FunctionComponent {
+export interface IHeaderFooter extends React.FunctionComponent {
     displaySymbol: symbol;
     typeSymbol: symbol;
-    Conditional: IConditionalSlot;
 }
 export interface ISortChildrenEl {
     index: number;
     child: JSX.Element;
 }
+export declare type SlotType<T = {}, S = {}> = T extends {} ? S extends keyof JSX.IntrinsicElements ? T & Partial<JSX.IntrinsicElements[S]> : T : T extends keyof JSX.IntrinsicElements ? S extends {} ? S & Partial<JSX.IntrinsicElements[T]> : Partial<JSX.IntrinsicElements[T]> : any;
 /**
  * Slot constructor
  * @param {React.ComponentType<any>} [Element=React.Fragment] - Element for slotting, default is fragment
