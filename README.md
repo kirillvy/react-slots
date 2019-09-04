@@ -1,12 +1,12 @@
-# react-slots-library
+# slottr
 
-react-slots-library is a library for managing React components as slots, with scoped, conditional and
+slottr (Slot Tooling for React) is a library for managing React components as slots, with scoped, conditional and
 multiple rendering. It can be used for creating reusable components and UI kits.
 
 To begin, install with
 
 ```
-npm i react-slots-library
+npm i slottr
 ```
 
 ## Component properties
@@ -53,10 +53,10 @@ scope | `React.Context` | Elements passed for filtering
 
 ## Using slots
 
-To begin using react-slots-library, import the slot creator and the children indexer.
+To begin using slottr, import the slot creator and the children indexer.
 
 ```js
-import createSlot, { useScope }  from 'react-slots-library';
+import createSlot, { useScope }  from 'slottr';
 ```
 
 Then create several slots for use in other components. The slot creator can accept elements and JSX intrinsic
@@ -308,7 +308,7 @@ To designate a place to render all components intended as non-slottable children
 FilterSlot component. 
 
 ```js
-import createSlot, { FilterSlot } from 'react-slots-library';
+import createSlot, { FilterSlot } from 'slottr';
 ```
 
 Then insert it where you would like to process non-slottable children, as you would a slot:

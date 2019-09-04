@@ -9,7 +9,7 @@ module.exports = {
   output: {
     path: path.join(__dirname,  prodPath),
     filename: '[name].js',
-    library: 'react-slots-library',
+    library: 'slottr',
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },

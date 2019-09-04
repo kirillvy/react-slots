@@ -1,6 +1,6 @@
 {
-  "name": "react-slots-library",
-  "version": "0.3.1",
+  "name": "slottr",
+  "version": "0.3.3",
   "description": "Extended slot pattern for React",
   "main": "./lib/index.js",
   "files": [

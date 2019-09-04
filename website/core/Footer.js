@@ -49,7 +49,8 @@ class Footer extends React.Component {
           </div>
           <div>
             <h5>Community</h5>
-            <a href={this.pageUrl('users.html', this.props.language)}>
+            <span style={{color: 'rgba(255, 255, 255, 0.6)'}}>Coming soon...</span>
+            {/* <a href={this.pageUrl('users.html', this.props.language)}>
               User Showcase
             </a>
             <a
@@ -64,7 +65,7 @@ class Footer extends React.Component {
               target="_blank"
               rel="noreferrer noopener">
               Twitter
-            </a>
+            </a> */}
           </div>
           <div>
             <h5>More</h5>
