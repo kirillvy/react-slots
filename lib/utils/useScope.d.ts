@@ -32,12 +32,12 @@ declare class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
      * Sorts elements by order of appearance
      * @param els children object to sort into children
      */
-    sortEls(els: ISortChildrenEl[]): JSX.Element[];
+    sortElements(els: ISortChildrenEl[]): JSX.Element[];
     /**
      * Returns grouped elements, by order of appearance
      * @param els children object to sort into children
      */
-    mapEls(els: ISortChildrenEl[]): JSX.Element[];
+    mapElements(els: ISortChildrenEl[]): JSX.Element[];
     /**
      * Tests whether object includes all conditional slots
      * @param arr conditional slots for inclusion

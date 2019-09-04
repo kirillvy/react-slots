@@ -41,7 +41,7 @@ childIs? | `'feedback' \| 'default' \| 'both'` | Designate the children prop as 
 
 ### Component.SubSlot
 
-Same as Slot, but takes in a React Context perpetrated by the Slot with the withContext option.
+Same as Slot, but takes in a React Context propagated by the Slot with the withContext option.
 All other props are passed into the Slot. The context of the SubSlot can be accessed from a Component.Slot
 above it in the hierarchy by accessing Component.Context.
 
@@ -54,59 +54,6 @@ Name | Type | Description
 --- | --- | ---
 scope | `React.Context` | Elements passed for filtering
 
-### FilterSlot
-
-Equivalent of `{children}` for non-slottable elements. Can include a whitelist (include) or blacklist(exclude),
-otherwise filters out all slottable elements.
-
-Name | Type | Description
---- | --- | ---
-scope | `any` | Elements passed for filtering
-exclude | `Array<SlotComponent>` | Array of slottable components for filtering out
-include | `Array<SlotComponent>` | Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
-all | `boolean` | Automatically include all non-slottable elements when doing include (on true)
-or automatically exclude when doing exclude (on false)
-grouped? | `boolean` | Groups elements by component type
-
-### FilterSlot.SubSlot
-
-Same as FilterSlot, but consumes a context from a slot with `withContext` enabled.
-
-Name | Type | Description
---- | --- | ---
-scope | any | Elements passed for filtering
-
-### ConditionalSlot
-
-Component which renders components under it only if the rules are followed. Can also act
-as a declaration of an if-elseif-else block. Perpetuates a context that becomes the scope of its children.
-
-Name | Type | Description
---- | --- | ---
-scope? | `any` | Elements passed for filtering
-excludes? | `Array<SlotComponent>` | Does not render if any of the excludes is in the scope.
-includes? | `Array<SlotComponent>` | Does not render if any of the includes are not in the scope.
-condition? | `any` | Truthy eval of conditions for implementations. Shorthand for `{ x === 5 && <ConditionalSlot /> }`
-
-Also available by adding .Conditional to any Slot, SubSlot or FilterSlot element.
-
-### ConditionalSlot.If
-
-Made for convenience, same as rendering elements directly inside of a conditional block but can
-be used to create a separate if block in an if-else block that can render its own if-else. Creating an
-If element alongside non-conditional slots inside a Conditional Slot creates an if-else block that renders
-alongside the pre-existing elements.
-
-### ConditionalSlot.ElseIf
-
-Same props as ConditionalSlot, but renders inside ConditionalSlot if the slot did not render. Can
-be nested. Same behavior as if nesting a ConditionalSlot inside a ConditionalSlot.Else, but
-it is possible to have multiple, the same way else-ifs work in JavaScript. Processed in
-the order added.
-
-### ConditionalSlot.Else
-
-Component that renders if none of the elements have rendered. Must be the last child.
 
 ## Using slots
 
@@ -490,6 +437,61 @@ solely the default element, solely the fallback element or both, to avoid needle
 In addition, use defaultProps in the Element.Slot element to pass default props, passedProps to forward props
 from other places (overrides defaultProps) and fallBack props to pass props designated for the fallback component.
 
+
+### FilterSlot
+
+Equivalent of `{children}` for non-slottable elements. Can include a whitelist (include) or blacklist(exclude),
+otherwise filters out all slottable elements.
+
+Name | Type | Description
+--- | --- | ---
+scope | `any` | Elements passed for filtering
+exclude | `Array<SlotComponent>` | Array of slottable components for filtering out
+include | `Array<SlotComponent>` | Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
+all | `boolean` | Automatically include all non-slottable elements when doing include (on true)
+or automatically exclude when doing exclude (on false)
+grouped? | `boolean` | Groups elements by component type
+
+### FilterSlot.SubSlot
+
+Same as FilterSlot, but consumes a context from a slot with `withContext` enabled.
+
+Name | Type | Description
+--- | --- | ---
+scope | any | Elements passed for filtering
+
+### ConditionalSlot
+
+Component which renders components under it only if the rules are followed. Can also act
+as a declaration of an if-elseif-else block. Perpetuates a context that becomes the scope of its children.
+
+Name | Type | Description
+--- | --- | ---
+scope? | `any` | Elements passed for filtering
+excludes? | `Array<SlotComponent>` | Does not render if any of the excludes is in the scope.
+includes? | `Array<SlotComponent>` | Does not render if any of the includes are not in the scope.
+condition? | `any` | Truthy eval of conditions for implementations. Shorthand for `{ x === 5 && <ConditionalSlot /> }`
+
+Also available by adding .Conditional to any Slot, SubSlot or FilterSlot element.
+
+### ConditionalSlot.If
+
+Made for convenience, same as rendering elements directly inside of a conditional block but can
+be used to create a separate if block in an if-else block that can render its own if-else. Creating an
+If element alongside non-conditional slots inside a Conditional Slot creates an if-else block that renders
+alongside the pre-existing elements.
+
+### ConditionalSlot.ElseIf
+
+Same props as ConditionalSlot, but renders inside ConditionalSlot if the slot did not render. Can
+be nested. Same behavior as if nesting a ConditionalSlot inside a ConditionalSlot.Else, but
+it is possible to have multiple, the same way else-ifs work in JavaScript. Processed in
+the order added.
+
+### ConditionalSlot.Else
+
+Component that renders if none of the elements have rendered. Must be the last child.
+
 ## Conditional Slots
 
 Sometimes, you may want to render content based on whether or not certain conditions apply.
@@ -506,8 +508,7 @@ prop as shorthand.
 
 ## Reusing Slots and Extending Components
 
-Once created, you can reuse slots in any part of your project. It's best to avoid nesting the same 
-slotted element inside itself, as this can lead to unpredictable behavior when using context.
+TBD
 
 ## Changelog
 

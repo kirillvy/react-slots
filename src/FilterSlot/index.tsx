@@ -51,9 +51,9 @@ const FilterSlotComponent = ({ scope, exclude, include, grouped, all }: IFilterS
     }
   }
   if (grouped === true) {
-    return <>{childrenObj.mapEls(prev)}</>;
+    return <>{childrenObj.mapElements(prev)}</>;
   }
-  return <>{childrenObj.sortEls(prev)}</>;
+  return <>{childrenObj.sortElements(prev)}</>;
 };
 
 FilterSlotComponent.SubSlot = FilterSlotFactory(FilterSlotComponent);

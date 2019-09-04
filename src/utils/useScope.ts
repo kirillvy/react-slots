@@ -65,14 +65,14 @@ class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
    * Sorts elements by order of appearance
    * @param els children object to sort into children
    */
-  public sortEls(els: ISortChildrenEl[]): JSX.Element[] {
+  public sortElements(els: ISortChildrenEl[]): JSX.Element[] {
     return els.sort((a, b) => a.index - b.index).map((el) => el.child);
   }
   /**
    * Returns grouped elements, by order of appearance
    * @param els children object to sort into children
    */
-  public mapEls(els: ISortChildrenEl[]): JSX.Element[] {
+  public mapElements(els: ISortChildrenEl[]): JSX.Element[] {
     return els.map((el) => el.child);
   }
   /**

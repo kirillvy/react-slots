@@ -175,8 +175,8 @@ const SlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISlot<T
     }
     return <>{headers}{element}{footers}</>;
   }
-  const { child } = res[0];
-  return <>{headers}{injectSlot(child)}{footers}</>;
+  const { child: childObj } = res[0];
+  return <>{headers}{injectSlot(childObj)}{footers}</>;
 };
 
 const SubSlotFactory = <T extends {}>(Element: ISlotComponent<T>): React.FC<ISubSlot<T>> => (
