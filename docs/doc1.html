@@ -1,0 +1,348 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Getting Started · slottr</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="To begin, install with"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Getting Started · slottr"/><meta property="og:type" content="website"/><meta property="og:url" content="https://kirillvy.github.io/react-slots/"/><meta property="og:description" content="To begin, install with"/><meta property="og:image" content="https://kirillvy.github.io/react-slots/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://kirillvy.github.io/react-slots/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/react-slots/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://kirillvy.github.io/react-slots/blog/atom.xml" title="slottr Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://kirillvy.github.io/react-slots/blog/feed.xml" title="slottr Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/react-slots/js/scrollSpy.js"></script><link rel="stylesheet" href="/react-slots/css/main.css"/><script src="/react-slots/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/react-slots/"><img class="logo" src="/react-slots/img/favicon.ico" alt="slottr"/><h2 class="headerTitleWithLogo">slottr</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive siteNavItemActive"><a href="/react-slots/docs/doc1" target="_self">Docs</a></li><li class=""><a href="/react-slots/docs/doc4" target="_self">API</a></li><li class=""><a href="/react-slots/help" target="_self">Help</a></li><li class=""><a href="/react-slots/blog/" target="_self">Blog</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Docusaurus</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Docusaurus</h3><ul class=""><li class="navListItem navListItemActive"><a class="navItem" href="/react-slots/docs/doc1">Getting started</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">First Category</h3><ul class=""><li class="navListItem"><a class="navItem" href="/react-slots/docs/doc2">Component properties</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Second Category</h3><ul class=""><li class="navListItem"><a class="navItem" href="/react-slots/docs/doc3">Advanced uses</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Getting Started</h1></header><article><div><span><p>To begin, install with</p>
+<pre><code class="hljs">npm <span class="hljs-selector-tag">i</span> slottr
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="using-slots"></a><a href="#using-slots" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Using slots</h2>
+<p>To begin using slottr, import the slot creator and the children indexer.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">import</span> createSlot, { useScope }  <span class="hljs-keyword">from</span> <span class="hljs-string">'slottr'</span>;
+</code></pre>
+<p>Then create several slots for use in other components. The slot creator can accept elements and JSX intrinsic
+elements. For Typescript, you can also annotate the slot with the props that it accepts. For styled-components and
+custom components using intrinsic JSX element properties, you can pass in a combination of the component's props type
+and the intrinsic component. Orer does not matter. By default, a React Fragment is created.</p>
+<p>Each createSlot output is unique and tied to the variable name (Symbol) it is declared as.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CardTopText = createSlot();
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CardBottomText = createSlot();
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CardImage = createSlot&lt;<span class="hljs-string">'div'</span>&gt;(div);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CardActions = createSlot&lt;ICustomComponent&gt;(MyCustomComponent);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CardFlair = createSlot&lt;<span class="hljs-string">'div'</span>, {<span class="hljs-attr">color</span>: <span class="hljs-string">'red'</span> | <span class="hljs-string">'green'</span>}&gt;(MyStyledComponent);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CardWarning = createSlot&lt;{<span class="hljs-attr">color</span>: <span class="hljs-string">'red'</span> | <span class="hljs-string">'green'</span>}, <span class="hljs-string">'span'</span>&gt;(MyCustomJSXComponent);
+</code></pre>
+<p>Now they can be inserted into the template element through the .Slot property. Make sure to include the scope.</p>
+<pre><code class="hljs css language-jsx"><span class="hljs-keyword">const</span> Card = <span class="hljs-function">(<span class="hljs-params">{children}</span>) =&gt;</span> {
+  <span class="hljs-keyword">const</span> scope = useScope(children);
+  <span class="hljs-keyword">return</span> &lt;div&gt;
+    &lt;div&gt;
+        &lt;CardTopText.Slot scope={scope} /&gt;
+        &lt;CardFlair.Slot scope={scope} /&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+        &lt;CardBottomText.Slot scope={scope} /&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;;
+};
+</code></pre>
+<p>In the component using the slots, import them and the component.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">import</span> Card, { CardTopText, CardBottomText } <span class="hljs-keyword">from</span> <span class="hljs-string">'../Card'</span>;
+</code></pre>
+<p>Then insert them into the element. The slotted elements <strong>must</strong> be the primary children of the element
+and not inserted into other elements in the hierarchy. Otherwise they will be rendered as ordinary elements.</p>
+<pre><code class="hljs css language-jsx"><span class="hljs-keyword">const</span> CustomCard = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Card</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">CardTopText</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Name of the Card<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">CardTopText</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">CardBottomText</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Description of the Card<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">CardBottomText</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Card</span>&gt;</span></span>;
+);
+</code></pre>
+<p>The result will be rendered as</p>
+<pre><code class="hljs css language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Name of the Card<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Name of the Card<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<p>To render multiple components in one slot, enable to <code>multiple</code> prop.</p>
+<pre><code class="hljs css language-jsx"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> SingleComment = createSlot&lt;<span class="hljs-string">'div'</span>&gt;(div);
+
+<span class="hljs-keyword">const</span> CommentList = <span class="hljs-function">(<span class="hljs-params">{children}</span>) =&gt;</span> {
+  <span class="hljs-keyword">const</span> scope = useScope(children);
+  <span class="hljs-keyword">return</span> (
+    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Comments:<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">SingleComment.Slot</span> <span class="hljs-attr">scope</span>=<span class="hljs-string">{scope}</span> <span class="hljs-attr">multiple</span>=<span class="hljs-string">{true}</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  );
+};
+</span></code></pre>
+<p>This will allow you to insert any number of components of that type.</p>
+<pre><code class="hljs css language-jsx">&lt;CommentList&gt;
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">SingleComment</span>&gt;</span>
+    Hello.
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SingleComment</span>&gt;</span></span>
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">SingleComment</span>&gt;</span>
+    Nice job!.
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SingleComment</span>&gt;</span></span>
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">SingleComment</span>&gt;</span>
+    Using slots.
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SingleComment</span>&gt;</span></span>
+<span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">CommentList</span>&gt;</span></span>
+</code></pre>
+<p>And each one will be rendered as a separate one.</p>
+<pre><code class="hljs css language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Comments:<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    Hello.
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    Nice job!.
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    Using slots.
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="composition-and-inheritance"></a><a href="#composition-and-inheritance" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Composition and Inheritance</h2>
+<p>There are two ways two allow slots to render other slots. The first is by creating child components that also
+contain slots.</p>
+<pre><code class="hljs css language-jsx"><span class="hljs-keyword">import</span> {Name, Email, Message, Comment} <span class="hljs-keyword">from</span> <span class="hljs-string">'./Comment.style'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CommentName = createSlot&lt;<span class="hljs-string">'div'</span>&gt;(Name);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CommentEmail = createSlot&lt;<span class="hljs-string">'div'</span>&gt;(Email);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CommentMessage = createSlot&lt;<span class="hljs-string">'div'</span>&gt;(Message);
+
+<span class="hljs-keyword">const</span> CommentComponent = <span class="hljs-function">(<span class="hljs-params">{ children, ...props}</span>) =&gt;</span> {
+  <span class="hljs-keyword">const</span> scope = useScope(children);
+  <span class="hljs-keyword">return</span> (
+  &lt;Comment {...props}&gt;
+    &lt;div&gt;
+      &lt;CommentName.Slot scope={scope} /&gt;
+      &lt;CommentEmail.Slot scope={scope} /&gt;
+    &lt;/div&gt;
+    &lt;CommentMessage.Slot scope={scope} /&gt;
+  &lt;/Comment&gt;
+  );
+};
+
+
+export const SingleComment = createSlot&lt;'div'&gt;(CommentComponent);
+
+const CommentList = ({children}) =&gt; {
+  const scope = useScope(children);
+  return (
+  &lt;div&gt;
+    &lt;div&gt;Comments:&lt;/div&gt;
+    &lt;SingleComment.Slot scope={scope} multiple={true} /&gt;
+  &lt;/div&gt;
+);
+</code></pre>
+<p>The second is by writing them directly as subslots to do that, you will need to use the
+<code>withContext</code> option.</p>
+<pre><code class="hljs css language-jsx"><span class="hljs-keyword">import</span> {Name, Email, Message, Comment} <span class="hljs-keyword">from</span> <span class="hljs-string">'./Comment.styles'</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CommentName = createSlot&lt;<span class="hljs-string">'div'</span>&gt;(Name);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CommentEmail = createSlot&lt;<span class="hljs-string">'div'</span>&gt;(Email);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> CommentMessage = createSlot&lt;<span class="hljs-string">'div'</span>&gt;(Message);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> SingleComment = createSlot&lt;<span class="hljs-string">'div'</span>&gt;(Comment);
+
+<span class="hljs-keyword">const</span> Comment = <span class="hljs-function">(<span class="hljs-params">{children}</span>) =&gt;</span> {
+  <span class="hljs-keyword">const</span> scope = useScope(children);
+  <span class="hljs-keyword">return</span> (
+  &lt;&gt;
+    &lt;div&gt;
+      &lt;CommentName.Slot scope={scope} /&gt;
+      &lt;CommentEmail.Slot scope={scope} /&gt;
+    &lt;/div&gt;
+    &lt;CommentMessage.Slot scope={scope} /&gt;
+  &lt;/&gt;
+  );
+};
+
+const InheritanceCommentList = ({children}) =&gt; {
+  const scope = useScope(children);
+  return (
+  &lt;div&gt;
+    &lt;div&gt;Comments:&lt;/div&gt;
+    &lt;SingleComment.Slot scope={scope} multiple={true} /&gt;
+  &lt;/div&gt;
+  )
+}
+
+const CompositionCommentList = ({children}) =&gt; {
+  const scope = useScope(children);
+  return (
+  &lt;div&gt;
+    &lt;div&gt;Comments:&lt;/div&gt;
+    &lt;SingleComment.Slot scope={scope} multiple={true} withContext={true}&gt;
+      &lt;div&gt;
+        &lt;CommentName.SubSlot scope={SingleComment.Context} /&gt;
+        &lt;CommentEmail.SubSlot scope={SingleComment.Context} /&gt;
+      &lt;/div&gt;
+      &lt;CommentMessage.SubSlot scope={SingleComment.Context} /&gt;
+    &lt;/SingleComment.Slot&gt;
+  &lt;/div&gt;
+  );
+};
+</code></pre>
+<p>Both will allow you to make insert slots one into another:</p>
+<pre><code class="hljs css language-jsx">&lt;CommentList&gt;
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">SingleComment</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">CommentName</span>&gt;</span>
+      Christopher
+    <span class="hljs-tag">&lt;/<span class="hljs-name">CommentName</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">CommentEmail</span>&gt;</span>
+      loylecapo@holly.wood
+    <span class="hljs-tag">&lt;/<span class="hljs-name">CommentEmail</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">CommentMessage</span>&gt;</span>
+      Nice job!
+    <span class="hljs-tag">&lt;/<span class="hljs-name">CommentMessage</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SingleComment</span>&gt;</span></span>
+<span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">CommentList</span>&gt;</span></span>
+</code></pre>
+<p>And each one will be rendered as a separate one.</p>
+<pre><code class="hljs css language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Comments:<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"Comment-123xyz"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"Name-123xyz"</span>&gt;</span>
+        Christopher
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"Email-123xyz"</span>&gt;</span>
+        loylecapo@holly.wood
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"Message-123xyz"</span>&gt;</span>
+      Nice job!
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="rendering-non-slotted-components"></a><a href="#rendering-non-slotted-components" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Rendering non-slotted components</h2>
+<p>To designate a place to render all components intended as non-slottable children, import the
+FilterSlot component.</p>
+<pre><code class="hljs css language-js"><span class="hljs-keyword">import</span> createSlot, { FilterSlot } <span class="hljs-keyword">from</span> <span class="hljs-string">'slottr'</span>;
+</code></pre>
+<p>Then insert it where you would like to process non-slottable children, as you would a slot:</p>
+<pre><code class="hljs css language-jsx">
+<span class="hljs-keyword">const</span> CommentList = <span class="hljs-function">(<span class="hljs-params">{children}</span>) =&gt;</span> {
+  <span class="hljs-keyword">const</span> scope = useScope(children);
+  <span class="hljs-keyword">return</span> (
+  &lt;div&gt;
+    &lt;FilterSlot scope={scope} /&gt;
+    &lt;SingleComment.Slot scope={scope} multiple={true} withContext={true}&gt;
+      &lt;div&gt;
+        &lt;CommentName.SubSlot scope={SingleComment.Context} /&gt;
+        &lt;CommentEmail.SubSlot scope={SingleComment.Context} /&gt;
+      &lt;/div&gt;
+      &lt;CommentMessage.SubSlot scope={SingleComment.Context} /&gt;
+    &lt;/SingleComment.Slot&gt;
+  &lt;/div&gt;
+);
+</code></pre>
+<p>Non-slotted components can similarly be inserted as context-dependent limited scope subslots
+through the FilterSlot.SubSlot component.</p>
+<pre><code class="hljs css language-jsx">
+<span class="hljs-keyword">const</span> CommentList = <span class="hljs-function">(<span class="hljs-params">{children}</span>) =&gt;</span> {
+  <span class="hljs-keyword">const</span> scope = useScope(children);
+  <span class="hljs-keyword">return</span> (
+  &lt;div&gt;
+    &lt;div&gt;&lt;FilterSlot scope={scope} /&gt;&lt;/div&gt;
+    &lt;SingleComment.Slot scope={scope} multiple={true} withContext={true}&gt;
+      &lt;div&gt;&lt;FilterSlot.SubSlot scope={SingleComment.Context} /&gt;&lt;/div&gt;
+      &lt;div&gt;
+        &lt;CommentName.SubSlot scope={SingleComment.Context} /&gt;
+        &lt;CommentEmail.SubSlot scope={SingleComment.Context} /&gt;
+      &lt;/div&gt;
+      &lt;CommentMessage.SubSlot scope={SingleComment.Context} /&gt;
+    &lt;/SingleComment.Slot&gt;
+  &lt;/div&gt;
+);
+</code></pre>
+<p>Rendering a component with non-slotted components:</p>
+<pre><code class="hljs css language-jsx">&lt;CommentList&gt;
+  Comments:
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">SingleComment</span>&gt;</span>
+    Comment #1:
+    <span class="hljs-tag">&lt;<span class="hljs-name">CommentName</span>&gt;</span>
+      Christopher
+    <span class="hljs-tag">&lt;/<span class="hljs-name">CommentName</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">CommentEmail</span>&gt;</span>
+      loylecapo@holly.wood
+    <span class="hljs-tag">&lt;/<span class="hljs-name">CommentEmail</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">CommentMessage</span>&gt;</span>
+      Nice job!
+    <span class="hljs-tag">&lt;/<span class="hljs-name">CommentMessage</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">SingleComment</span>&gt;</span></span>
+<span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">CommentList</span>&gt;</span></span>
+</code></pre>
+<p>In their designated place:</p>
+<pre><code class="hljs css language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Comments:<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"Comment-123xyz"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Comment #1:<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"Name-123xyz"</span>&gt;</span>
+        Christopher
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"Email-123xyz"</span>&gt;</span>
+        loylecapo@holly.wood
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"Message-123xyz"</span>&gt;</span>
+      Nice job!
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-next button" href="/react-slots/docs/doc2"><span>Component properties</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#using-slots">Using slots</a></li><li><a href="#composition-and-inheritance">Composition and Inheritance</a></li><li><a href="#rendering-non-slotted-components">Rendering non-slotted components</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/react-slots/" class="nav-home"><img src="/react-slots/img/favicon.ico" alt="slottr" width="66" height="58"/></a><div><h5>Docs</h5><a href="/react-slots/docs/en/doc1.html">Getting Started (or other categories)</a><a href="/react-slots/docs/en/doc2.html">Guides (or other categories)</a><a href="/react-slots/docs/en/doc3.html">API Reference (or other categories)</a></div><div><h5>Community</h5><span style="color:rgba(255, 255, 255, 0.6)">Coming soon...</span></div><div><h5>More</h5><a href="/react-slots/blog">Blog</a><a href="https://github.com/kirillvy/react-slots">GitHub</a><a class="github-button" href="https://github.com/kirillvy/react-slots" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><section class="copyright">Copyright © 2019 kirillvy</section></footer></div></body></html>

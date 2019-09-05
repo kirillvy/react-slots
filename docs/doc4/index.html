@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Slottable components · slottr</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="The main component created by the createSlot function accepts and passes the same props as"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Slottable components · slottr"/><meta property="og:type" content="website"/><meta property="og:url" content="https://kirillvy.github.io/react-slots/"/><meta property="og:description" content="The main component created by the createSlot function accepts and passes the same props as"/><meta property="og:image" content="https://kirillvy.github.io/react-slots/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://kirillvy.github.io/react-slots/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/react-slots/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://kirillvy.github.io/react-slots/blog/atom.xml" title="slottr Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://kirillvy.github.io/react-slots/blog/feed.xml" title="slottr Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/react-slots/js/scrollSpy.js"></script><link rel="stylesheet" href="/react-slots/css/main.css"/><script src="/react-slots/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/react-slots/"><img class="logo" src="/react-slots/img/favicon.ico" alt="slottr"/><h2 class="headerTitleWithLogo">slottr</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/react-slots/docs/doc1" target="_self">Docs</a></li><li class="siteNavGroupActive siteNavItemActive"><a href="/react-slots/docs/doc4" target="_self">API</a></li><li class=""><a href="/react-slots/help" target="_self">Help</a></li><li class=""><a href="/react-slots/blog/" target="_self">Blog</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>First Category</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">First Category</h3><ul class=""><li class="navListItem navListItemActive"><a class="navItem" href="/react-slots/docs/doc4">Slottable components</a></li><li class="navListItem"><a class="navItem" href="/react-slots/docs/doc5">Filter Slot</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Slottable components</h1></header><article><div><span><p>The main component created by the createSlot function accepts and passes the same props as
+the component or JSX element indicated.</p>
+<h2><a class="anchor" aria-hidden="true" id="component"></a><a href="#component" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Component</h2>
+<table>
+<thead>
+<tr><th>Name</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>renderAs</td><td><code>React.ComponentType ⎮ keyof JSX.IntrinsicElements</code></td><td>Element injected for rendering instead of default. Any props will have to be compatible.</td></tr>
+</tbody>
+</table>
+<h2><a class="anchor" aria-hidden="true" id="componentslot"></a><a href="#componentslot" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Component.Slot</h2>
+<p>The slot consumes an array of children and filters for ones marked as the component</p>
+<table>
+<thead>
+<tr><th>Name</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>scope</td><td><code>any ⎮ ScopeMap</code></td><td>Elements passed for filtering, indexed using <code>useScope</code></td></tr>
+<tr><td>children?</td><td><code>any</code></td><td>Default children of element, if any.</td></tr>
+<tr><td>defaultProps?</td><td><code>JSX.IntrinsicAttributes &amp; React.PropsWithChildren&lt;T&gt;</code></td><td>default props to use with default element</td></tr>
+<tr><td>passedProps?</td><td><code>T</code></td><td>props passed to the element from the component containing the slot</td></tr>
+<tr><td>multiple?</td><td><code>boolean</code></td><td>Display all if multiple slots are passed</td></tr>
+<tr><td>withContext?</td><td><code>boolean</code></td><td>Components are composed through their immediate children</td></tr>
+<tr><td>fallback?</td><td><code>any</code></td><td>fallback to use if slot is not used</td></tr>
+<tr><td>fallbackProps?</td><td><code>JSX.IntrinsicAttributes &amp; React.PropsWithChildren&lt;T&gt;</code></td><td>default props to use with default element</td></tr>
+<tr><td>childIs?</td><td><code>'feedback' ⎮ 'default' ⎮ 'both'</code></td><td>Designate the children prop as the default element, the fallback element or both</td></tr>
+</tbody>
+</table>
+<h3><a class="anchor" aria-hidden="true" id="componentsubslot"></a><a href="#componentsubslot" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Component.SubSlot</h3>
+<p>Same as Slot, but takes in a React Context propagated by the Slot with the withContext option.
+All other props are passed into the Slot. The context of the SubSlot can be accessed from a Component.Slot
+above it in the hierarchy by accessing Component.Context.</p>
+<p><strong>Warning!</strong> All SubSlot elements must be placed inside the Slot element propagating the context,
+and its context must be enabled in the slot template. Otherwise, a critical React error will occur, as a
+Context Consumer is created without a Context Provider above it in the hierarchy.</p>
+<table>
+<thead>
+<tr><th>Name</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>scope</td><td><code>React.Context</code></td><td>Elements passed for filtering</td></tr>
+</tbody>
+</table>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-next button" href="/react-slots/docs/doc5"><span>Filter Slot</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#component">Component</a></li><li><a href="#componentslot">Component.Slot</a><ul class="toc-headings"><li><a href="#componentsubslot">Component.SubSlot</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/react-slots/" class="nav-home"><img src="/react-slots/img/favicon.ico" alt="slottr" width="66" height="58"/></a><div><h5>Docs</h5><a href="/react-slots/docs/en/doc1.html">Getting Started (or other categories)</a><a href="/react-slots/docs/en/doc2.html">Guides (or other categories)</a><a href="/react-slots/docs/en/doc3.html">API Reference (or other categories)</a></div><div><h5>Community</h5><span style="color:rgba(255, 255, 255, 0.6)">Coming soon...</span></div><div><h5>More</h5><a href="/react-slots/blog">Blog</a><a href="https://github.com/kirillvy/react-slots">GitHub</a><a class="github-button" href="https://github.com/kirillvy/react-slots" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div></section><section class="copyright">Copyright © 2019 kirillvy</section></footer></div></body></html>
