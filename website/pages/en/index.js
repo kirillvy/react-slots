@@ -98,6 +98,8 @@ class Index extends React.Component {
         style={{textAlign: 'center'}}>
         <h2>Feature Callout</h2>
         <MarkdownBlock>These are features of this project</MarkdownBlock>
+        <MarkdownBlock>These are features of this project</MarkdownBlock>
+        <MarkdownBlock>These are features of this project</MarkdownBlock>
       </div>
     );
 
@@ -149,16 +151,16 @@ class Index extends React.Component {
       <Block layout="fourColumn">
         {[
           {
-            content: 'This is the content of my feature',
+            content: 'Slottr slots are React components that can be extended or constrained as needed',
             image: `${baseUrl}img/undraw_react.svg`,
             imageAlign: 'top',
-            title: 'Feature One',
+            title: 'Develop extendable components',
           },
           {
-            content: 'The content of my second feature',
+            content: 'Without dependence on layout or data structures',
             image: `${baseUrl}img/undraw_note_list.svg`,
             imageAlign: 'top',
-            title: 'Feature Two',
+            title: 'Reuse them anywhere',
           },
         ]}
       </Block>
@@ -199,9 +201,9 @@ class Index extends React.Component {
         <div className="mainContainer">
           <Features />
           <FeatureCallout />
-          <LearnHow />
+          {/* <LearnHow />
           <TryOut />
-          <Description />
+          <Description /> */}
           {/* <Showcase /> */}
         </div>
       </div>

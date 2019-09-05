@@ -3,23 +3,31 @@
   "localized-strings": {
     "next": "Next",
     "previous": "Previous",
-    "tagline": "Tooling for extendable slots in React",
+    "tagline": "Slot pattern Tooling for React",
     "docs": {
       "doc1": {
-        "title": "Latin-ish",
-        "sidebar_label": "Example Page"
+        "title": "Getting Started",
+        "sidebar_label": "Getting started"
       },
       "doc2": {
-        "title": "document number 2"
+        "title": "Component properties",
+        "sidebar_label": "Component properties"
       },
       "doc3": {
-        "title": "This is document number 3"
+        "title": "Advanced uses",
+        "sidebar_label": "Advanced uses"
       },
       "doc4": {
-        "title": "Other Document"
+        "title": "Slottable components",
+        "sidebar_label": "Slottable components"
       },
       "doc5": {
-        "title": "Fifth Document"
+        "title": "Filter Slot",
+        "sidebar_label": "Filter Slot"
+      },
+      "doc6": {
+        "title": "The ScopeMap Object",
+        "sidebar_label": "The ScopeMap Object"
       }
     },
     "links": {
