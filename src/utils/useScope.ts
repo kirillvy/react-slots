@@ -173,7 +173,7 @@ class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
       }
       return obj !== undefined && obj.some((elem) => test(elem.child.props)) === true;
     }
-    return this.get(el.displaySymbol) !== undefined;
+    return this.has(el.displaySymbol);
   }
 }
 /**

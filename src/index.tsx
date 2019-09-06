@@ -1,5 +1,5 @@
 import useScope from './utils/useScope';
-import createSlot from './utils/createSlot';
+import createSlot, {createLayeredSlot} from './utils/createSlot';
 import createConditionalSlot from './utils/createConditionalSlot';
 import ConditionalSlot, {createConditionalElement} from './ConditionalSlot';
 import FilterSlot from './FilterSlot';
@@ -10,6 +10,7 @@ export {
   useScope,
   useScope as useChildren,
   createSlot,
+  createLayeredSlot,
   createConditionalSlot,
   createConditionalElement,
   ConditionalSlot,

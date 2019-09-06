@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withReadme } from 'storybook-readme';
-import createSlot, { createConditionalSlot, useScope, ConditionalSlot, FilterSlot,
-  createConditionalElement } from '.';
+import createSlot, {
+  createConditionalSlot, useScope, ConditionalSlot, FilterSlot,
+  createConditionalElement, createLayeredSlot,
+} from '.';
 
 /**
  * imports of README file
@@ -13,28 +15,27 @@ import Readme from './README.md';
  * imports of component
  */
 
-const Example: React.FC = ({children}) => (
+const Example: React.FC = ({ children }) => (
   <div>
     hello, {children}
   </div>
-)
+);
+
 const stories = storiesOf('Components', module);
 
 export const CardContextCard = createConditionalSlot('div');
 export const CardTopText = createSlot();
 export const CardTopTexts = createSlot();
-export const CardBottomText = createSlot<'input'>('input', Example);
+export const CardBottomText = createLayeredSlot<'input'>('input', Example);
 const ConditionalDiv = createConditionalElement<'div'>('div');
 
 const Card3: React.FC = ({ children }) => {
+  const scope = useScope(children);
   return (
     <div>
-      <ConditionalDiv includes={[CardBottomText.Slot]} scope={children} style={{border: '1px solid black'}}>
-        card  text
-        <CardBottomText.Slot.Slot scope={children} />
-        /card bottom text
-      </ConditionalDiv>
-  </div>
+      <CardBottomText.Slot.Slot scope={children} />
+      /card bottom text
+    </div>
   );
 };
 
@@ -65,7 +66,11 @@ const Card: React.FC = ({ children }) => {
       </div>
       <div>
         <Card3>
-          <CardBottomText.Slot scope={scope} defaultProps={{type: 'text', value: 'hello'}}  multiple={true} />
+          <CardBottomText.Slot
+            scope={scope}
+            defaultProps={{ type: 'text', value: 'hello'}}
+            multiple={true}
+          />
         </Card3>
       </div>
       nonslotted grouped:
