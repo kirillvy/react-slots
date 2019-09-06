@@ -1,7 +1,7 @@
 import useScope from './utils/useScope';
 import createSlot from './utils/createSlot';
 import createConditionalSlot from './utils/createConditionalSlot';
-import ConditionalSlot from './ConditionalSlot';
+import ConditionalSlot, {createConditionalElement} from './ConditionalSlot';
 import FilterSlot from './FilterSlot';
 
 export {
@@ -11,6 +11,7 @@ export {
   useScope as useChildren,
   createSlot,
   createConditionalSlot,
+  createConditionalElement,
   ConditionalSlot,
 };
 

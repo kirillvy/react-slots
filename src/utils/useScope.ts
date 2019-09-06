@@ -176,9 +176,6 @@ class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
     return this.get(el.displaySymbol) !== undefined;
   }
 }
-Object.defineProperty(ScopeMap, Symbol.hasInstance, {
-  value: (i: any) => i.instanceType === ScopeType,
-});
 /**
  * Creates scope object for work with slots
  * @param scope - React Children prop

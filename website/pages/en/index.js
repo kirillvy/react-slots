@@ -64,9 +64,9 @@ class HomeSplash extends React.Component {
         <div className="inner">
           <ProjectTitle siteConfig={siteConfig} />
           <PromoSection>
-            <Button href="#try">Get Started</Button>
-            <Button href={docUrl('doc1.html')}>Example Link</Button>
-            <Button href={docUrl('doc2.html')}>Example Link 2</Button>
+            <Button href={docUrl('doc1.html')}>Get Started</Button>
+            <Button href={docUrl('doc2.html')}>Api</Button>
+            <Button href="blog/">Blog</Button>
           </PromoSection>
         </div>
       </SplashContainer>
@@ -96,10 +96,12 @@ class Index extends React.Component {
       <div
         className="productShowcaseSection paddingBottom"
         style={{textAlign: 'center'}}>
-        <h2>Feature Callout</h2>
-        <MarkdownBlock>These are features of this project</MarkdownBlock>
-        <MarkdownBlock>These are features of this project</MarkdownBlock>
-        <MarkdownBlock>These are features of this project</MarkdownBlock>
+        <h2>Try Now</h2>
+        <MarkdownBlock>Install with `npm i slottr`</MarkdownBlock>
+        <MarkdownBlock>`import createSlot from 'slotter'`</MarkdownBlock>
+        <MarkdownBlock>Make slot components as easy as `const NewSlot = createSlot('div')`</MarkdownBlock>
+        <MarkdownBlock>Insert into the markup as `NewSlot.Slot`, replacing the `div`</MarkdownBlock>
+        <MarkdownBlock>`export` with the component and reuse anywhere, as a slot or as a component</MarkdownBlock>
       </div>
     );
 
@@ -151,13 +153,13 @@ class Index extends React.Component {
       <Block layout="fourColumn">
         {[
           {
-            content: 'Slottr slots are React components that can be extended or constrained as needed',
+            content: 'Slottr slots are React components that can be extended or constrained when you need it',
             image: `${baseUrl}img/undraw_react.svg`,
             imageAlign: 'top',
-            title: 'Develop extendable components',
+            title: 'Create extendable React components',
           },
           {
-            content: 'Without dependence on layout or data structures',
+            content: 'Markup is now independent from data',
             image: `${baseUrl}img/undraw_note_list.svg`,
             imageAlign: 'top',
             title: 'Reuse them anywhere',
@@ -200,7 +202,7 @@ class Index extends React.Component {
         <HomeSplash siteConfig={siteConfig} language={language} />
         <div className="mainContainer">
           <Features />
-          <FeatureCallout />
+          {/* <FeatureCallout /> */}
           {/* <LearnHow />
           <TryOut />
           <Description /> */}
