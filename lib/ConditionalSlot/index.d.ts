@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISlotComponent } from '../index';
+import { TConditionalSlot } from '../utils/useScope';
 export interface IConditionalSlotBase {
     children?: any;
     /**
@@ -9,26 +9,15 @@ export interface IConditionalSlotBase {
     /**
      * Array of slottable components for filtering out
      */
-    excludes?: TConditionalSlotArray;
+    excludes?: TConditionalSlot[];
     /**
      * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
      */
-    includes?: TConditionalSlotArray;
+    includes?: TConditionalSlot[];
     /**
      * Truthy eval of conditions for implementations.
      */
     condition?: any;
-}
-declare type TConditionalSlotArray = Array<ISlotComponent<any> | IConditionsComponent>;
-export interface IConditionsComponent {
-    /**
-     * Slottable component for filtering
-     */
-    slot: ISlotComponent<any>;
-    /**
-     * Slottable component test
-     */
-    test: <T = any>(props: T) => boolean;
 }
 export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase & T> {
     If: IConditionalSlot;
@@ -37,8 +26,6 @@ export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase 
     displaySymbol: symbol;
     typeSymbol: symbol;
 }
-export declare const isConditionsComponent: (entity: IConditionalSlot<{}> | ISlotComponent<any> | IConditionsComponent) => entity is IConditionsComponent;
-export declare const evalSlots: (arr: (ISlotComponent<any> | IConditionsComponent)[], childrenObj: Map<string | symbol, import("..").ISortChildrenEl[]>) => boolean;
-export declare function createConditionalSlot(Element?: React.ComponentType, typeSymbol?: symbol, parent?: IConditionalSlot): IConditionalSlot;
+export declare function createDefaultConditionalSlot(Element?: React.ComponentType, typeSymbol?: symbol, parent?: IConditionalSlot): IConditionalSlot;
 declare const ConditionalSlotElement: IConditionalSlot;
 export default ConditionalSlotElement;

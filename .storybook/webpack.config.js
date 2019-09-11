@@ -6,8 +6,6 @@ module.exports = ({config, mode}) => {
 		{
 			test: /\.ts(x)?$/,
 			include: [
-				path.resolve(__dirname, '../../rest-api/src'),
-				path.resolve(__dirname, '../../ui_system/src'),
 				path.resolve(__dirname, "../src"),
 			],
 			use: [
@@ -16,14 +14,7 @@ module.exports = ({config, mode}) => {
           options: {
             configFile: path.join(__dirname, '../tsconfig.json'),
           }
-        },
-        // {
-        //   loader: require.resolve("react-docgen-typescript-loader"),
-        //   options: {
-        //     tsconfigPath: path.join(__dirname, '../tsconfig.json'),
-        //   }
-        // },
-				
+        },				
 			],
 		}
 	);

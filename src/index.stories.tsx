@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withReadme } from 'storybook-readme';
-import { createSlot, useChildren, FilterSlot, ConditionalSlot } from '.';
+import createSlot, { createConditionalSlot, useScope, ConditionalSlot, FilterSlot,
+  createConditionalElement } from '.';
 
 /**
  * imports of README file
@@ -11,60 +12,88 @@ import Readme from './README.md';
 /**
  * imports of component
  */
+
+const Example: React.FC = ({children}) => (
+  <div>
+    hello, {children}
+  </div>
+)
 const stories = storiesOf('Components', module);
 
-export const CardContextCard = createSlot();
+export const CardContextCard = createConditionalSlot('div');
 export const CardTopText = createSlot();
-export const CardBottomText = createSlot<'div'>('div');
+export const CardTopTexts = createSlot();
+export const CardBottomText = createSlot<'input'>('input', Example);
+const ConditionalDiv = createConditionalElement<'div'>('div');
 
-const Card: React.FC = ({ children }) => {
-  const scope = useChildren(children);
+const Card3: React.FC = ({ children }) => {
   return (
     <div>
-      <ConditionalSlot condition={true} excludes={[]} scope={scope}>
+      <ConditionalDiv includes={[CardBottomText.Slot]} scope={children} style={{border: '1px solid black'}}>
+        card  text
+        <CardBottomText.Slot.Slot scope={children} />
+        /card bottom text
+      </ConditionalDiv>
+  </div>
+  );
+};
+
+const Card: React.FC = ({ children }) => {
+  const scope = useScope(children);
+  return (
+    <div>
+      <ConditionalSlot condition={true} scope={scope}>
         hello1
-    <ConditionalSlot.If condition={true} scope={scope}>
+        <ConditionalSlot.If condition={false} scope={scope}>
           hello2
-    </ConditionalSlot.If>
-        <ConditionalSlot.ElseIf condition={false} scope={scope}>
+        </ConditionalSlot.If>
+        <ConditionalSlot.ElseIf condition={true} scope={scope}>
           hello3
-    </ConditionalSlot.ElseIf>
+        </ConditionalSlot.ElseIf>
         <ConditionalSlot.ElseIf condition={false} scope={scope}>
           hello4
-    </ConditionalSlot.ElseIf>
+        </ConditionalSlot.ElseIf>
         <ConditionalSlot.Else>
           hello5
-    </ConditionalSlot.Else>
+        </ConditionalSlot.Else>
       </ConditionalSlot>
       <div>
-        <CardContextCard.Slot scope={scope} withContext={true}>
+        <CardContextCard.Slot.Conditional condition={true} scope={scope} withContext={true}>
           conditional card
-        <CardTopText.SubSlot scope={CardContextCard.Context} multiple={true} />
-        </CardContextCard.Slot>
+          <CardTopText.SubSlot scope={CardContextCard.Context} multiple={true} />
+        </CardContextCard.Slot.Conditional>
       </div>
       <div>
-        <CardBottomText.Slot scope={scope} />
+        <Card3>
+          <CardBottomText.Slot scope={scope} defaultProps={{type: 'text', value: 'hello'}}  multiple={true} />
+        </Card3>
       </div>
       nonslotted grouped:
-    <FilterSlot scope={children} include={[CardBottomText]} all={true} grouped={true} />
+    <FilterSlot scope={children} include={[]} all={true} grouped={true} />
       nonslotted ungrouped:
-    <FilterSlot scope={children} include={[CardBottomText]} all={true} grouped={false} />
+    <FilterSlot scope={children} include={[]} all={true} grouped={false} />
     </div>
   );
 };
 
-const Card2: React.FC = ({ children }) => (
-  <Card>
-    {children}
-    <CardContextCard.Before>
-      Text before conditional card
-    </CardContextCard.Before>
-  </Card>
-)
+const Card2: React.FC = ({ children }) => {
+  const scope = useScope(children);
+  return (
+    <Card>
+      {children}
+      <CardContextCard.Before>
+        Text before conditional card
+      </CardContextCard.Before>
+    </Card>
+  );
+};
+
+const Check = () => <input type='checkbox' />;
 
 stories.add(
   'Card component',
   withReadme(Readme, () => (
+
     <>f
     <Card2>
         xzzxvv
@@ -79,7 +108,7 @@ stories.add(
           <CardTopText>
             <p>Name of the Card 2</p>
           </CardTopText>
-          <CardTopText renderAs={'div'} onClick={() => alert('hello')}>
+          <CardTopText>
             <p>Name of the Card 3</p>
           </CardTopText>
           <CardTopText.Before>
@@ -92,9 +121,11 @@ stories.add(
         <CardBottomText.Before>
           Text before Description of the Card
         </CardBottomText.Before>
-        <CardBottomText>
-          <p>Description of the Card</p>
-        </CardBottomText>
+        <CardBottomText renderAs={Check} />
+        <CardBottomText renderAs={Check} />
+        <CardBottomText renderAs={Check} />
+        <CardBottomText renderAs={Check} />
+        <CardBottomText renderAs={Check} />
         afsfsakj
     </Card2>
     </>

@@ -1,6 +1,6 @@
 {
-  "name": "react-slots-library",
-  "version": "0.2.1",
+  "name": "slottr",
+  "version": "0.3.5",
   "description": "Extended slot pattern for React",
   "main": "./lib/index.js",
   "files": [
@@ -31,6 +31,7 @@
     "slots",
     "react"
   ],
+  "homepage": "https://kirillvy.github.io/react-slots/",
   "sideEffects": false,
   "author": "Kirill Vysokolov",
   "license": "MIT",

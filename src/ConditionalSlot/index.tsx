@@ -1,6 +1,5 @@
 import React from 'react';
-import { ISlotComponent, IIndexedChildren } from '../index';
-import useChildren from '../utils/useChildren';
+import useScope, {TConditionalSlot, IConditionsComponent} from '../utils/useScope';
 import FilterSlot from '../FilterSlot';
 
 export interface IConditionalSlotBase {
@@ -12,28 +11,31 @@ export interface IConditionalSlotBase {
   /**
    * Array of slottable components for filtering out
    */
-  excludes?: TConditionalSlotArray;
+  excludes?: TConditionalSlot[];
   /**
    * Array of slottable components whitelisted for not being filtered. Overrides 'exclude'
    */
-  includes?: TConditionalSlotArray;
+  includes?: TConditionalSlot[];
   /**
    * Truthy eval of conditions for implementations.
    */
   condition?: any;
 }
 
-type TConditionalSlotArray = Array<ISlotComponent<any> | IConditionsComponent>;
-
-export interface IConditionsComponent {
-  /**
-   * Slottable component for filtering
-   */
-  slot: ISlotComponent<any>;
-  /**
-   * Slottable component test
-   */
-  test: <T = any>(props: T) => boolean;
+interface IOverloadCreateConditional {
+  (
+    Element: keyof JSX.IntrinsicElements | React.ComponentType,
+  ): IConditionalSlot;
+  <T extends keyof JSX.IntrinsicElements>(
+    Element: T | React.ComponentType,
+  ): IConditionalSlot<Partial<JSX.IntrinsicElements[T]>>;
+  <T extends {}>(Element: React.ComponentType): IConditionalSlot<T>;
+  <S extends keyof JSX.IntrinsicElements, T extends {}>(
+    Element: React.ComponentType,
+  ): IConditionalSlot<T & Partial<JSX.IntrinsicElements[S]>>;
+  <T extends {}, S extends keyof JSX.IntrinsicElements>(
+    Element: React.ComponentType,
+  ): IConditionalSlot<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 
 export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase & T> {
@@ -49,42 +51,23 @@ const IF = Symbol();
 const ELSEIF = Symbol();
 const ELSE = Symbol();
 
-export const isConditionsComponent = (
-  entity: ISlotComponent<any> | IConditionsComponent | IConditionalSlot,
-  ): entity is IConditionsComponent => {
-  return (entity as IConditionsComponent).test !== undefined;
-};
-
-export const evalSlots = (arr: TConditionalSlotArray, childrenObj: IIndexedChildren) => {
-  return arr.every((el) => {
-    if (isConditionsComponent(el)) {
-      const {slot, test} = el;
-      if (React.isValidElement(slot)) {
-        return childrenObj.get(slot.displaySymbol) !== undefined && test(slot.props) === true;
-      }
-      return false;
-    }
-    return childrenObj.get(el.displaySymbol) !== undefined;
-  });
-};
-
 const slotEvalIf = ({scope, excludes, includes, condition}: IConditionalSlotBase) => {
-  const childrenObj = useChildren(scope);
-  const include = scope && includes ? evalSlots(includes, childrenObj) : true;
-  const exclude = scope && excludes ? evalSlots(excludes, childrenObj) : true;
+  const childrenObj = useScope(scope);
+  const include = (scope && includes) ? childrenObj.includes(...includes) : true;
+  const exclude = (scope && excludes) ? childrenObj.excludes(...excludes) : true;
   const conditional = condition !== undefined ? Boolean(condition) : true;
   return include && exclude && conditional;
 };
 
-export function createConditionalSlot(
-  Element: React.ComponentType = React.Fragment,
+export function createDefaultConditionalSlot(
+  Element: keyof JSX.IntrinsicElements | React.ComponentType = React.Fragment,
   typeSymbol: symbol = IF,
   parent?: IConditionalSlot,
   ): IConditionalSlot {
   function ConditionalSlot(props: IConditionalSlotBase) {
     const {children, scope, excludes, includes, condition, ...newProps} = props;
     const elProps = Element === React.Fragment ? {} : {scope, ...newProps};
-    const scopeObj = useChildren(children);
+    const scopeObj = useScope(children);
     const evalResult = parent === undefined ? slotEvalIf({scope, excludes, includes, condition}) : true;
     const obj = scopeObj.get(ConditionalSlot.displaySymbol);
     let res: React.ReactNode = null;
@@ -123,12 +106,12 @@ export function createConditionalSlot(
     if (evalResult) {
       if (onIf && res !== null && res !== undefined) {
         return React.createElement(Element, elProps,
-          <FilterSlot key={0} scope={children} exclude={[ConditionalSlot]} />,
+          <FilterSlot key={0} scope={scopeObj} exclude={[ConditionalSlot as any]} all={true} />,
           res,
         );
       }
       return React.createElement(Element, elProps,
-        <FilterSlot key={0} scope={children} exclude={[ConditionalSlot]} />,
+        <FilterSlot key={0} scope={scopeObj} exclude={[ConditionalSlot as any]} all={true} />,
       );
     }
     if (res !== null && onIf === false) {
@@ -141,9 +124,9 @@ export function createConditionalSlot(
   ConditionalSlot.displaySymbol = elDisplay;
   ConditionalSlot.typeSymbol = typeSymbol;
   if (parent === undefined) {
-    const If = createConditionalSlot(React.Fragment, IF, ConditionalSlot);
-    const Else = createConditionalSlot(React.Fragment, ELSEIF, ConditionalSlot);
-    const ElseIf = createConditionalSlot(React.Fragment, ELSE, ConditionalSlot);
+    const If = createDefaultConditionalSlot(React.Fragment, IF, ConditionalSlot);
+    const Else = createDefaultConditionalSlot(React.Fragment, ELSEIF, ConditionalSlot);
+    const ElseIf = createDefaultConditionalSlot(React.Fragment, ELSE, ConditionalSlot);
     ConditionalSlot.If = If;
     ConditionalSlot.ElseIf = Else;
     ConditionalSlot.Else = ElseIf;
@@ -157,6 +140,10 @@ export function createConditionalSlot(
   return ConditionalSlot;
 }
 
-const ConditionalSlotElement: IConditionalSlot = createConditionalSlot();
+const ConditionalSlotElement: IConditionalSlot = createDefaultConditionalSlot();
+
+export const createConditionalElement: IOverloadCreateConditional = (
+  Element: keyof JSX.IntrinsicElements | React.ComponentType,
+  ) => createDefaultConditionalSlot(Element, IF);
 
 export default ConditionalSlotElement;

@@ -9,7 +9,7 @@ module.exports = {
   output: {
     path: path.join(__dirname,  prodPath),
     filename: '[name].js',
-    library: 'react-slots-library',
+    library: 'slottr',
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },
@@ -23,11 +23,12 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: ['ts-loader'],
+        use: ['ts-loader'],
         exclude: /node_modules/
       }
     ]
   },
+
   resolve: {
     extensions: ['.ts', '.tsx']
   },
