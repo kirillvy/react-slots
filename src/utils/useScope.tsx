@@ -1,6 +1,7 @@
 import React from 'react';
 import { ISortChildrenEl, ISlotComponent } from './createSlot';
 import ScopeUtils from './ScopeUtils';
+
 /**
  * Indexes React children for faster access by Slot components
  * @param scope - react children, in any format

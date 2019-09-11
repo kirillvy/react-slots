@@ -82,7 +82,7 @@ const Card2: React.FC = ({ children }) => {
   );
 };
 
-const Check: React.FC = (props) => <input {...props} onChange={e => null} type='checkbox' />;
+const Check: React.FC = (props) => <input {...props} onChange={(e) => null} type='checkbox' />;
 
 stories.add(
   'Card component',

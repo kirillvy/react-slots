@@ -15,28 +15,11 @@ export interface IConditionsComponent {
     test: <T = any>(props: T) => boolean;
 }
 export declare type TConditionalSlot = ISlotComponent<any> | IConditionsComponent;
-export declare const isConditionsComponent: (entity: IConditionsComponent | ISlotComponent<any>) => entity is IConditionsComponent;
 /**
  * Scope object. Slottable elements are tracked as Element.DisplaySymbol
  * Custom components as Element.DisplayName.
  */
 export declare class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
-    /**
-     * Reduces conditions to an object.
-     */
-    static reduceConds: (arr: (IConditionsComponent | ISlotComponent<any>)[]) => {
-        [x: string]: IConditionsComponent | ISlotComponent<any>;
-    };
-    /**
-     * Sorts elements by order of appearance
-     * @param els children object to sort into children
-     */
-    static sortElements(els: ISortChildrenEl[]): JSX.Element[];
-    /**
-     * Returns grouped elements, by order of appearance
-     * @param els children object to sort into children
-     */
-    static mapElements(els: ISortChildrenEl[]): JSX.Element[];
     private lastIndex;
     private children;
     constructor(childrenProp?: any);
@@ -50,7 +33,7 @@ export declare class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
      * Tests whether object includes all conditional slots
      * @param arr conditional slots for inclusion
      */
-    includes: (...arr: (IConditionsComponent | ISlotComponent<any>)[]) => boolean;
+    includes: (...arr: TConditionalSlot[]) => boolean;
     /**
      * Tests whether object excludes all conditional slots
      * @param arr conditional slots for exclusion
@@ -60,13 +43,13 @@ export declare class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
      * Returns array of conditional slots included
      * @param arr conditional slots for inclusion
      */
-    includeSlots: (arr: (IConditionsComponent | ISlotComponent<any>)[]) => ISortChildrenEl[];
+    includeSlots: (arr: TConditionalSlot[]) => ISortChildrenEl[];
     /**
      * Returns array of conditional slots without the excluded ones
      * @param arr conditional slots for exclusion
      * @param all include all elements including non-conditional slots
      */
-    excludeSlots: (arr: (IConditionsComponent | ISlotComponent<any>)[], all?: boolean | undefined) => ISortChildrenEl[];
+    excludeSlots: (arr: TConditionalSlot[], all?: boolean | undefined) => ISortChildrenEl[];
     /**
      * Returns all non-slot elements in scope
      */

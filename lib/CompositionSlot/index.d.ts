@@ -2,7 +2,7 @@ import * as React from 'react';
 /**
  * Allows composition through children.
  */
-interface ICompositionSlot {
+export interface ICompositionSlot {
     /**
      * Children with rules on passing (reads props, multiple, )
      */
@@ -12,14 +12,14 @@ interface ICompositionSlot {
      */
     scope: any;
     /**
-     * Composition out all slottable components, overrides include and exclude properties
+     * Include all non-slottable elements
      */
     all?: boolean;
 }
-interface ICompositionSubSlot extends ICompositionSlot {
+export interface ICompositionSubSlot extends ICompositionSlot {
     scope: React.Context<any>;
 }
-interface ICompositionSlotComponent extends React.FC<ICompositionSlot> {
+interface ICompositionSlotComponent<T = {}> extends React.FC<ICompositionSlot & T> {
     SubSlot: React.FunctionComponent<ICompositionSubSlot>;
 }
 declare const CompositionSlot: ICompositionSlotComponent;

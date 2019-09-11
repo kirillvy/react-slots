@@ -1,5 +1,5 @@
 import React from 'react';
-import useScope, { TConditionalSlot, ScopeMap } from '../utils/useScope';
+import useScope, { TConditionalSlot } from '../utils/useScope';
 import ScopeUtils from '../utils/ScopeUtils';
 
 export interface IConditionalSlotBase {
@@ -22,7 +22,7 @@ export interface IConditionalSlotBase {
   condition?: any;
 }
 
-interface IConditionalSubSlot extends IConditionalSlotBase {
+export interface IConditionalSubSlot extends IConditionalSlotBase {
   scope: React.Context<any>;
 }
 
@@ -86,8 +86,8 @@ export function createDefaultConditionalSlot(
     let res: React.ReactNode = null;
     let [onIf, pastIf] = [false, false];
     if (obj !== undefined) {
-      for (let i = 0; i < obj.length; i++) {
-        const cur: any = obj[i].child;
+      for (const i of obj) {
+        const cur: any = i.child;
         const valid = slotEvalIf(cur.props);
         if (valid) {
           res = cur;

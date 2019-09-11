@@ -19,7 +19,7 @@ export interface IConditionalSlotBase {
      */
     condition?: any;
 }
-interface IConditionalSubSlot extends IConditionalSlotBase {
+export interface IConditionalSubSlot extends IConditionalSlotBase {
     scope: React.Context<any>;
 }
 interface IOverloadCreateConditional {

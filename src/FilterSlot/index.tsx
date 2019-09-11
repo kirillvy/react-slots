@@ -26,7 +26,7 @@ export interface IFilterSlot {
   grouped?: boolean;
 }
 
-interface IFilterSubSlot extends IFilterSlot {
+export interface IFilterSubSlot extends IFilterSlot {
   scope: React.Context<any>;
 }
 

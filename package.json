@@ -1,6 +1,6 @@
 {
   "name": "slottr",
-  "version": "0.3.5",
+  "version": "0.4.0-beta",
   "description": "Extended slot pattern for React",
   "main": "./lib/index.js",
   "files": [
@@ -51,6 +51,7 @@
     "react-docgen-typescript-loader": "^3.1.0",
     "rollup-plugin-typescript": "^1.0.1",
     "storybook-readme": "^5.0.5",
+    "terser-webpack-plugin": "^2.0.1",
     "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
     "tslint-react": "^4.0.0",

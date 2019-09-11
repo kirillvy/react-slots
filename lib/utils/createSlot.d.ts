@@ -54,6 +54,7 @@ export interface ISlot<T = any> {
 declare type TAny = any;
 declare type ElType<T> = ISlotComponent<T> | ISlotComponentExtended<T>;
 interface IRenderAs extends TAny {
+    renderIn?: React.ComponentType | keyof JSX.IntrinsicElements | false;
     /**
      * Props passed into next level component
      */
@@ -61,7 +62,7 @@ interface IRenderAs extends TAny {
     /**
      * Element injected for rendering instead of default. Any props will have to be compatible.
      */
-    renderAs: React.ComponentType | keyof JSX.IntrinsicElements;
+    renderAs?: React.ComponentType | keyof JSX.IntrinsicElements;
 }
 export interface ISubSlot<T> extends Partial<ISlot<T>> {
     scope: React.Context<any>;
@@ -94,18 +95,18 @@ export interface ISlotComponentExtended<T = any> extends ISlotComponentBase<T> {
     After: IHeaderFooter;
 }
 interface IOverloadCreateSlot {
-    (Element: keyof JSX.IntrinsicElements | React.ComponentType, renderIn?: React.ComponentType | keyof JSX.IntrinsicElements | true): ISlotComponent;
-    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType, renderIn?: React.ComponentType | keyof JSX.IntrinsicElements | true): ISlotComponent<Partial<JSX.IntrinsicElements[T]>>;
-    <T extends {}>(Element?: React.ComponentType, renderIn?: React.ComponentType | keyof JSX.IntrinsicElements | true): ISlotComponent<T>;
-    <S extends keyof JSX.IntrinsicElements, T extends {}>(Element?: React.ComponentType, renderIn?: React.ComponentType | keyof JSX.IntrinsicElements | true): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
-    <T extends {}, S extends keyof JSX.IntrinsicElements>(Element?: React.ComponentType, renderIn?: React.ComponentType | keyof JSX.IntrinsicElements | true): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
+    (Element: keyof JSX.IntrinsicElements | React.ComponentType, renderIn?: React.ComponentType | keyof JSX.IntrinsicElements): ISlotComponent;
+    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType, renderIn?: React.ComponentType | keyof JSX.IntrinsicElements): ISlotComponent<Partial<JSX.IntrinsicElements[T]>>;
+    <T extends {}>(Element?: React.ComponentType, renderIn?: React.ComponentType | keyof JSX.IntrinsicElements): ISlotComponent<T>;
+    <S extends keyof JSX.IntrinsicElements, T extends {}>(Element?: React.ComponentType, renderIn?: React.ComponentType | keyof JSX.IntrinsicElements): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
+    <T extends {}, S extends keyof JSX.IntrinsicElements>(Element?: React.ComponentType, renderIn?: React.ComponentType | keyof JSX.IntrinsicElements): ISlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 interface IOverloadCreateLayeredSlot {
-    (Element: keyof JSX.IntrinsicElements | React.ComponentType, renderIn: React.ComponentType | keyof JSX.IntrinsicElements | true): ISlotComponentExtended;
-    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType, renderIn: React.ComponentType | keyof JSX.IntrinsicElements | true): ISlotComponentExtended<Partial<JSX.IntrinsicElements[T]>>;
-    <T extends {}>(Element: React.ComponentType, renderIn: React.ComponentType | keyof JSX.IntrinsicElements | true): ISlotComponentExtended<T>;
-    <S extends keyof JSX.IntrinsicElements, T extends {}>(Element: React.ComponentType, renderIn: React.ComponentType | keyof JSX.IntrinsicElements | true): ISlotComponentExtended<T & Partial<JSX.IntrinsicElements[S]>>;
-    <T extends {}, S extends keyof JSX.IntrinsicElements>(Element: React.ComponentType, renderIn: React.ComponentType | keyof JSX.IntrinsicElements | true): ISlotComponentExtended<T & Partial<JSX.IntrinsicElements[S]>>;
+    (Element: keyof JSX.IntrinsicElements | React.ComponentType, renderIn: React.ComponentType | keyof JSX.IntrinsicElements): ISlotComponentExtended;
+    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType, renderIn: React.ComponentType | keyof JSX.IntrinsicElements): ISlotComponentExtended<Partial<JSX.IntrinsicElements[T]>>;
+    <T extends {}>(Element: React.ComponentType, renderIn: React.ComponentType | keyof JSX.IntrinsicElements): ISlotComponentExtended<T>;
+    <S extends keyof JSX.IntrinsicElements, T extends {}>(Element: React.ComponentType, renderIn: React.ComponentType | keyof JSX.IntrinsicElements): ISlotComponentExtended<T & Partial<JSX.IntrinsicElements[S]>>;
+    <T extends {}, S extends keyof JSX.IntrinsicElements>(Element: React.ComponentType, renderIn: React.ComponentType | keyof JSX.IntrinsicElements): ISlotComponentExtended<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 export interface IHeaderFooter extends React.FunctionComponent {
     displaySymbol: symbol;

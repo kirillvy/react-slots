@@ -20,7 +20,7 @@ interface IHeaderFooterConditional extends IHeaderFooter {
   Conditional: IConditionalSlot;
 }
 
-interface IConditionalSlotComponent<T = any> extends ISlotComponentBase<T> {
+export interface IConditionalSlotComponent<T = any> extends ISlotComponentBase<T> {
   Slot: ISlotConditional<T>;
   SubSlot: ISubSlotConditional<T>;
   Before: IHeaderFooterConditional;

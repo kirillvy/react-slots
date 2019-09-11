@@ -6,7 +6,7 @@ import { ISlotComponent } from '../utils/createSlot';
 /**
  * Allows composition through children.
  */
-interface ICompositionSlot {
+export interface ICompositionSlot {
   /**
    * Children with rules on passing (reads props, multiple, )
    */
@@ -16,9 +16,13 @@ interface ICompositionSlot {
    */
   scope: any;
   /**
-   * Composition out all slottable components, overrides include and exclude properties
+   * Include all non-slottable elements
    */
   all?: boolean;
+  /**
+   * [planned] - group by type in order of appearance. Currently not implemented,
+   * but will be if cases are found.
+   */
   // grouped?: boolean;
 }
 
@@ -26,11 +30,11 @@ const isSlotted = (
   child: any | ISlotComponent,
   ): child is ISlotComponent => child && child.type && child.type.displaySymbol;
 
-interface ICompositionSubSlot extends ICompositionSlot {
+export interface ICompositionSubSlot extends ICompositionSlot {
   scope: React.Context<any>;
 }
 
-interface ICompositionSlotComponent extends React.FC<ICompositionSlot> {
+interface ICompositionSlotComponent<T = {}> extends React.FC<ICompositionSlot & T> {
   SubSlot: React.FunctionComponent<ICompositionSubSlot>;
 }
 
@@ -40,7 +44,20 @@ const CompositionSlotFactory = (Element: React.FC<ICompositionSlot>): React.FC<I
   return <Context.Consumer>{(value) => <Element {...props} scope={value} />}</Context.Consumer>;
 };
 
-const createCompositionSlot = (
+interface IOverloadCreateConditionalSlot {
+  (Element: keyof JSX.IntrinsicElements | React.ComponentType): ICompositionSlotComponent;
+  <T extends keyof JSX.IntrinsicElements>(
+    Element: T | React.ComponentType,
+  ): ICompositionSlotComponent<Partial<JSX.IntrinsicElements[T]>>;
+  <T extends {}>(Element?: React.ComponentType): ICompositionSlotComponent<T>;
+  <S extends keyof JSX.IntrinsicElements, T extends {}>(
+    Element?: React.ComponentType,
+  ): ICompositionSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
+  <T extends {}, S extends keyof JSX.IntrinsicElements>(
+    Element?: React.ComponentType,
+  ): ICompositionSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
+}
+const createCompositionSlot: IOverloadCreateConditionalSlot = (
     Element: keyof JSX.IntrinsicElements | React.ComponentType = React.Fragment,
   ) => {
   const CompositionSlotComponent = ({ scope, all, children }: ICompositionSlot) => {
@@ -60,8 +77,7 @@ const createCompositionSlot = (
       if (isSlotted(child) && child.type && child.type.Slot) {
         const result = childrenObj[child.type.Slot.displaySymbol];
         if (result) {
-          for (let i = 0; i < result.length; i++) {
-            const El = result[i];
+          for (const El of result) {
             const slotted = injectSlot(child.type, El.props)(child, key);
             if (slotted) {
               res.push(slotted);
