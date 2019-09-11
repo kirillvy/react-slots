@@ -44,7 +44,7 @@ const CompositionSlotFactory = (Element: React.FC<ICompositionSlot>): React.FC<I
   return <Context.Consumer>{(value) => <Element {...props} scope={value} />}</Context.Consumer>;
 };
 
-interface IOverloadCreateConditionalSlot {
+interface IOverloadCreateCompositionSlot {
   (Element: keyof JSX.IntrinsicElements | React.ComponentType): ICompositionSlotComponent;
   <T extends keyof JSX.IntrinsicElements>(
     Element: T | React.ComponentType,
@@ -57,7 +57,7 @@ interface IOverloadCreateConditionalSlot {
     Element?: React.ComponentType,
   ): ICompositionSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
 }
-const createCompositionSlot: IOverloadCreateConditionalSlot = (
+const createCompositionSlot: IOverloadCreateCompositionSlot = (
     Element: keyof JSX.IntrinsicElements | React.ComponentType = React.Fragment,
   ) => {
   const CompositionSlotComponent = ({ scope, all, children }: ICompositionSlot) => {

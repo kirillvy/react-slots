@@ -1,6 +1,5 @@
 import React from 'react';
 import { ISortChildrenEl, ISlotComponent } from './createSlot';
-import ScopeUtils from './ScopeUtils';
 
 /**
  * Indexes React children for faster access by Slot components
@@ -25,6 +24,34 @@ export type TConditionalSlot = ISlotComponent<any> | IConditionsComponent;
  * Custom components as Element.DisplayName.
  */
 export class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
+  public static isConditionsComponent = (
+    entity: ISlotComponent<any> | IConditionsComponent,
+    ): entity is IConditionsComponent => {
+    return (entity as IConditionsComponent).test !== undefined;
+  }
+  /**
+   * Reduces conditions to an object.
+   */
+  public static reduceConds = (arr: TConditionalSlot[]) => arr.reduce((prevV, val) => {
+    const key = ScopeMap.isConditionsComponent(val) ? val.slot.displaySymbol : val.displaySymbol as any;
+    prevV[key] = val;
+    return prevV;
+  }, {} as { [x: string]: TConditionalSlot })
+
+  /**
+   * Sorts elements by order of appearance
+   * @param els children object to sort into children
+   */
+  public static sortElements(els: ISortChildrenEl[]): JSX.Element[] {
+    return els.sort((a, b) => a.index - b.index).map((el) => el.child);
+  }
+  /**
+   * Returns grouped elements, by order of appearance
+   * @param els children object to sort into children
+   */
+  public static mapElements(els: ISortChildrenEl[]): JSX.Element[] {
+    return els.map((el) => el.child);
+  }
   private lastIndex = -1;
   private children: any;
   constructor(childrenProp?: any) {
@@ -104,7 +131,7 @@ export class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
    */
   public excludeSlots = (arr: TConditionalSlot[], all?: boolean) => {
     const prev: ISortChildrenEl[] = [];
-    const vals = ScopeUtils.reduceConds(arr);
+    const vals = ScopeMap.reduceConds(arr);
     this.forEach((val, key) => {
       if (typeof key !== 'symbol' && all !== true) {
         return;
@@ -141,7 +168,7 @@ export class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
    * filters slots by params
    */
   private filterSlot = (exclude?: boolean) => (prev: ISortChildrenEl[], el: TConditionalSlot) => {
-    if (ScopeUtils.isConditionsComponent(el)) {
+    if (ScopeMap.isConditionsComponent(el)) {
       const { slot, test } = el;
       const objConditions = this.get(slot.displaySymbol);
       if (objConditions !== undefined) {
@@ -163,7 +190,7 @@ export class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
    * evals slots by params
    */
   private evalSlot = (includes?: boolean) => (el: TConditionalSlot) => {
-    if (ScopeUtils.isConditionsComponent(el)) {
+    if (ScopeMap.isConditionsComponent(el)) {
       const {slot, test} = el;
       const obj = this.get(slot.displaySymbol);
       if (includes) {

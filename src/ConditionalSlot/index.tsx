@@ -1,6 +1,5 @@
 import React from 'react';
-import useScope, { TConditionalSlot } from '../utils/useScope';
-import ScopeUtils from '../utils/ScopeUtils';
+import useScope, { TConditionalSlot, ScopeMap } from '../utils/useScope';
 
 export interface IConditionalSlotBase {
   children?: any;
@@ -120,12 +119,12 @@ export function createDefaultConditionalSlot(
       const prev = scopeObj.excludeSlots([ConditionalSlot as any], true);
       if (onIf && res !== null && res !== undefined) {
         return React.createElement(Element, elProps,
-          ScopeUtils.mapElements(prev),
+          ScopeMap.mapElements(prev),
           res,
         );
       }
       return React.createElement(Element, elProps,
-        ScopeUtils.mapElements(prev),
+        ScopeMap.mapElements(prev),
       );
     }
     if (res !== null && onIf === false) {
@@ -156,7 +155,6 @@ export function createDefaultConditionalSlot(
   }
   return ConditionalSlot;
 }
-
 const ConditionalSlotElement: IConditionalSlot = createDefaultConditionalSlot();
 
 export const createConditionalElement: IOverloadCreateConditional = (
