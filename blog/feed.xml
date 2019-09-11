@@ -4,7 +4,7 @@
         <title>slottr Blog</title>
         <link>https://kirillvy.github.io/react-slots/blog</link>
         <description>The best place to stay up-to-date with the latest slottr news and events.</description>
-        <lastBuildDate>Thu, 05 Sep 2019 06:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Wed, 11 Sep 2019 06:00:00 GMT</lastBuildDate>
         <docs>http://blogs.law.harvard.edu/tech/rss</docs>
         <generator>Feed for Node.js</generator>
         <image>
@@ -14,12 +14,23 @@
         </image>
         <copyright>Copyright © 2019 kirillvy</copyright>
         <item>
+            <title><![CDATA[Introducing CompositionSlot]]></title>
+            <link>https://kirillvy.github.io/react-slots/blog/2019/09/11/CompositionSlot.html</link>
+            <guid>https://kirillvy.github.io/react-slots/blog/2019/09/11/CompositionSlot.html</guid>
+            <pubDate>Wed, 11 Sep 2019 06:00:00 GMT</pubDate>
+            <description><![CDATA[<p>CompositionSlot is a method tailored for forms coming in slottr 0.4, which allows you to compose forms and process
+events inside the template.</p>
+<p>To begin using the slot, import it:</p>
+<p><code>import { CompositionSlot } from 'slottr';</code></p>
+<p>You can also create your own with the method createCompositionSlot().</p>
+]]></description>
+        </item>
+        <item>
             <title><![CDATA[Welcome to the blog!]]></title>
             <link>https://kirillvy.github.io/react-slots/blog/2019/09/05/blog-post.html</link>
             <guid>https://kirillvy.github.io/react-slots/blog/2019/09/05/blog-post.html</guid>
             <pubDate>Thu, 05 Sep 2019 06:00:00 GMT</pubDate>
-            <description><![CDATA[<p>This is the first entry. I will be updating the package once in a while</p>
-]]></description>
+            <description><![CDATA[<p>This is the first entry. I will be updating the package once in a while</p> ]]></description>
         </item>
     </channel>
 </rss>

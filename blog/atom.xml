@@ -2,20 +2,35 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://kirillvy.github.io/react-slots/blog</id>
     <title>slottr Blog</title>
-    <updated>2019-09-05T06:00:00Z</updated>
+    <updated>2019-09-11T06:00:00Z</updated>
     <generator>Feed for Node.js</generator>
     <link rel="alternate" href="https://kirillvy.github.io/react-slots/blog"/>
     <subtitle>The best place to stay up-to-date with the latest slottr news and events.</subtitle>
     <logo>https://kirillvy.github.io/react-slots/img/favicon.ico</logo>
     <rights>Copyright © 2019 kirillvy</rights>
     <entry>
+        <title type="html"><![CDATA[Introducing CompositionSlot]]></title>
+        <id>https://kirillvy.github.io/react-slots/blog/2019/09/11/CompositionSlot.html</id>
+        <link href="https://kirillvy.github.io/react-slots/blog/2019/09/11/CompositionSlot.html">
+        </link>
+        <updated>2019-09-11T06:00:00Z</updated>
+        <summary type="html"><![CDATA[<p>CompositionSlot is a method tailored for forms coming in slottr 0.4, which allows you to compose forms and process
+events inside the template.</p>
+<p>To begin using the slot, import it:</p>
+<p><code>import { CompositionSlot } from 'slottr';</code></p>
+<p>You can also create your own with the method createCompositionSlot().</p>
+]]></summary>
+        <author>
+            <name>Kirill Vysokolov</name>
+        </author>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[Welcome to the blog!]]></title>
         <id>https://kirillvy.github.io/react-slots/blog/2019/09/05/blog-post.html</id>
         <link href="https://kirillvy.github.io/react-slots/blog/2019/09/05/blog-post.html">
         </link>
         <updated>2019-09-05T06:00:00Z</updated>
-        <summary type="html"><![CDATA[<p>This is the first entry. I will be updating the package once in a while</p>
-]]></summary>
+        <summary type="html"><![CDATA[<p>This is the first entry. I will be updating the package once in a while</p> ]]></summary>
         <author>
             <name>Kirill Vysokolov</name>
         </author>
