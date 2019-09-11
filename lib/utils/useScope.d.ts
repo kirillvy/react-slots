@@ -20,24 +20,32 @@ export declare const isConditionsComponent: (entity: IConditionsComponent | ISlo
  * Scope object. Slottable elements are tracked as Element.DisplaySymbol
  * Custom components as Element.DisplayName.
  */
-declare class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
-    private lastIndex;
-    private instanceType;
+export declare class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
     /**
-     * Injects element into the scope
-     * @param child JSX element to inject
+     * Reduces conditions to an object.
      */
-    injectElement: (child: JSX.Element) => void;
+    static reduceConds: (arr: (IConditionsComponent | ISlotComponent<any>)[]) => {
+        [x: string]: IConditionsComponent | ISlotComponent<any>;
+    };
     /**
      * Sorts elements by order of appearance
      * @param els children object to sort into children
      */
-    sortElements(els: ISortChildrenEl[]): JSX.Element[];
+    static sortElements(els: ISortChildrenEl[]): JSX.Element[];
     /**
      * Returns grouped elements, by order of appearance
      * @param els children object to sort into children
      */
-    mapElements(els: ISortChildrenEl[]): JSX.Element[];
+    static mapElements(els: ISortChildrenEl[]): JSX.Element[];
+    private lastIndex;
+    private children;
+    constructor(childrenProp?: any);
+    /**
+     * Injects element into the scope
+     * @param child JSX element to inject
+     */
+    scopeChildren: () => any;
+    injectElement: (child: JSX.Element) => void;
     /**
      * Tests whether object includes all conditional slots
      * @param arr conditional slots for inclusion
@@ -81,4 +89,4 @@ declare class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
  * @param scope - React Children prop
  */
 declare const useScope: (scope: any) => ScopeMap;
-export default useScope;
+export { useScope as default };

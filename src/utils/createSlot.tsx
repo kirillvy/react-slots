@@ -22,7 +22,7 @@ export interface ISlot<T = any> {
   /**
    * Elements or indexed children object passed for filtering
    */
-  scope: any;
+  scope?: any;
   /**
    * Slottable component test
    */
@@ -52,12 +52,14 @@ export interface ISlot<T = any> {
    * Component is always rendered.
    */
   unconditional?: boolean;
+  noHeaders?: boolean;
 }
 
 type TAny = any;
 type ElType<T> = ISlotComponent<T> | ISlotComponentExtended<T>;
 
 interface IRenderAs extends TAny {
+  renderIn?: React.ComponentType | keyof JSX.IntrinsicElements;
   /**
    * Props passed into next level component
    */
@@ -65,7 +67,7 @@ interface IRenderAs extends TAny {
   /**
    * Element injected for rendering instead of default. Any props will have to be compatible.
    */
-  renderAs: React.ComponentType | keyof JSX.IntrinsicElements;
+  renderAs?: React.ComponentType | keyof JSX.IntrinsicElements;
 }
 
 export interface ISubSlot<T> extends Partial<ISlot<T>> {
@@ -164,45 +166,50 @@ export type SlotType<T = {}, S = {}> =
   T extends keyof JSX.IntrinsicElements ? S extends {} ? S & Partial<JSX.IntrinsicElements[T]> :
    Partial<JSX.IntrinsicElements[T]> : any;
 
+export const injectSlot = <T extends {}>(
+  Element: ElType<T>, slotProps: ISlot<T>,
+  ) => (child: JSX.Element, i?: number) => {
+  const { children: defaultElement, defaultProps, passedProps, withContext, props, childIs } = slotProps;
+  if (withContext === true  && defaultElement !== undefined) {
+    if (childIs === 'fallback') {
+      return null;
+    }
+    if (Element.Context.Provider === undefined) {
+      return null;
+    }
+    const contextChildren = React.cloneElement(child, {...props, ...passedProps });
+    return React.cloneElement(child, { key: i, ...props, ...passedProps }, (
+    <Element.Context.Provider
+      key={i}
+      value={useScope(contextChildren.props.children)}
+    >
+    {defaultElement}
+    </Element.Context.Provider>
+    ));
+  }
+  const childProps: any = child.props;
+  if (child.props === undefined) {
+    return child;
+  }
+  if (childProps.hasOwnProperty('children')) {
+    return React.cloneElement(child, { key: i, ...props, ...passedProps });
+  }
+  return React.cloneElement(child, { key: i, ...props, ...defaultProps, ...passedProps }, defaultElement);
+};
+
 const SlotFactory = <T extends {}>(
   Element: ElType<T>,
   ): React.FC<ISlot<T>> => (
-  { scope, children: defaultElement, multiple = false, defaultProps, passedProps, withContext,
-    fallback, fallbackProps, props, childIs, test },
+  slotProps,
 ) => {
+  const { scope, children: defaultElement, multiple = false,
+    fallback, fallbackProps, childIs, test, noHeaders } = slotProps;
   const childrenObj = useScope(scope);
   const res = childrenObj.get(Element.displaySymbol);
   const headersList = childrenObj.get(Element.Before.displaySymbol) || [];
   const footersList = childrenObj.get(Element.After.displaySymbol) || [];
   const headers = headersList.map((el) => el.child);
   const footers = footersList.map((el) => el.child);
-  const injectSlot = (child: JSX.Element, i?: number) => {
-    if (withContext === true  && defaultElement !== undefined) {
-      if (childIs === 'fallback') {
-        return null;
-      }
-      if (Element.Context.Provider === undefined) {
-        return null;
-      }
-      const contextChildren = React.cloneElement(child, {...props, ...passedProps });
-      return React.cloneElement(child, { key: i, ...props, ...passedProps }, (
-      <Element.Context.Provider
-        key={i}
-        value={useScope(contextChildren.props.children)}
-      >
-      {defaultElement}
-      </Element.Context.Provider>
-      ));
-    }
-    const childProps: any = child.props;
-    if (child.props === undefined) {
-      return child;
-    }
-    if (childProps.hasOwnProperty('children')) {
-      return React.cloneElement(child, { key: i, ...props, ...passedProps });
-    }
-    return React.cloneElement(child, { key: i, ...props, ...defaultProps, ...passedProps }, defaultElement);
-  };
   if (res === undefined) {
     if ((childIs === 'fallback' || childIs === 'both') && defaultElement !== undefined) {
       return React.cloneElement(defaultElement, fallbackProps);
@@ -214,7 +221,7 @@ const SlotFactory = <T extends {}>(
   }
   if (multiple === true) {
     let element = res.reduce((prev, {index, child}) => {
-      const el = injectSlot(child, index);
+      const el = injectSlot(Element, slotProps)(child, index);
       if (el !== null) {
         prev.push(el);
       }
@@ -226,7 +233,11 @@ const SlotFactory = <T extends {}>(
     return <>{headers}{element}{footers}</>;
   }
   const { child: childObj } = res[0];
-  return <>{headers}{injectSlot(childObj)}{footers}</>;
+  const result = injectSlot(Element, slotProps)(childObj);
+  if (noHeaders && result === null) {
+    return result;
+  }
+  return <>{headers}{result}{footers}</>;
 };
 
 const SubSlotFactory = <T extends {}>(Element: ElType<T>): React.FC<ISubSlot<T>> => (
@@ -237,12 +248,15 @@ const SubSlotFactory = <T extends {}>(Element: ElType<T>): React.FC<ISubSlot<T>>
 
 const SlottableElement: (
     defaultElement?: React.ComponentType | keyof JSX.IntrinsicElements,
-    renderIn?: React.ComponentType | keyof JSX.IntrinsicElements | true,
-  ) => React.FC<IRenderAs> = (defaultElement = React.Fragment, renderIn) => (
-  {children, renderAs, renderInProps, ...props},
+    renderInParam?: React.ComponentType | keyof JSX.IntrinsicElements | true,
+  ) => React.FC<IRenderAs> = (defaultElement = React.Fragment, renderInParam) => (
+  {children, renderAs, renderIn, renderInProps, ...props},
   ) => {
     const el = React.createElement(renderAs || defaultElement, props, children);
-    if (renderIn && renderIn !== true) {
+    if (renderInParam && renderInParam !== true) {
+      return React.createElement(renderInParam || renderIn, renderInProps, el);
+    }
+    if (renderIn) {
       return React.createElement(renderIn, renderInProps, el);
     }
     return el;
@@ -288,4 +302,4 @@ export const createLayeredSlot: IOverloadCreateLayeredSlot = <T extends {} = {},
     return SlottedElement;
 };
 
-export default createSlot;
+export {createSlot as default};

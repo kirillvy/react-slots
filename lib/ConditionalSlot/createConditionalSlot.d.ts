@@ -1,10 +1,10 @@
 import React from 'react';
-import { ISlotComponentBase, IHeaderFooter, ISubSlotElement, ISubSlot, ISlotElement, ISlot } from './createSlot';
-import { IConditionalSlot } from '../ConditionalSlot';
+import { ISlotComponentBase, IHeaderFooter, ISubSlotElement, ISubSlot, ISlotElement, ISlot } from '../utils/createSlot';
+import { IConditionalSlot } from '.';
 interface IHeaderFooterConditional extends IHeaderFooter {
     Conditional: IConditionalSlot;
 }
-interface ISlotConditional<T> extends ISlotElement<T> {
+export interface ISlotConditional<T> extends ISlotElement<T> {
     displaySymbol: symbol;
     Conditional: IConditionalSlot<T & ISlot>;
 }
@@ -28,4 +28,4 @@ interface IOverloadCreateConditionalSlot {
     <T extends {}, S extends keyof JSX.IntrinsicElements>(Element?: React.ComponentType): IConditionalSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 declare const createConditionalSlot: IOverloadCreateConditionalSlot;
-export default createConditionalSlot;
+export { createConditionalSlot as default };

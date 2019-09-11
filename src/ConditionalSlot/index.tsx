@@ -1,6 +1,6 @@
 import React from 'react';
-import useScope, {TConditionalSlot, IConditionsComponent} from '../utils/useScope';
-import FilterSlot from '../FilterSlot';
+import useScope, { TConditionalSlot, ScopeMap } from '../utils/useScope';
+import ScopeUtils from '../utils/ScopeUtils';
 
 export interface IConditionalSlotBase {
   children?: any;
@@ -20,6 +20,10 @@ export interface IConditionalSlotBase {
    * Truthy eval of conditions for implementations.
    */
   condition?: any;
+}
+
+interface IConditionalSubSlot extends IConditionalSlotBase {
+  scope: React.Context<any>;
 }
 
 interface IOverloadCreateConditional {
@@ -42,9 +46,18 @@ export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase 
   If: IConditionalSlot;
   ElseIf: IConditionalSlot;
   Else: IConditionalSlot;
+  SubSlot: React.FC<IConditionalSubSlot & T>;
   displaySymbol: symbol;
   typeSymbol: symbol;
 }
+
+const SubSlotFactory = <T extends {}>(
+  Element: IConditionalSlot,
+  ): React.FC<IConditionalSubSlot & T> => (
+  { scope: Context, ...props },
+) => {
+  return <Context.Consumer>{(value) => <Element {...props} scope={value}/>}</Context.Consumer>;
+};
 
 const elDisplay = Symbol();
 const IF = Symbol();
@@ -104,14 +117,15 @@ export function createDefaultConditionalSlot(
       }
     }
     if (evalResult) {
+      const prev = scopeObj.excludeSlots([ConditionalSlot as any], true);
       if (onIf && res !== null && res !== undefined) {
         return React.createElement(Element, elProps,
-          <FilterSlot key={0} scope={scopeObj} exclude={[ConditionalSlot as any]} all={true} />,
+          ScopeUtils.mapElements(prev),
           res,
         );
       }
       return React.createElement(Element, elProps,
-        <FilterSlot key={0} scope={scopeObj} exclude={[ConditionalSlot as any]} all={true} />,
+        ScopeUtils.mapElements(prev),
       );
     }
     if (res !== null && onIf === false) {
@@ -130,11 +144,14 @@ export function createDefaultConditionalSlot(
     ConditionalSlot.If = If;
     ConditionalSlot.ElseIf = Else;
     ConditionalSlot.Else = ElseIf;
+    // @ts-ignore
+    ConditionalSlot.SubSlot = SubSlotFactory(ConditionalSlot);
   } else {
     setTimeout(() => {
       ConditionalSlot.If = parent.If;
       ConditionalSlot.ElseIf = parent.Else;
       ConditionalSlot.Else = parent.ElseIf;
+      ConditionalSlot.SubSlot = SubSlotFactory(parent);
     }, 0);
   }
   return ConditionalSlot;
@@ -146,4 +163,4 @@ export const createConditionalElement: IOverloadCreateConditional = (
   Element: keyof JSX.IntrinsicElements | React.ComponentType,
   ) => createDefaultConditionalSlot(Element, IF);
 
-export default ConditionalSlotElement;
+export {ConditionalSlotElement as default};

@@ -1,19 +1,18 @@
 import useScope from './utils/useScope';
 import createSlot, {createLayeredSlot} from './utils/createSlot';
-import createConditionalSlot from './utils/createConditionalSlot';
+import createConditionalSlot from './ConditionalSlot/createConditionalSlot';
 import ConditionalSlot, {createConditionalElement} from './ConditionalSlot';
 import FilterSlot from './FilterSlot';
+import CompositionSlot from './CompositionSlot';
 
 export {
+  CompositionSlot,
+  ConditionalSlot,
   FilterSlot,
-  FilterSlot as NonSlotted,
-  useScope,
-  useScope as useChildren,
   createSlot,
+  createSlot as default,
   createLayeredSlot,
   createConditionalSlot,
   createConditionalElement,
-  ConditionalSlot,
+  useScope,
 };
-
-export default createSlot;
