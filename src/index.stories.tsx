@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withReadme } from 'storybook-readme';
-import createSlot, { createConditionalSlot, useScope, ConditionalSlot, FilterSlot,
-  createConditionalElement } from '.';
+import createSlot, {
+  createConditionalSlot, useScope, ConditionalSlot, FilterSlot, createLayeredSlot,
+  CompositionSlot,
+} from '.';
 
 /**
  * imports of README file
@@ -13,35 +15,34 @@ import Readme from './README.md';
  * imports of component
  */
 
-const Example: React.FC = ({children}) => (
+const Example: React.FC = ({ children }) => (
   <div>
     hello, {children}
   </div>
-)
+);
+
 const stories = storiesOf('Components', module);
 
 export const CardContextCard = createConditionalSlot('div');
 export const CardTopText = createSlot();
 export const CardTopTexts = createSlot();
-export const CardBottomText = createSlot<'input'>('input', Example);
-const ConditionalDiv = createConditionalElement<'div'>('div');
-
-const Card3: React.FC = ({ children }) => {
-  return (
-    <div>
-      <ConditionalDiv includes={[CardBottomText.Slot]} scope={children} style={{border: '1px solid black'}}>
-        card  text
-        <CardBottomText.Slot.Slot scope={children} />
-        /card bottom text
-      </ConditionalDiv>
-  </div>
-  );
-};
+export const CardBottomText = createSlot<'input'>('input');
 
 const Card: React.FC = ({ children }) => {
   const scope = useScope(children);
   return (
     <div>
+      <CompositionSlot scope={scope}>
+        <CardBottomText.Slot
+          props={{onInput: (e) => console.log(e.currentTarget.value, e.currentTarget.name)}}
+          scope={[]}
+        />
+        <CardTopText.Slot scope={[]} />
+        <CardContextCard.Slot scope={[]} withContext={true}>
+          <CardTopText.SubSlot scope={CardContextCard.Context} multiple={true} />
+        </CardContextCard.Slot>
+      </CompositionSlot>
+      <div>/composition card</div>
       <ConditionalSlot condition={true} scope={scope}>
         hello1
         <ConditionalSlot.If condition={false} scope={scope}>
@@ -63,21 +64,14 @@ const Card: React.FC = ({ children }) => {
           <CardTopText.SubSlot scope={CardContextCard.Context} multiple={true} />
         </CardContextCard.Slot.Conditional>
       </div>
-      <div>
-        <Card3>
-          <CardBottomText.Slot scope={scope} defaultProps={{type: 'text', value: 'hello'}}  multiple={true} />
-        </Card3>
-      </div>
-      nonslotted grouped:
-    <FilterSlot scope={children} include={[]} all={true} grouped={true} />
-      nonslotted ungrouped:
-    <FilterSlot scope={children} include={[]} all={true} grouped={false} />
+    <FilterSlot scope={scope} include={[]} all={true} grouped={true} />
+    nonslotted ungrouped:
+    <FilterSlot scope={scope} include={[]} all={true} />
     </div>
   );
 };
 
 const Card2: React.FC = ({ children }) => {
-  const scope = useScope(children);
   return (
     <Card>
       {children}
@@ -88,7 +82,7 @@ const Card2: React.FC = ({ children }) => {
   );
 };
 
-const Check = () => <input type='checkbox' />;
+const Check: React.FC = (props) => <input {...props} onChange={(e) => null} type='checkbox' />;
 
 stories.add(
   'Card component',
@@ -98,6 +92,9 @@ stories.add(
     <Card2>
         xzzxvv
       <div>ggg</div>
+        <CardBottomText  name={'aaa'}  />
+        <CardBottomText renderAs={Check}/>
+        <CardTopText>asfklfhlka</CardTopText>
         <CardContextCard>
           <CardTopText.After>
             <p>yes card here</p>
@@ -121,10 +118,8 @@ stories.add(
         <CardBottomText.Before>
           Text before Description of the Card
         </CardBottomText.Before>
-        <CardBottomText renderAs={Check} />
-        <CardBottomText renderAs={Check} />
-        <CardBottomText renderAs={Check} />
-        <CardBottomText renderAs={Check} />
+        <CardBottomText renderAs={Check} name={'fff'} />
+        <CardBottomText renderAs={Check} renderIn={Example} />
         <CardBottomText renderAs={Check} />
         afsfsakj
     </Card2>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ISortChildrenEl, ISlotComponent } from './createSlot';
+import ScopeUtils from './ScopeUtils';
 
 /**
  * Indexes React children for faster access by Slot components
@@ -19,25 +20,40 @@ export interface IConditionsComponent {
 
 export type TConditionalSlot = ISlotComponent<any> | IConditionsComponent;
 
-export const isConditionsComponent = (
-  entity: ISlotComponent<any> | IConditionsComponent,
-  ): entity is IConditionsComponent => {
-  return (entity as IConditionsComponent).test !== undefined;
-};
-
-const ScopeType = Symbol();
-
 /**
  * Scope object. Slottable elements are tracked as Element.DisplaySymbol
  * Custom components as Element.DisplayName.
  */
-class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
+export class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
   private lastIndex = -1;
-  private instanceType = ScopeType;
+  private children: any;
+  constructor(childrenProp?: any) {
+    super();
+    if (!childrenProp) {
+      return;
+    }
+    const mapArr = (arr: any[]) => arr.reduce((prev, el) => {
+        if (el instanceof Array && el.length) {
+          prev.push(...mapArr(el));
+        } else {
+          prev.push(el);
+        }
+        return prev;
+      },
+      [] as any[]);
+    this.children = mapArr([childrenProp]);
+    const childrenCount = React.Children.count(this.children);
+    if (childrenCount === 1) {
+      this.injectElement(this.children);
+    } else if (childrenCount > 1) {
+        React.Children.forEach(childrenProp, this.injectElement);
+    }
+  }
   /**
    * Injects element into the scope
    * @param child JSX element to inject
    */
+  public scopeChildren = () => this.children;
   public injectElement = (child: JSX.Element) => {
     let childType = 'string';
     if (React.isValidElement(child) && child.type !== undefined) {
@@ -59,20 +75,6 @@ class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
       resultGet.push({index, child});
       this.set(childType, resultGet);
     }
-  }
-  /**
-   * Sorts elements by order of appearance
-   * @param els children object to sort into children
-   */
-  public sortElements(els: ISortChildrenEl[]): JSX.Element[] {
-    return els.sort((a, b) => a.index - b.index).map((el) => el.child);
-  }
-  /**
-   * Returns grouped elements, by order of appearance
-   * @param els children object to sort into children
-   */
-  public mapElements(els: ISortChildrenEl[]): JSX.Element[] {
-    return els.map((el) => el.child);
   }
   /**
    * Tests whether object includes all conditional slots
@@ -102,11 +104,7 @@ class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
    */
   public excludeSlots = (arr: TConditionalSlot[], all?: boolean) => {
     const prev: ISortChildrenEl[] = [];
-    const vals = arr.reduce((prevV, val) => {
-      const key = isConditionsComponent(val) ? val.slot.displaySymbol : val.displaySymbol as any;
-      prevV[key] = val;
-      return prevV;
-    }, {} as { [x: string]: TConditionalSlot });
+    const vals = ScopeUtils.reduceConds(arr);
     this.forEach((val, key) => {
       if (typeof key !== 'symbol' && all !== true) {
         return;
@@ -143,7 +141,7 @@ class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
    * filters slots by params
    */
   private filterSlot = (exclude?: boolean) => (prev: ISortChildrenEl[], el: TConditionalSlot) => {
-    if (isConditionsComponent(el)) {
+    if (ScopeUtils.isConditionsComponent(el)) {
       const { slot, test } = el;
       const objConditions = this.get(slot.displaySymbol);
       if (objConditions !== undefined) {
@@ -165,7 +163,7 @@ class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
    * evals slots by params
    */
   private evalSlot = (includes?: boolean) => (el: TConditionalSlot) => {
-    if (isConditionsComponent(el)) {
+    if (ScopeUtils.isConditionsComponent(el)) {
       const {slot, test} = el;
       const obj = this.get(slot.displaySymbol);
       if (includes) {
@@ -173,7 +171,7 @@ class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
       }
       return obj !== undefined && obj.some((elem) => test(elem.child.props)) === true;
     }
-    return this.get(el.displaySymbol) !== undefined;
+    return this.has(el.displaySymbol);
   }
 }
 /**
@@ -187,14 +185,8 @@ const useScope = (scope: any): ScopeMap => {
   if (scope === undefined || scope.length === 0) {
     return new ScopeMap();
   }
-  const childrenCount = React.Children.count(scope);
-  const result = new ScopeMap();
-  if (childrenCount === 1) {
-    result.injectElement(scope);
-  } else if (childrenCount > 1) {
-      React.Children.forEach(scope, result.injectElement);
-  }
+  const result = new ScopeMap(scope);
   return result;
 };
 
-export default useScope;
+export {useScope as default};

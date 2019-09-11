@@ -1,4 +1,5 @@
 var path = require('path');
+var TerserPlugin = require('terser-webpack-plugin');
 
 var prodPath = 'lib';
 
@@ -15,9 +16,9 @@ module.exports = {
   },
   devtool: 'source-map',
   optimization: {
-    splitChunks: {
-      chunks: 'all'
-    },
+    // splitChunks: {
+    //   chunks: 'all'
+    // },
   },
   module: {
     rules: [
