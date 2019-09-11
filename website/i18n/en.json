@@ -37,9 +37,10 @@
       "Blog": "Blog"
     },
     "categories": {
-      "Docusaurus": "Docusaurus",
-      "First Category": "First Category",
-      "Second Category": "Second Category"
+      "Intro": "Intro",
+      "Full Guide": "Full Guide",
+      "Advanced cases": "Advanced cases",
+      "slottr API": "slottr API"
     }
   },
   "pages-strings": {

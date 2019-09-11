@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ISortChildrenEl, ISlotComponent } from '../utils/createSlot';
 import useScope, {TConditionalSlot, ScopeMap } from '../utils/useScope';
-import ScopeUtils from '../utils/ScopeUtils';
 
 export interface IFilterSlot {
   /**
@@ -59,7 +58,7 @@ export const createFilterSlot = (
           prev.push(...childrenObject.nonSlotted());
         }
       }
-      const x = ScopeUtils.mapElements(prev);
+      const x = ScopeMap.mapElements(prev);
       return React.createElement(Element, {}, x);
     }
     let childrenObj = scope;
@@ -67,14 +66,14 @@ export const createFilterSlot = (
     if (scope instanceof ScopeMap) {
       childrenObj = scope.scopeChildren();
     }
-    const includeSlots = include && ScopeUtils.reduceConds(include);
-    const excludeSlots = exclude && ScopeUtils.reduceConds(exclude);
+    const includeSlots = include && ScopeMap.reduceConds(include);
+    const excludeSlots = exclude && ScopeMap.reduceConds(exclude);
     const filterElement = (child: JSX.Element) => {
       const checkSlot = (x: TConditionalSlot | undefined, included: boolean) => {
         if (x === undefined) {
           return;
         }
-        if (ScopeUtils.isConditionsComponent(x)) {
+        if (ScopeMap.isConditionsComponent(x)) {
           if (x.test(child.props) === included) {
             return res.push(child);
           }
