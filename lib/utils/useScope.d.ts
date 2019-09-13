@@ -45,6 +45,9 @@ export declare class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
      * @param child JSX element to inject
      */
     scopeChildren: () => any;
+    /**
+     * inject JSX element into scope object
+     */
     injectElement: (child: JSX.Element) => void;
     /**
      * Tests whether object includes all conditional slots

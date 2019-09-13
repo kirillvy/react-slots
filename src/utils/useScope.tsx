@@ -69,29 +69,26 @@ export class ScopeMap extends Map<symbol | string, ISortChildrenEl[]> {
       },
       [] as any[]);
     this.children = mapArr([childrenProp]);
-    const childrenCount = React.Children.count(this.children);
-    if (childrenCount === 1) {
-      this.injectElement(this.children);
-    } else if (childrenCount > 1) {
-        React.Children.forEach(childrenProp, this.injectElement);
-    }
+    React.Children.forEach(childrenProp, this.injectElement);
   }
   /**
    * Injects element into the scope
    * @param child JSX element to inject
    */
   public scopeChildren = () => this.children;
+  /**
+   * inject JSX element into scope object
+   */
   public injectElement = (child: JSX.Element) => {
     let childType = 'string';
     if (React.isValidElement(child) && child.type !== undefined) {
       const obj: any = child.type;
-      if (obj.hasOwnProperty('displayName')) {
+      if (obj.hasOwnProperty('displaySymbol')) {
+        childType = obj.displaySymbol;
+      } else if (obj.hasOwnProperty('displayName')) {
         childType = obj.displayName || 'string';
       } else {
         childType = obj;
-      }
-      if (obj.hasOwnProperty('displaySymbol')) {
-        childType = obj.displaySymbol;
       }
     }
     const resultGet = this.get(childType);
