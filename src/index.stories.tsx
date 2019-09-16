@@ -26,6 +26,7 @@ const stories = storiesOf('Components', module);
 export const CardContextCard = createConditionalSlot('div');
 export const CardTopText = createSlot();
 export const CardTopTexts = createSlot();
+export const CardEmpty = createSlot<'div'>('div');
 export const CardBottomText = createSlot<'input'>('input');
 
 const Card: React.FC = ({ children }) => {
@@ -58,6 +59,7 @@ const Card: React.FC = ({ children }) => {
           hello5
         </ConditionalSlot.Else>
       </ConditionalSlot>
+      <CardEmpty.Slot scope={scope} fallback={false && <CardEmpty>emptyCard</CardEmpty>} />
       <div>
         <CardContextCard.Slot.Conditional condition={true} scope={scope} withContext={true}>
           conditional card

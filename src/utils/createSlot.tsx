@@ -84,6 +84,7 @@ export interface ISubSlotElement<T> extends React.FunctionComponent<ISubSlot<T>>
 
 export interface ISlotComponentBase<T = any> extends React.FunctionComponent<T | IRenderAs | { children?: any }> {
   Context: React.Context<any>;
+  ContextProvider: React.FunctionComponentElement<React.ProviderProps<any>>;
   displaySymbol: symbol;
 }
 
@@ -168,33 +169,37 @@ export type SlotType<T = {}, S = {}> =
 
 export const injectSlot = <T extends {}>(
   Element: ElType<T>, slotProps: ISlot<T>,
-) => (child: JSX.Element, i?: number) => {
-  const { children: defaultElement, defaultProps, passedProps, withContext, props, childIs } = slotProps;
-  if (withContext === true && defaultElement !== undefined) {
-    if (childIs === 'fallback') {
-      return null;
+) => {
+  return (child: JSX.Element, i?: number) => {
+    const { children: defaultElement, defaultProps, passedProps, withContext, props, childIs } = slotProps;
+    if (withContext === true && defaultElement !== undefined) {
+      if (childIs === 'fallback') {
+        return null;
+      }
+      if (Element.Context.Provider === undefined) {
+        return null;
+      }
+      const contextChildren = React.cloneElement(child, { ...props, ...passedProps });
+      return React.cloneElement(child, { key: i, ...props, ...passedProps }, (
+        React.cloneElement(
+          Element.ContextProvider,
+          {
+            key: i,
+            value: useScope(contextChildren.props.children),
+          },
+          defaultElement,
+        )
+      ));
     }
-    if (Element.Context.Provider === undefined) {
-      return null;
+    const childProps: any = child.props;
+    if (child.props === undefined) {
+      return child;
     }
-    const contextChildren = React.cloneElement(child, { ...props, ...passedProps });
-    return React.cloneElement(child, { key: i, ...props, ...passedProps }, (
-      <Element.Context.Provider
-        key={i}
-        value={useScope(contextChildren.props.children)}
-      >
-        {defaultElement}
-      </Element.Context.Provider>
-    ));
-  }
-  const childProps: any = child.props;
-  if (child.props === undefined) {
-    return child;
-  }
-  if (childProps.hasOwnProperty('children')) {
-    return React.cloneElement(child, { key: i, ...props, ...passedProps });
-  }
-  return React.cloneElement(child, { key: i, ...props, ...defaultProps, ...passedProps }, defaultElement);
+    if (childProps.hasOwnProperty('children')) {
+      return React.cloneElement(child, { key: i, ...props, ...passedProps });
+    }
+    return React.cloneElement(child, { key: i, ...props, ...defaultProps, ...passedProps }, defaultElement);
+  };
 };
 
 const SlotFactory = <T extends {}>(
@@ -214,7 +219,7 @@ const SlotFactory = <T extends {}>(
       if ((childIs === 'fallback' || childIs === 'both') && defaultElement !== undefined) {
         return React.cloneElement(defaultElement, fallbackProps);
       }
-      if (fallback !== undefined) {
+      if (fallback) {
         return React.cloneElement(fallback, fallbackProps);
       }
       return <>{headers}{footers}</>;
@@ -258,11 +263,11 @@ const SlottableElement: (
   ) => {
     const el = renderAs ? React.createElement(renderAs, props, children) :
       React.cloneElement(ElDefault, props, children);
-    if (RenderedIn && renderIn !== false) {
-      return React.cloneElement(RenderedIn, renderInProps, el);
-    }
     if (renderIn) {
       return React.createElement(renderIn, renderInProps, el);
+    }
+    if (RenderedIn && renderIn !== false) {
+      return React.cloneElement(RenderedIn, renderInProps, el);
     }
     return el;
   };
@@ -279,6 +284,7 @@ const createSlot: IOverloadCreateSlot = <T extends {} = {}, S extends {} = {}>(
   type CurType = SlotType<T, S>;
   const SlottedElement = SlottableElement(Element, renderIn) as ISlotComponent<CurType>;
   SlottedElement.Context = React.createContext(null);
+  SlottedElement.ContextProvider = React.createElement(SlottedElement.Context.Provider);
   SlottedElement.displaySymbol = Symbol();
   SlottedElement.Before = SlottableElement() as IHeaderFooter;
   SlottedElement.Before.displaySymbol = Symbol();
