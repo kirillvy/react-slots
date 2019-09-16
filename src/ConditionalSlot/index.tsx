@@ -76,6 +76,7 @@ export function createDefaultConditionalSlot(
   typeSymbol: symbol = IF,
   parent?: IConditionalSlot,
   ): IConditionalSlot {
+  const createdElement = React.createElement(Element);
   function ConditionalSlot(props: IConditionalSlotBase) {
     const {children, scope, excludes, includes, condition, ...newProps} = props;
     const elProps = Element === React.Fragment ? {} : {scope, ...newProps};
@@ -118,17 +119,17 @@ export function createDefaultConditionalSlot(
     if (evalResult) {
       const prev = scopeObj.excludeSlots([ConditionalSlot as any], true);
       if (onIf && res !== null && res !== undefined) {
-        return React.createElement(Element, elProps,
+        return React.cloneElement(createdElement, elProps,
           ScopeMap.mapElements(prev),
           res,
         );
       }
-      return React.createElement(Element, elProps,
+      return React.cloneElement(createdElement, elProps,
         ScopeMap.mapElements(prev),
       );
     }
     if (res !== null && onIf === false) {
-      return React.createElement(Element, elProps,
+      return React.cloneElement(createdElement, elProps,
         res,
       );
     }

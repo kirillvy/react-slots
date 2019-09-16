@@ -60,6 +60,7 @@ interface IOverloadCreateCompositionSlot {
 const createCompositionSlot: IOverloadCreateCompositionSlot = (
     Element: keyof JSX.IntrinsicElements | React.ComponentType = React.Fragment,
   ) => {
+  const createdElement = React.createElement(Element);
   const CompositionSlotComponent = ({ scope, all, children }: ICompositionSlot) => {
     const childrenArr = Array.isArray(children) ? children : [children];
     const childrenObj = childrenArr.reduce((prev, el) => {
@@ -98,7 +99,7 @@ const createCompositionSlot: IOverloadCreateCompositionSlot = (
     } else if (childrenCount > 1) {
         React.Children.forEach(scopeObj, filterElement);
     }
-    return React.createElement(Element, {}, res);
+    return React.cloneElement(createdElement, {}, res);
   };
   CompositionSlotComponent.SubSlot = CompositionSlotFactory(CompositionSlotComponent);
   return CompositionSlotComponent;
