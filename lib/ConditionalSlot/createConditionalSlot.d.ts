@@ -21,11 +21,11 @@ export interface IConditionalSlotComponent<T = any> extends ISlotComponentBase<T
     After: IHeaderFooterConditional;
 }
 interface IOverloadCreateConditionalSlot {
-    (Element: keyof JSX.IntrinsicElements | React.ComponentType): IConditionalSlotComponent;
-    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType): IConditionalSlotComponent<Partial<JSX.IntrinsicElements[T]>>;
-    <T extends {}>(Element?: React.ComponentType): IConditionalSlotComponent<T>;
-    <S extends keyof JSX.IntrinsicElements, T extends {}>(Element?: React.ComponentType): IConditionalSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
-    <T extends {}, S extends keyof JSX.IntrinsicElements>(Element?: React.ComponentType): IConditionalSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
+    (Element: keyof JSX.IntrinsicElements | React.ComponentType<any>): IConditionalSlotComponent;
+    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType<any>): IConditionalSlotComponent<Partial<JSX.IntrinsicElements[T]>>;
+    <T extends {}>(Element?: React.ComponentType<any>): IConditionalSlotComponent<T>;
+    <S extends keyof JSX.IntrinsicElements, T extends {}>(Element?: React.ComponentType<any>): IConditionalSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
+    <T extends {}, S extends keyof JSX.IntrinsicElements>(Element?: React.ComponentType<any>): IConditionalSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 declare const createConditionalSlot: IOverloadCreateConditionalSlot;
 export { createConditionalSlot as default };

@@ -32,15 +32,16 @@ Read the docs at https://kirillvy.github.io/react-slots/
   - other API changes
   - breaking changes 
     - Mandatory pre-indexing with useScope
+- 0.4.2
+  - Elimination of createElement calls after initialization
+  -
 
 ## Roadmap to 1.0
 
 - 1.0
-
-Plans:
-- Full examples
-- Test coverage for ordinary and edge cases
-- Modules for assistive slots
-- Passing props other than children through Context API (unique global and component-level slots).
-- Caching, priority and garbage collection for global slots.
-- Package optimizations (tree-shaking)
+  - Full examples
+  - Test coverage for ordinary and edge cases
+  - Modules for assistive slots
+  - Passing props other than children through Context API (unique global and component-level slots).
+  - Caching, priority and garbage collection for global slots.
+  - Package optimizatio ns (tree-shaking)

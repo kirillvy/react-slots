@@ -44,8 +44,9 @@ const isSlotted = (
   ): child is ISlotComponent => child && child.type && child.type.displaySymbol;
 
 export const createFilterSlot = (
-  Element: keyof JSX.IntrinsicElements | React.ComponentType = React.Fragment,
+  Element: keyof JSX.IntrinsicElements | React.ComponentType<any> = React.Fragment,
 ) =>  {
+  const createdElement = React.createElement(Element);
   const FilterSlot = ({ scope, exclude, include, grouped, all }: IFilterSlot) => {
     if (grouped === true) {
       const childrenObject = useScope(scope);
@@ -59,7 +60,7 @@ export const createFilterSlot = (
         }
       }
       const x = ScopeMap.mapElements(prev);
-      return React.createElement(Element, {}, x);
+      return React.cloneElement(createdElement, {}, x);
     }
     let childrenObj = scope;
     const res: JSX.Element[] = [];
@@ -101,7 +102,7 @@ export const createFilterSlot = (
     } else if (childrenCount > 1) {
         React.Children.forEach(childrenObj, filterElement);
     }
-    return React.createElement(Element, {}, res);
+    return React.cloneElement(createdElement, {}, res);
   };
   FilterSlot.SubSlot = FilterSlotFactory(FilterSlot);
   return FilterSlot;

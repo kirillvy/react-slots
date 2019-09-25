@@ -45,21 +45,22 @@ const CompositionSlotFactory = (Element: React.FC<ICompositionSlot>): React.FC<I
 };
 
 interface IOverloadCreateCompositionSlot {
-  (Element: keyof JSX.IntrinsicElements | React.ComponentType): ICompositionSlotComponent;
+  (Element: keyof JSX.IntrinsicElements | React.ComponentType<any>): ICompositionSlotComponent;
   <T extends keyof JSX.IntrinsicElements>(
-    Element: T | React.ComponentType,
+    Element: T | React.ComponentType<any>,
   ): ICompositionSlotComponent<Partial<JSX.IntrinsicElements[T]>>;
-  <T extends {}>(Element?: React.ComponentType): ICompositionSlotComponent<T>;
+  <T extends {}>(Element?: React.ComponentType<any>): ICompositionSlotComponent<T>;
   <S extends keyof JSX.IntrinsicElements, T extends {}>(
-    Element?: React.ComponentType,
+    Element?: React.ComponentType<any>,
   ): ICompositionSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
   <T extends {}, S extends keyof JSX.IntrinsicElements>(
-    Element?: React.ComponentType,
+    Element?: React.ComponentType<any>,
   ): ICompositionSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 const createCompositionSlot: IOverloadCreateCompositionSlot = (
-    Element: keyof JSX.IntrinsicElements | React.ComponentType = React.Fragment,
+    Element: keyof JSX.IntrinsicElements | React.ComponentType<any> = React.Fragment,
   ) => {
+  const createdElement = React.createElement(Element);
   const CompositionSlotComponent = ({ scope, all, children }: ICompositionSlot) => {
     const childrenArr = Array.isArray(children) ? children : [children];
     const childrenObj = childrenArr.reduce((prev, el) => {
@@ -98,7 +99,7 @@ const createCompositionSlot: IOverloadCreateCompositionSlot = (
     } else if (childrenCount > 1) {
         React.Children.forEach(scopeObj, filterElement);
     }
-    return React.createElement(Element, {}, res);
+    return React.cloneElement(createdElement, {}, res);
   };
   CompositionSlotComponent.SubSlot = CompositionSlotFactory(CompositionSlotComponent);
   return CompositionSlotComponent;
