@@ -27,16 +27,16 @@ export interface IConditionalSlotComponent<T = any> extends ISlotComponentBase<T
   After: IHeaderFooterConditional;
 }
 interface IOverloadCreateConditionalSlot {
-  (Element: keyof JSX.IntrinsicElements | React.ComponentType): IConditionalSlotComponent;
+  (Element: keyof JSX.IntrinsicElements | React.ComponentType<any>): IConditionalSlotComponent;
   <T extends keyof JSX.IntrinsicElements>(
-    Element: T | React.ComponentType,
+    Element: T | React.ComponentType<any>,
   ): IConditionalSlotComponent<Partial<JSX.IntrinsicElements[T]>>;
-  <T extends {}>(Element?: React.ComponentType): IConditionalSlotComponent<T>;
+  <T extends {}>(Element?: React.ComponentType<any>): IConditionalSlotComponent<T>;
   <S extends keyof JSX.IntrinsicElements, T extends {}>(
-    Element?: React.ComponentType,
+    Element?: React.ComponentType<any>,
   ): IConditionalSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
   <T extends {}, S extends keyof JSX.IntrinsicElements>(
-    Element?: React.ComponentType,
+    Element?: React.ComponentType<any>,
   ): IConditionalSlotComponent<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 const ConditionalSubSlotFactory = <T extends {}>(Element: IConditionalSlotComponent): React.FC<ISubSlot<T>> => (
@@ -46,16 +46,16 @@ const ConditionalSubSlotFactory = <T extends {}>(Element: IConditionalSlotCompon
 };
 
 const createConditionalSlot: IOverloadCreateConditionalSlot = <T extends {} = {}, S extends {} = {}>(
-  Element: React.ComponentType | keyof JSX.IntrinsicElements = React.Fragment,
+  Element: React.ComponentType<any> | keyof JSX.IntrinsicElements = React.Fragment,
   ) => {
   type CurType = SlotType<T, S>;
   const SlottedElement = createSlot(Element) as IConditionalSlotComponent<CurType>;
   SlottedElement.Slot.Conditional = createDefaultConditionalSlot(
-    SlottedElement.Slot as React.ComponentType) as IConditionalSlot<CurType & ISlot<any>>;
+    SlottedElement.Slot as React.ComponentType<any>) as IConditionalSlot<CurType & ISlot<any>>;
   SlottedElement.SubSlot.Conditional = ConditionalSubSlotFactory<CurType>(SlottedElement);
-  SlottedElement.Before.Conditional = createDefaultConditionalSlot(SlottedElement.Before as React.ComponentType);
+  SlottedElement.Before.Conditional = createDefaultConditionalSlot(SlottedElement.Before as React.ComponentType<any>);
   SlottedElement.Before.Conditional.displaySymbol = SlottedElement.Before.displaySymbol;
-  SlottedElement.After.Conditional = createDefaultConditionalSlot(SlottedElement.After as React.ComponentType);
+  SlottedElement.After.Conditional = createDefaultConditionalSlot(SlottedElement.After as React.ComponentType<any>);
   SlottedElement.After.Conditional.displaySymbol = SlottedElement.After.displaySymbol;
   return SlottedElement;
 };

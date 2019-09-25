@@ -11,7 +11,7 @@ the component or JSX element indicated.
 
 Name | Type | Description
 --- | --- | ---
-renderAs | `React.ComponentType ⎮ keyof JSX.IntrinsicElements` | Element injected for rendering instead of default. Any props will have to be compatible.
+renderAs | `React.ComponentType<any> ⎮ keyof JSX.IntrinsicElements` | Element injected for rendering instead of default. Any props will have to be compatible.
 
 ## Component.Slot
 

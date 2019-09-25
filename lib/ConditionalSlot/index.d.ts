@@ -23,11 +23,11 @@ export interface IConditionalSubSlot extends IConditionalSlotBase {
     scope: React.Context<any>;
 }
 interface IOverloadCreateConditional {
-    (Element: keyof JSX.IntrinsicElements | React.ComponentType): IConditionalSlot;
-    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType): IConditionalSlot<Partial<JSX.IntrinsicElements[T]>>;
-    <T extends {}>(Element: React.ComponentType): IConditionalSlot<T>;
-    <S extends keyof JSX.IntrinsicElements, T extends {}>(Element: React.ComponentType): IConditionalSlot<T & Partial<JSX.IntrinsicElements[S]>>;
-    <T extends {}, S extends keyof JSX.IntrinsicElements>(Element: React.ComponentType): IConditionalSlot<T & Partial<JSX.IntrinsicElements[S]>>;
+    (Element: keyof JSX.IntrinsicElements | React.ComponentType<any>): IConditionalSlot;
+    <T extends keyof JSX.IntrinsicElements>(Element: T | React.ComponentType<any>): IConditionalSlot<Partial<JSX.IntrinsicElements[T]>>;
+    <T extends {}>(Element: React.ComponentType<any>): IConditionalSlot<T>;
+    <S extends keyof JSX.IntrinsicElements, T extends {}>(Element: React.ComponentType<any>): IConditionalSlot<T & Partial<JSX.IntrinsicElements[S]>>;
+    <T extends {}, S extends keyof JSX.IntrinsicElements>(Element: React.ComponentType<any>): IConditionalSlot<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase & T> {
     If: IConditionalSlot;
@@ -37,7 +37,7 @@ export interface IConditionalSlot<T = {}> extends React.FC<IConditionalSlotBase 
     displaySymbol: symbol;
     typeSymbol: symbol;
 }
-export declare function createDefaultConditionalSlot(Element?: keyof JSX.IntrinsicElements | React.ComponentType, typeSymbol?: symbol, parent?: IConditionalSlot): IConditionalSlot;
+export declare function createDefaultConditionalSlot(Element?: keyof JSX.IntrinsicElements | React.ComponentType<any>, typeSymbol?: symbol, parent?: IConditionalSlot): IConditionalSlot;
 declare const ConditionalSlotElement: IConditionalSlot;
 export declare const createConditionalElement: IOverloadCreateConditional;
 export { ConditionalSlotElement as default };

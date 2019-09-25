@@ -21,6 +21,17 @@ const Example: React.FC = ({ children }) => (
   </div>
 );
 
+export interface DrawerContainerProps {
+  isShowing: string;
+}
+
+export const DrawerContainer: React.FunctionComponent<DrawerContainerProps> = ({ isShowing, children }) => {
+  const styles = React.useState({ isShowing });
+  return <div className={isShowing}>{children}</div>;
+};
+
+export const Drawer = createSlot<DrawerContainerProps>(DrawerContainer);
+
 const stories = storiesOf('Components', module);
 
 export const CardContextCard = createConditionalSlot('div');
@@ -33,6 +44,7 @@ const Card: React.FC = ({ children }) => {
   const scope = useScope(children);
   return (
     <div>
+      <Drawer.Slot defaultProps={{isShowing: 'true'}} scope={scope} />
       <CompositionSlot scope={scope}>
         <CardBottomText.Slot
           props={{onInput: (e) => console.log(e.currentTarget.value, e.currentTarget.name)}}
@@ -92,6 +104,8 @@ stories.add(
 
     <>f
     <Card2>
+      <ComponentWithSlot />
+      <Drawer isShowing={'f'}>ggg</Drawer>
         xzzxvv
       <div>ggg</div>
         <CardBottomText  name={'aaa'}  />
@@ -128,3 +142,23 @@ stories.add(
     </>
   )),
 );
+
+interface SProps {
+  isShowing: boolean;
+}
+
+const ComponentSlot: React.FunctionComponent<SProps> = ({ children }) => {
+  return <div>{children}</div>;
+};
+
+const Sloter = createSlot<SProps>(ComponentSlot);
+
+export const ComponentWithSlot: React.FunctionComponent = ({children}) => {
+  const scope = useScope(children);
+  return (
+    <div>
+      componennt wiht slot
+      <Sloter.Slot scope={scope} />
+    </div>
+  );
+  };

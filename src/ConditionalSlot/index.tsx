@@ -27,17 +27,17 @@ export interface IConditionalSubSlot extends IConditionalSlotBase {
 
 interface IOverloadCreateConditional {
   (
-    Element: keyof JSX.IntrinsicElements | React.ComponentType,
+    Element: keyof JSX.IntrinsicElements | React.ComponentType<any>,
   ): IConditionalSlot;
   <T extends keyof JSX.IntrinsicElements>(
-    Element: T | React.ComponentType,
+    Element: T | React.ComponentType<any>,
   ): IConditionalSlot<Partial<JSX.IntrinsicElements[T]>>;
-  <T extends {}>(Element: React.ComponentType): IConditionalSlot<T>;
+  <T extends {}>(Element: React.ComponentType<any>): IConditionalSlot<T>;
   <S extends keyof JSX.IntrinsicElements, T extends {}>(
-    Element: React.ComponentType,
+    Element: React.ComponentType<any>,
   ): IConditionalSlot<T & Partial<JSX.IntrinsicElements[S]>>;
   <T extends {}, S extends keyof JSX.IntrinsicElements>(
-    Element: React.ComponentType,
+    Element: React.ComponentType<any>,
   ): IConditionalSlot<T & Partial<JSX.IntrinsicElements[S]>>;
 }
 
@@ -72,7 +72,7 @@ const slotEvalIf = ({scope, excludes, includes, condition}: IConditionalSlotBase
 };
 
 export function createDefaultConditionalSlot(
-  Element: keyof JSX.IntrinsicElements | React.ComponentType = React.Fragment,
+  Element: keyof JSX.IntrinsicElements | React.ComponentType<any> = React.Fragment,
   typeSymbol: symbol = IF,
   parent?: IConditionalSlot,
   ): IConditionalSlot {
@@ -159,7 +159,7 @@ export function createDefaultConditionalSlot(
 const ConditionalSlotElement: IConditionalSlot = createDefaultConditionalSlot();
 
 export const createConditionalElement: IOverloadCreateConditional = (
-  Element: keyof JSX.IntrinsicElements | React.ComponentType,
+  Element: keyof JSX.IntrinsicElements | React.ComponentType<any>,
   ) => createDefaultConditionalSlot(Element, IF);
 
 export {ConditionalSlotElement as default};

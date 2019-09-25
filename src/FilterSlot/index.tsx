@@ -44,7 +44,7 @@ const isSlotted = (
   ): child is ISlotComponent => child && child.type && child.type.displaySymbol;
 
 export const createFilterSlot = (
-  Element: keyof JSX.IntrinsicElements | React.ComponentType = React.Fragment,
+  Element: keyof JSX.IntrinsicElements | React.ComponentType<any> = React.Fragment,
 ) =>  {
   const createdElement = React.createElement(Element);
   const FilterSlot = ({ scope, exclude, include, grouped, all }: IFilterSlot) => {
